@@ -1,7 +1,11 @@
 "use client";
 import Link from "next/link";
-import { User2, Home } from "lucide-react";
+import { User2, Home, Mail } from "lucide-react";
 import Logo from "./Logo";
+
+// Navigation visibility flags
+const SHOW_PRICING = false;
+const SHOW_LOGIN = false;
 
 export default function Header() {
   return (
@@ -26,29 +30,34 @@ export default function Header() {
             <Home size={16} />
             <span>Home</span>
           </Link>
-          <Link
-            href="/pricing"
-            className="text-gray-300 hover:text-white transition-colors duration-200"
-          >
-            Pricing
-          </Link>
+          {SHOW_PRICING && (
+            <Link
+              href="/pricing"
+              className="text-gray-300 hover:text-white transition-colors duration-200"
+            >
+              Pricing
+            </Link>
+          )}
           <Link
             href="/contact"
-            className="text-gray-300 hover:text-white transition-colors duration-200"
+            className="flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors duration-200"
           >
-            Contact
+            <Mail size={16} />
+            <span>Contact</span>
           </Link>
         </nav>
 
         {/* Right section with auth buttons */}
         <div className="w-[240px] flex items-center justify-end gap-3">
           {/* Login Button */}
-          <Link
-            href="/login"
-            className="px-4 py-2 text-sm font-montserrat text-white/90 hover:text-white transition-colors duration-200 tracking-wide whitespace-nowrap"
-          >
-            Log In
-          </Link>
+          {SHOW_LOGIN && (
+            <Link
+              href="/login"
+              className="px-4 py-2 text-caption text-white/90 hover:text-white transition-colors duration-200 whitespace-nowrap"
+            >
+              Log In
+            </Link>
+          )}
 
           {/* Sign Up Button */}
           <Link
@@ -63,7 +72,7 @@ export default function Header() {
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2/3 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
             
             {/* Button text */}
-            <span className="relative text-sm font-montserrat tracking-wide text-white whitespace-nowrap">
+            <span className="relative text-caption text-white whitespace-nowrap">
               Sign Up
             </span>
           </Link>
