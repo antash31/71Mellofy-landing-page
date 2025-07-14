@@ -42,7 +42,7 @@ export default function Footer() {
         <div className="xl:grid xl:grid-cols-3 xl:gap-12">
           {/* Brand section */}
           <div className="space-y-8 xl:col-span-1">
-            <Link href="/" className="font-cormorant text-3xl font-normal tracking-wide text-white">
+            <Link href="/" className="font-montserrat text-3xl font-normal tracking-wide text-white">
               AI SDR
             </Link>
             <p className="font-montserrat text-sm tracking-wide text-white/60 max-w-xs leading-relaxed">

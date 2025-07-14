@@ -51,15 +51,15 @@ export default function FAQ() {
           className="text-center mb-16"
         >
           <div className="inline-block px-6 py-2 bg-white/10 backdrop-blur-lg rounded-full mb-8">
-            <span className="font-montserrat text-sm tracking-ultra uppercase text-white/80">
+            <span className="font-inter text-sm tracking-ultra uppercase text-white/80">
               Common Questions
             </span>
           </div>
-          <h2 className="text-5xl md:text-7xl font-normal tracking-elegant text-white font-cormorant mb-4">
+          <h2 className="text-5xl md:text-7xl font-poppins font-semibold tracking-tight text-white mb-4">
             Frequently Asked
           </h2>
           <div className="w-16 h-px bg-white/20 mx-auto mb-10"></div>
-          <p className="text-lg text-white/60 max-w-2xl mx-auto font-montserrat tracking-wide leading-relaxed">
+          <p className="text-lg text-white/60 max-w-2xl mx-auto font-inter tracking-normal leading-relaxed">
             Everything you need to know about the AI SDR platform
           </p>
         </motion.div>
@@ -78,7 +78,7 @@ export default function FAQ() {
                 className="w-full text-left p-8 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/30 transition-all duration-300 group"
               >
                 <div className="flex justify-between items-center">
-                  <h3 className="text-xl font-cormorant font-normal tracking-wide text-white">
+                  <h3 className="text-xl font-poppins font-medium tracking-tight text-white">
                     {faq.question}
                   </h3>
                   <svg
@@ -103,7 +103,7 @@ export default function FAQ() {
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="mt-6 font-montserrat text-sm tracking-wide text-white/60 leading-relaxed"
+                    className="mt-6 font-inter text-sm tracking-normal text-white/60 leading-relaxed"
                   >
                     {faq.answer}
                   </motion.p>

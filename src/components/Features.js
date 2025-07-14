@@ -43,15 +43,15 @@ export default function Features() {
           className="text-center mb-16"
         >
           <div className="inline-block px-6 py-2 bg-white/10 backdrop-blur-lg rounded-full mb-8">
-            <span className="font-montserrat text-sm tracking-ultra uppercase text-white/80">
+            <span className="font-inter text-sm tracking-ultra uppercase text-white/80">
               Key Features
             </span>
           </div>
-          <h2 className="text-5xl md:text-7xl font-normal tracking-elegant text-white font-cormorant mb-4">
+          <h2 className="text-5xl md:text-7xl font-poppins font-semibold tracking-tight text-white mb-4">
             Supercharge Your Sales
           </h2>
           <div className="w-16 h-px bg-white/20 mx-auto mb-10"></div>
-          <p className="text-lg text-white/60 max-w-2xl mx-auto font-montserrat tracking-wide leading-relaxed">
+          <p className="text-lg text-white/60 max-w-2xl mx-auto font-inter tracking-normal leading-relaxed">
             Leverage cutting-edge AI technology to automate and optimize every step of your sales development process.
           </p>
         </motion.div>
@@ -75,10 +75,10 @@ export default function Features() {
                   <Image src={feature.icon} alt={feature.title} width={24} height={24} className="opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
                 </div>
                 
-                <h3 className="text-2xl font-cormorant font-normal tracking-wide text-white mb-4">
+                <h3 className="text-2xl font-poppins font-semibold tracking-tight text-white mb-4">
                   {feature.title}
                 </h3>
-                <p className="font-montserrat text-sm tracking-wide text-white/60 leading-relaxed">
+                <p className="font-inter text-sm tracking-normal text-white/60 leading-relaxed">
                   {feature.description}
                 </p>
               </div>
