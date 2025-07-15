@@ -8,7 +8,7 @@ export default function Hero() {
     <section className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
       <div className="absolute inset-0 z-1">
         <Aurora
-          colorStops={["#FFFFFF", "#FFFFFF"]}
+          colorStops={["#2563eb", "#9333ea", "#db2777"]}
           blend={0.8}
           amplitude={2}
           speed={0.5}
@@ -16,19 +16,21 @@ export default function Hero() {
       </div>
 
       <div className="relative z-2 max-w-4xl mx-auto flex flex-col items-center">
-        <div className="mb-2 text-xs font-sans tracking-ultra text-white/80 uppercase">Introducing</div>
-        
+        <div className="mb-2 text-xs font-sans tracking-ultra text-white/80 uppercase">
+          Introducing
+        </div>
+
         <div className="flex justify-center w-full">
           <BlurText
-            text="Cold Email."
+            text="Turn Cold Emails into"
             animateBy="words"
             delay={120}
             className="mb-3 text-hero font-poppins text-center"
           />
         </div>
-        
+
         <BlurText
-          text="Completely Automated."
+          text="Warm Conversations with AI-Powered Precision"
           animateBy="words"
           delay={150}
           direction="bottom"
@@ -39,7 +41,7 @@ export default function Hero() {
 
         <div className="w-full max-w-2xl flex justify-center items-center">
           <BlurText
-            text="Your AI SDR finds prospects, personalises messages, and books meetings while you sleep"
+            text="Stop wasting time on generic outreach. Our AI agents score leads, personalize every email, and handle responses intelligently - so you can focus on closing deals."
             animateBy="words"
             delay={30}
             stepDuration={0.25}
@@ -54,18 +56,21 @@ export default function Hero() {
           transition={{ delay: 1, duration: 0.5 }}
           className="flex justify-center mt-14"
         >
-          <button className="btn group relative px-8 py-4 text-white transition-all duration-300">
+          <button className="btn group relative px-8 py-4 text-black transition-all duration-300">
             {/* Button background */}
-            <div className="absolute inset-0 bg-white/10 rounded-xl transition-all duration-300 group-hover:bg-white/20" />
-            
-            {/* Button border */}
-            <div className="absolute inset-0 rounded-xl border border-white/50 transition-all duration-300 group-hover:border-white group-hover:scale-105" />
-            
+            <div className="absolute inset-0 bg-white rounded-xl transition-all duration-300 transform group-hover:-translate-y-1 shadow-[0_4px_8px_rgba(0,0,0,0.1)] group-hover:shadow-[0_8px_16px_rgba(0,0,0,0.1)]" />
+
+            {/* Button border and 3D effect */}
+            <div className="absolute inset-0 rounded-xl bg-white/90 -bottom-1 translate-y-1 group-hover:translate-y-0.5 transition-transform duration-300 shadow-[0_2px_4px_rgba(0,0,0,0.05)]" />
+
             {/* Button text */}
-            <span className="relative z-10 uppercase">Join the Waitlist</span>
-            
+            <span className="relative z-10 uppercase">Get Early Access</span>
+
             {/* Button shine effect */}
-            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-white/0 via-white/10 to-white/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ transform: 'translateX(-100%)' }} />
+            <div
+              className="absolute inset-0 -z-10 bg-gradient-to-r from-black/0 via-black/5 to-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              style={{ transform: "translateX(-100%)" }}
+            />
           </button>
         </motion.div>
       </div>

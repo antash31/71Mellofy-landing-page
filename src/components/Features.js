@@ -3,28 +3,39 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import Image from "next/image";
 import Aurora from "./Aurora";
+import TiltedCard from "./TiltedCard";
 
 const features = [
   {
-    title: "AI-Powered Prospecting",
-    description: "Our AI analyzes millions of data points to find your ideal customers with unprecedented accuracy.",
-    icon: "/globe.svg"
+    title: "AI Lead Scoring Agent",
+    headline: "Quality Over Quantity: AI That Finds Your Perfect Prospects",
+    description:
+      "Our AI analyzes 200+ data points to identify high-intent leads, so you spend time on prospects who are ready to buy, not tire-kickers.",
+    metric: "77% increase in ROI",
+    metricLabel: "Average ROI increase with AI lead scoring",
+    icon: "/globe.svg",
   },
   {
-    title: "Smart Personalization",
-    description: "Generate hyper-personalized messages that resonate with each prospect's unique context and needs.",
-    icon: "/file.svg"
+    title: "Context-Aware Email Generator",
+    headline: "Personalization That Actually Converts",
+    description:
+      "Goes beyond {{FirstName}} - our AI crafts emails based on recent company news, job changes, and behavioral triggers for 3x higher response rates.",
+    metric: "3x higher",
+    metricLabel: "Response rate with contextual personalization",
+    icon: "/file.svg",
   },
   {
-    title: "Automated Outreach",
-    description: "Set up sophisticated multi-channel outreach campaigns that run 24/7 while maintaining a human touch.",
-    icon: "/window.svg"
-  }
+    title: "Response Intelligence Agent",
+    headline: "Never Miss a Sales Opportunity Again",
+    description:
+      "AI handles objections, qualification questions, and follow-ups instantly, ensuring every lead stays warm while you focus on closing.",
+    metric: "24/7",
+    metricLabel: "Intelligent response management",
+    icon: "/window.svg",
+  },
 ];
 
 export default function Features() {
-  const [hoveredIndex, setHoveredIndex] = useState(null);
-
   return (
     <section className="relative py-24 px-6 bg-black overflow-hidden">
       <div className="absolute inset-0 opacity-30">
@@ -44,7 +55,7 @@ export default function Features() {
         >
           <div className="inline-block px-6 py-2 bg-white/10 backdrop-blur-lg rounded-full mb-8">
             <span className="font-inter text-sm tracking-ultra uppercase text-white/80">
-              Key Features
+              Problem-Solution Mapping
             </span>
           </div>
           <h2 className="text-5xl md:text-7xl font-poppins font-semibold tracking-tight text-white mb-4">
@@ -52,11 +63,13 @@ export default function Features() {
           </h2>
           <div className="w-16 h-px bg-white/20 mx-auto mb-10"></div>
           <p className="text-lg text-white/60 max-w-2xl mx-auto font-inter tracking-normal leading-relaxed">
-            Leverage cutting-edge AI technology to automate and optimize every step of your sales development process.
+            Leverage cutting-edge AI technology to automate and optimize every
+            step of your sales development process.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Feature Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
@@ -64,28 +77,69 @@ export default function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.2 }}
-              onHoverStart={() => setHoveredIndex(index)}
-              onHoverEnd={() => setHoveredIndex(null)}
-              className="relative p-8 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/30 transition-all duration-300 group"
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
-              
-              <div className="relative">
-                <div className="h-12 w-12 mb-6 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-all duration-300">
-                  <Image src={feature.icon} alt={feature.title} width={24} height={24} className="opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
-                </div>
-                
-                <h3 className="text-2xl font-poppins font-semibold tracking-tight text-white mb-4">
-                  {feature.title}
-                </h3>
-                <p className="font-inter text-sm tracking-normal text-white/60 leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
+              <TiltedCard
+                containerHeight="500px"
+                containerWidth="100%"
+                imageHeight="500px"
+                imageWidth="100%"
+                showMobileWarning={false}
+                showTooltip={false}
+                displayOverlayContent={true}
+                scaleOnHover={1.05}
+                rotateAmplitude={10}
+                overlayContent={
+                  <div className="relative w-full h-full p-8 bg-gradient-to-b from-black/80 via-black/60 to-black/80 backdrop-blur-xl rounded-lg flex flex-col group">
+                    {/* Animated glowing border */}
+                    <div className="absolute -inset-[1px] rounded-lg bg-gradient-to-r from-blue-600/50 via-purple-600/50 to-pink-600/50 animate-gradient blur-sm" />
+                    <div className="absolute -inset-[2px] rounded-lg bg-gradient-to-r from-blue-600/25 via-purple-600/25 to-pink-600/25 animate-gradient blur-md" />
+                    <div className="absolute inset-[1px] rounded-lg bg-gradient-to-b from-black/80 via-black/60 to-black/80 backdrop-blur-xl" />
+
+                    {/* Content container */}
+                    <div className="relative z-10">
+                      {/* Icon */}
+                      <div className="mb-6">
+                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/10 backdrop-blur-lg">
+                          <Image
+                            src={feature.icon}
+                            width={24}
+                            height={24}
+                            alt={feature.title}
+                            className="opacity-80"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <h3 className="text-xl font-semibold text-white mb-2">
+                        {feature.title}
+                      </h3>
+                      <h4 className="text-lg font-medium text-white/90 mb-3">
+                        {feature.headline}
+                      </h4>
+                      <p className="text-white/70 mb-6 flex-grow">
+                        {feature.description}
+                      </p>
+
+                      {/* Metric */}
+                      <div className="pt-6 border-t border-white/10">
+                        <div className="flex items-baseline">
+                          <span className="text-2xl font-bold bg-gradient-to-r from-white via-white to-white/80 bg-clip-text text-transparent">
+                            {feature.metric}
+                          </span>
+                          <span className="ml-2 text-sm text-white/60">
+                            {feature.metricLabel}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+              />
             </motion.div>
           ))}
         </div>
       </div>
     </section>
   );
-} 
+}
