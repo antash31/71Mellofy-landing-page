@@ -466,11 +466,11 @@ export default function WorkflowDiagram() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onInit = useCallback((reactFlowInstance) => {
-    reactFlowInstance.fitView();
+    reactFlowInstance.fitView({ duration: 400 });
   }, []);
 
   return (
-    <div className="w-full h-[1000px] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl overflow-hidden border border-white/10">
+    <div className="w-full h-[1000px] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl overflow-hidden border border-white/10 relative">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -479,19 +479,27 @@ export default function WorkflowDiagram() {
         nodeTypes={nodeTypes}
         onInit={onInit}
         fitView
-        minZoom={0.1}
+        nodesDraggable={false}
+        zoomOnScroll={false}
+        zoomOnPinch={true}
+        preventScrolling={false}
+        minZoom={0.2}
         maxZoom={1.5}
-        defaultViewport={{ x: 0, y: 0, zoom: 0.4 }}
-        className="bg-transparent"
+        defaultViewport={{ x: 0, y: 0, zoom: 0.5 }}
+        className="bg-transparent [&_.react-flow__viewport]:transition-transform [&_.react-flow__viewport]:duration-200"
       >
         <Background
           color="#4b5563"
           variant="dots"
-          className="opacity-30"
+          className="opacity-30 !fixed"
           gap={20}
           size={1}
         />
-        <Controls className="bg-black/70 backdrop-blur-xl border border-white/20 rounded-lg p-2 shadow-xl" />
+        <Controls 
+          className="bg-black/70 backdrop-blur-xl border border-white/20 rounded-lg p-2 shadow-xl"
+          showZoom={true}
+          showFitView={true}
+        />
         <Panel
           position="top-left"
           className="bg-black/70 backdrop-blur-xl border border-white/20 rounded-lg p-4 m-4 shadow-xl"
