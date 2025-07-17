@@ -78,13 +78,13 @@ export default function Header() {
           </Link>
 
           {/* Account Icon */}
-          <div className="h-8 w-[1px] bg-white/10 mx-1" />
-          <Link
+          {/* <div className="h-8 w-[1px] bg-white/10 mx-1" />
+            <Link
             href="/account"
             className="grid h-10 w-10 place-content-center rounded-md border border-white/30 text-gray-200 transition-all duration-300 hover:border-white hover:text-white hover:scale-105"
-          >
+           >
             <User2 size={20} strokeWidth={1.5} />
-          </Link>
+            </Link> */}
         </div>
       </div>
     </header>

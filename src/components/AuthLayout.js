@@ -10,7 +10,7 @@ export default function AuthLayout({ children, title, subtitle, altLink, altText
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <Aurora
-          colorStops={["#FFFFFF", "#FFFFFF"]}
+           colorStops={["#2563eb", "#9333ea", "#db2777"]}
           blend={0.6}
           amplitude={1.5}
           speed={0.4}
