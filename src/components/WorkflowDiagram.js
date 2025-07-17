@@ -495,7 +495,7 @@ export default function WorkflowDiagram() {
           gap={20}
           size={1}
         />
-        <Controls 
+        <Controls
           className="bg-black/70 backdrop-blur-xl border border-white/20 rounded-lg p-2 shadow-xl"
           showZoom={true}
           showFitView={true}
