@@ -2,8 +2,36 @@
 import { motion } from "framer-motion";
 import Aurora from "@/components/Aurora";
 import BlurText from "@/components/BlurText";
+import { useState } from 'react';
 
 export default function ContactPage() {
+  const [formData, setFormData] = useState({ name: '', email: '', company: '', message: '' });
+  const [status, setStatus] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus('Sending...');
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        setStatus('Message sent successfully!');
+        setFormData({ name: '', email: '', company: '', message: '' });
+      } else {
+        setStatus('Error sending message.');
+      }
+    } catch (error) {
+      setStatus('Error sending message.');
+    }
+  };
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-20 px-4 relative overflow-hidden">
       <div className="absolute inset-0 opacity-30">
@@ -43,15 +71,19 @@ export default function ContactPage() {
           >
             <div className="absolute inset-0 bg-white/5 rounded-lg blur-xl group-hover:blur-2xl transition-all duration-300" />
             <div className="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-lg p-8 group-hover:border-white/20 transition-all duration-300 h-full shadow-[0_0_15px_rgba(37,99,235,0.1)] group-hover:shadow-[0_0_25px_rgba(147,51,234,0.2)]">
-              <form className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label className="block text-sm font-inter font-semibold text-white/80 mb-2">
                     Name
                   </label>
                   <input
                     type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/40 focus:bg-black/60 transition-all duration-300 font-inter text-base"
                     placeholder="Your name"
+                    required
                   />
                 </div>
                 <div>
@@ -60,8 +92,12 @@ export default function ContactPage() {
                   </label>
                   <input
                     type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/40 focus:bg-black/60 transition-all duration-300 font-inter text-base"
                     placeholder="your@email.com"
+                    required
                   />
                 </div>
                 <div>
@@ -70,6 +106,9 @@ export default function ContactPage() {
                   </label>
                   <input
                     type="text"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/40 focus:bg-black/60 transition-all duration-300 font-inter text-base"
                     placeholder="Your company"
                   />
@@ -79,16 +118,21 @@ export default function ContactPage() {
                     Message
                   </label>
                   <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/40 focus:bg-black/60 transition-all duration-300 h-32 font-inter text-base"
                     placeholder="How can we help you?"
+                    required
                   />
                 </div>
-                <button className="btn group relative px-5 py-2.5 text-black text-base transition-all duration-300">
+                <button type="submit" className="btn group relative px-5 py-2.5 text-black text-base transition-all duration-300">
                   <div className="absolute inset-0 bg-white rounded-xl transition-all duration-300 transform group-hover:-translate-y-1 shadow-[0_4px_8px_rgba(0,0,0,0.1)] group-hover:shadow-[0_8px_16px_rgba(0,0,0,0.1)]" />
                   <div className="absolute inset-0 rounded-xl bg-white/90 -bottom-1 translate-y-1 group-hover:translate-y-0.5 transition-transform duration-300 shadow-[0_2px_4px_rgba(0,0,0,0.05)]" />
                   <span className="relative z-10 uppercase font-inter font-bold">Send Message</span>
                   <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/0 via-black/5 to-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ transform: "translateX(-100%)" }} />
                 </button>
+                {status && <p className="text-white/80 font-inter text-base">{status}</p>}
               </form>
             </div>
           </motion.div>
@@ -120,7 +164,7 @@ export default function ContactPage() {
                         d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                       />
                     </svg>
-                    <span className="text-white/80 font-inter text-base">contact@aisdr.com</span>
+                    <span className="text-white/80 font-inter text-base">info@71mellofy.com</span>
                   </div>
                   <div className="flex items-center p-3 bg-black/40 rounded-lg border border-white/10 hover:border-white/30 transition-all duration-300">
                     <svg
@@ -136,7 +180,7 @@ export default function ContactPage() {
                         d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                       />
                     </svg>
-                    <span className="text-white/80 font-inter text-base">+1 (555) 123-4567</span>
+                    <span className="text-white/80 font-inter text-base">7024575459</span>
                   </div>
                 </div>
               </div>

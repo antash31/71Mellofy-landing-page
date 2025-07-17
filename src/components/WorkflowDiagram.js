@@ -55,6 +55,7 @@ const initialNodes = [
     },
   },
   // Rejected leads path - right side
+  /*
   {
     id: "12",
     type: "custom",
@@ -64,6 +65,7 @@ const initialNodes = [
       description: "All interactions and metrics are tracked in real time.",
     },
   },
+  */
   // Continue main path
   {
     id: "5",
@@ -93,6 +95,7 @@ const initialNodes = [
         "Personalized messages are sent using warmed-up, authenticated accounts.",
     },
   },
+  /*
   {
     id: "8",
     type: "custom",
@@ -130,6 +133,7 @@ const initialNodes = [
       description: "Complex responses are handled by human representatives.",
     },
   },
+  */
 ];
 
 const initialEdges = [
@@ -175,6 +179,7 @@ const initialEdges = [
     labelStyle: { fill: "#10b981", fontWeight: "bold" },
     labelBgStyle: { fill: "rgba(0,0,0,0.8)", rx: 4, ry: 4 },
   },
+  /*
   {
     id: "e4-12",
     source: "4",
@@ -189,6 +194,7 @@ const initialEdges = [
     sourceHandle: "source-right",
     targetHandle: "target-left",
   },
+  */
 
   // Continue main flow
   {
@@ -228,7 +234,7 @@ const initialEdges = [
     sourceHandle: "source-left",
     targetHandle: "target-left",
   },
-
+  /*
   // Continue main flow
   {
     id: "e7-8",
@@ -319,6 +325,7 @@ const initialEdges = [
     sourceHandle: "source-left",
     targetHandle: "target-right",
   },
+  */
 ];
 
 // Custom Node Component
@@ -470,7 +477,7 @@ export default function WorkflowDiagram() {
   }, []);
 
   return (
-    <div className="w-full h-[1000px] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl overflow-hidden border border-white/10 relative">
+    <div className="w-full h-[800px] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl overflow-hidden border border-white/10 relative">
       <ReactFlow
         nodes={nodes}
         edges={edges}

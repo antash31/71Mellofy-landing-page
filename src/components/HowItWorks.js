@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import Aurora from "./Aurora";
 import WorkflowDiagram from "./WorkflowDiagram";
+import Script from 'next/script';
 
 const steps = [
   {
@@ -9,30 +10,50 @@ const steps = [
     title: "Connect Your Data",
     description:
       "Integrate with your CRM and existing tools to sync your customer data and preferences.",
+    icon: "/file.svg", // Assuming public/file.svg exists
   },
   {
     number: "02",
     title: "Define Your ICP",
     description:
       "Our AI learns your Ideal Customer Profile and builds targeted prospect lists.",
+    icon: "/globe.svg",
   },
   {
     number: "03",
     title: "Customize Campaigns",
     description:
       "Set up personalized outreach sequences with custom messaging and timing.",
+    icon: "/window.svg",
   },
   {
     number: "04",
     title: "Auto-pilot Mode",
     description:
       "Let AI handle prospecting, outreach, and follow-ups while you focus on closing deals.",
+    icon: "/next.svg",
   },
 ];
 
+const howToSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How It Works",
+  "description": "Get started in minutes with our simple four-step process",
+  "step": steps.map((step, index) => ({
+    "@type": "HowToStep",
+    "name": step.title,
+    "text": step.description,
+    "position": index + 1,
+  })),
+};
+
 export default function HowItWorks() {
   return (
-    <section className="relative py-24 px-6 bg-black overflow-hidden">
+    <section id="how-it-works" className="relative py-24 px-6 bg-gradient-to-b from-gray-900 to-black overflow-hidden">
+      <Script id="howto-schema" type="application/ld+json">
+        {JSON.stringify(howToSchema)}
+      </Script>
       <div className="absolute inset-0 opacity-30">
         <Aurora
           colorStops={["#000000", "#1a1a1a", "#000000"]}
@@ -74,9 +95,9 @@ export default function HowItWorks() {
           <WorkflowDiagram />
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
           {steps.map((step, index) => (
-            <motion.div
+            <motion.li
               key={step.number}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -90,23 +111,24 @@ export default function HowItWorks() {
               )}
 
               {/* Step content */}
-              <div className="relative z-10 p-8 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/30 transition-all duration-300 group">
+              <div className="relative z-10 p-8 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/30 hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
-                <div className="relative">
+                <div className="relative flex flex-col flex-grow">
+                  <img src={step.icon} alt={`${step.title} icon`} className="w-12 h-12 mb-4" />
                   <div className="font-inter text-4xl font-light tracking-wide text-white/80 mb-6">
                     {step.number}
                   </div>
                   <h3 className="font-inter text-2xl font-normal tracking-wide text-white mb-4">
                     {step.title}
                   </h3>
-                  <p className="body-light text-white/60 leading-relaxed">
+                  <p className="body-light text-white/60 leading-relaxed mt-auto">
                     {step.description}
                   </p>
                 </div>
               </div>
-            </motion.div>
+            </motion.li>
           ))}
-        </div>
+        </ol>
       </div>
     </section>
   );
