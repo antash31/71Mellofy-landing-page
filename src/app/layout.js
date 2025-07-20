@@ -1,8 +1,9 @@
 import "./globals.css";
 import Header from "@/components/Header";
 import { inter, playfair, montserrat, roboto, poppins, oswald } from "@/fonts/fonts";
+import { GoogleAnalytics } from '@next/third-parties/google';
 
-export const metadata = {
+export const metadata = { 
   title: "AI SDR - Intelligent Sales Development",
   description: "AI-powered sales development representative platform",
 };
@@ -20,6 +21,7 @@ export default function RootLayout({ children }) {
           <Header />
         </div>
       </body>
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
     </html>
   );
 }
