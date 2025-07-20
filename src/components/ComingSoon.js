@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import Link from 'next/link';
 
 const teasers = [
   {
@@ -80,9 +81,11 @@ export default function ComingSoon() {
           transition={{ duration: 0.5, delay: 0.5 }}
           className="mt-20 text-center"
         >
-          <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg px-8 py-4 rounded-full hover:from-blue-500 hover:to-purple-500 transition-all duration-300 transform hover:scale-105">
-            Join The Waitlist
-          </button>
+          <Link href="/signup">
+            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg px-8 py-4 rounded-full hover:from-blue-500 hover:to-purple-500 transition-all duration-300 transform hover:scale-105">
+              Join The Waitlist
+            </button>
+          </Link>
         </motion.div>
       </div>
     </section>

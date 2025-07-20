@@ -2,6 +2,7 @@
 import Aurora from "./Aurora";
 import BlurText from "./BlurText";
 import { motion } from "framer-motion";
+import Link from 'next/link';
 
 export default function Hero() {
   return (
@@ -56,22 +57,24 @@ export default function Hero() {
           transition={{ delay: 1, duration: 0.5 }}
           className="flex justify-center mt-14"
         >
-          <button className="btn group relative px-8 py-4 text-black transition-all duration-300">
-            {/* Button background */}
-            <div className="absolute inset-0 bg-white rounded-xl transition-all duration-300 transform group-hover:-translate-y-1 shadow-[0_4px_8px_rgba(0,0,0,0.1)] group-hover:shadow-[0_8px_16px_rgba(0,0,0,0.1)]" />
+          <Link href="/signup">
+            <button className="btn group relative px-8 py-4 text-black transition-all duration-300">
+              {/* Button background */}
+              <div className="absolute inset-0 bg-white rounded-xl transition-all duration-300 transform group-hover:-translate-y-1 shadow-[0_4px_8px_rgba(0,0,0,0.1)] group-hover:shadow-[0_8px_16px_rgba(0,0,0,0.1)]" />
 
-            {/* Button border and 3D effect */}
-            <div className="absolute inset-0 rounded-xl bg-white/90 -bottom-1 translate-y-1 group-hover:translate-y-0.5 transition-transform duration-300 shadow-[0_2px_4px_rgba(0,0,0,0.05)]" />
+              {/* Button border and 3D effect */}
+              <div className="absolute inset-0 rounded-xl bg-white/90 -bottom-1 translate-y-1 group-hover:translate-y-0.5 transition-transform duration-300 shadow-[0_2px_4px_rgba(0,0,0,0.05)]" />
 
-            {/* Button text */}
-            <span className="relative z-10 uppercase">Get Early Access</span>
+              {/* Button text */}
+              <span className="relative z-10 uppercase">Get Early Access</span>
 
-            {/* Button shine effect */}
-            <div
-              className="absolute inset-0 -z-10 bg-gradient-to-r from-black/0 via-black/5 to-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-              style={{ transform: "translateX(-100%)" }}
-            />
-          </button>
+              {/* Button shine effect */}
+              <div
+                className="absolute inset-0 -z-10 bg-gradient-to-r from-black/0 via-black/5 to-black/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                style={{ transform: "translateX(-100%)" }}
+              />
+            </button>
+          </Link>
         </motion.div>
       </div>
     </section>
