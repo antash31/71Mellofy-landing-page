@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import StarBorder from "./StarBorder";
+import Link from 'next/link';
 
 const tiers = [
   {
@@ -129,15 +130,17 @@ export default function Pricing() {
               </ul>
 
               <div className="mt-auto">
-                <StarBorder
-                  color={tier.popular ? "#818cf8" : "#4f46e5"}
-                  speed="4s"
-                  thickness={2}
-                >
-                  <span className="font-bold text-lg tracking-wide">
-                    {tier.price === "Custom" ? "Contact Sales" : "Get Started"}
-                  </span>
-                </StarBorder>
+                <Link href={tier.price === "Custom" ? "/contact" : "/signup"}>
+                  <StarBorder
+                    color={tier.popular ? "#818cf8" : "#4f46e5"}
+                    speed="4s"
+                    thickness={2}
+                  >
+                    <span className="font-bold text-lg tracking-wide">
+                      {tier.price === "Custom" ? "Contact Sales" : "Get Started"}
+                    </span>
+                  </StarBorder>
+                </Link>
               </div>
             </motion.div>
           ))}
