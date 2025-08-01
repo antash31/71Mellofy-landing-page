@@ -60,17 +60,14 @@ export default function Header() {
           )}
 
           {/* Sign Up Button */}
-          <Link
-            href="/signup"
-            className="group relative px-4 py-2"
-          >
+          <Link href="/signup" className="group relative px-4 py-2">
             {/* Button background and effects */}
             <div className="absolute inset-0 bg-white/10 rounded-lg transition-all duration-300 group-hover:bg-white/20" />
             <div className="absolute inset-0 rounded-lg border border-white/30 transition-all duration-300 group-hover:border-white group-hover:scale-105" />
-            
+
             {/* Gradient line at the bottom */}
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2/3 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-            
+
             {/* Button text */}
             <span className="relative text-caption text-white whitespace-nowrap">
               Register Now
