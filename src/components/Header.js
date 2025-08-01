@@ -73,7 +73,7 @@ export default function Header() {
             
             {/* Button text */}
             <span className="relative text-caption text-white whitespace-nowrap">
-              Sign Up
+              Register Now
             </span>
           </Link>
 
