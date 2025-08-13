@@ -21,9 +21,10 @@ export default function Hero() {
           Introducing
         </div>
 
+        <h1 className="sr-only">AI SDR That Books 10X More Meetings While You Sleep</h1>
         <div className="flex justify-center w-full">
           <BlurText
-            text="Turn Cold Emails into"
+            text="AI SDR That Books"
             animateBy="words"
             delay={120}
             className="mb-3 text-hero font-poppins text-center"
@@ -31,7 +32,7 @@ export default function Hero() {
         </div>
 
         <BlurText
-          text="Warm Conversations with AI-Powered Precision"
+          text="10X More Meetings While You Sleep"
           animateBy="words"
           delay={150}
           direction="bottom"
@@ -42,7 +43,7 @@ export default function Hero() {
 
         <div className="w-full max-w-2xl flex justify-center items-center">
           <BlurText
-            text="Stop wasting time on generic outreach. Our AI agents score leads, personalize every email, and handle responses intelligently - so you can focus on closing deals."
+            text="Automate your entire sales pipeline with AI sales automation that prospects, qualifies, and books meetings 24/7. Join 500+ teams using our AI SDR software to dominate automated lead generation."
             animateBy="words"
             delay={30}
             stepDuration={0.25}
@@ -66,7 +67,7 @@ export default function Hero() {
               <div className="absolute inset-0 rounded-xl bg-white/90 -bottom-1 translate-y-1 group-hover:translate-y-0.5 transition-transform duration-300 shadow-[0_2px_4px_rgba(0,0,0,0.05)]" />
 
               {/* Button text */}
-              <span className="relative z-10 uppercase">Get Early Access</span>
+              <span className="relative z-10 uppercase">Start Free Trial - Setup in 5 Minutes</span>
 
               {/* Button shine effect */}
               <div

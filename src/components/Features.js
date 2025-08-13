@@ -59,7 +59,7 @@ export default function Features() {
             </span>
           </div>
           <h2 className="text-5xl md:text-7xl font-poppins font-semibold tracking-tight text-white mb-4">
-            Supercharge Your Sales
+            Everything You Need to Dominate Sales Outreach
           </h2>
           <div className="w-16 h-px bg-white/20 mx-auto mb-10"></div>
           <p className="text-lg text-white/60 max-w-2xl mx-auto font-inter tracking-normal leading-relaxed">
@@ -104,8 +104,9 @@ export default function Features() {
                             src={feature.icon}
                             width={24}
                             height={24}
-                            alt={feature.title}
+                            alt={`${feature.title} icon for AI SDR software`}
                             className="opacity-80"
+                            priority={index === 0}
                           />
                         </div>
                       </div>

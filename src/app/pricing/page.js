@@ -2,6 +2,18 @@
 import TiltedCard from "@/components/TiltedCard";
 import { motion } from "framer-motion";
 import Aurora from "@/components/Aurora";
+import Script from 'next/script';
+
+export const metadata = {
+  title: "AI SDR Pricing | Simple Plans, Free Trial",
+  description: "Choose a plan that fits your team. Free trial available. No setup fees, cancel anytime.",
+  alternates: { canonical: "/pricing" },
+  openGraph: {
+    title: "AI SDR Pricing | Simple Plans, Free Trial",
+    description: "Transparent pricing for AI sales automation.",
+    url: "/pricing",
+  },
+};
 
 export default function PricingPage() {
   const plans = [
@@ -45,6 +57,22 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen w-full bg-black text-white py-20 px-4 relative overflow-hidden">
+      <Script id="pricing-schema" type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": "Mellofy AI SDR",
+          "description": "AI SDR software for automated lead generation and AI sales automation.",
+          "offers": plans.map((p) => ({
+            "@type": "Offer",
+            "price": p.price.replace('$', ''),
+            "priceCurrency": "USD",
+            "name": p.name,
+            "description": p.description,
+            "availability": "https://schema.org/InStock"
+          }))
+        })}
+      </Script>
       <div className="absolute inset-0 opacity-30">
         <Aurora
           colorStops={["#000000", "#1a1a1a", "#000000"]}
