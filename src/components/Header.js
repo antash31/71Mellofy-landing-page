@@ -30,14 +30,30 @@ export default function Header() {
             <Home size={16} />
             <span>Home</span>
           </Link>
-          {SHOW_PRICING && (
-            <Link
-              href="/pricing"
-              className="text-gray-300 hover:text-white transition-colors duration-200"
-            >
-              Pricing
-            </Link>
-          )}
+          <Link
+            href="/ai-sdr-automation"
+            className="text-gray-300 hover:text-white transition-colors duration-200"
+          >
+            AI SDR Automation
+          </Link>
+          <Link
+            href="/sales-automation-software"
+            className="text-gray-300 hover:text-white transition-colors duration-200"
+          >
+            Sales Automation Software
+          </Link>
+          <Link
+            href="/automated-lead-generation"
+            className="text-gray-300 hover:text-white transition-colors duration-200"
+          >
+            Lead Generation
+          </Link>
+          <Link
+            href="/pricing"
+            className="text-gray-300 hover:text-white transition-colors duration-200"
+          >
+            Pricing
+          </Link>
           <Link
             href="/contact"
             className="flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors duration-200"

@@ -1,7 +1,9 @@
 "use client";
 import { motion } from "framer-motion";
 import Aurora from "./Aurora";
-import WorkflowDiagram from "./WorkflowDiagram";
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+const WorkflowDiagram = dynamic(() => import('./WorkflowDiagram'), { ssr: false });
 import Script from 'next/script';
 
 const steps = [
@@ -114,7 +116,7 @@ export default function HowItWorks() {
               <div className="relative z-10 p-8 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/30 hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
                 <div className="relative flex flex-col flex-grow">
-                  <img src={step.icon} alt={`${step.title} icon`} className="w-12 h-12 mb-4" />
+                  <Image src={step.icon} alt={`${step.title} icon for AI sales automation`} width={48} height={48} className="w-12 h-12 mb-4" />
                   <div className="font-inter text-4xl font-light tracking-wide text-white/80 mb-6">
                     {step.number}
                   </div>

@@ -4,6 +4,16 @@ import AuthLayout from "@/components/AuthLayout";
 import { motion } from "framer-motion";
 import { supabase } from "@/utils/supabase";
 import { useRouter } from "next/navigation";
+export const metadata = {
+  title: "Start Free Trial | Mellofy AI SDR",
+  description: "Register in minutes and start booking more meetings with AI SDR software.",
+  alternates: { canonical: "/signup" },
+  openGraph: {
+    title: "Start Free Trial | Mellofy AI SDR",
+    description: "Get started with AI sales automation in minutes.",
+    url: "/signup",
+  },
+};
 
 export default function SignupPage() {
   const router = useRouter();

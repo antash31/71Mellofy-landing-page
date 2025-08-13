@@ -3,6 +3,18 @@ import { motion } from "framer-motion";
 import Aurora from "@/components/Aurora";
 import BlurText from "@/components/BlurText";
 import { useState } from 'react';
+import Script from 'next/script';
+
+export const metadata = {
+  title: "Contact Mellofy AI SDR",
+  description: "Talk to our team about AI SDR software, pricing, and implementation.",
+  alternates: { canonical: "/contact" },
+  openGraph: {
+    title: "Contact Mellofy AI SDR",
+    description: "Questions about AI sales automation? Get in touch.",
+    url: "/contact",
+  },
+};
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({ name: '', email: '', company: '', message: '' });
@@ -34,6 +46,16 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-20 px-4 relative overflow-hidden">
+      <Script id="contact-breadcrumb" type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.71mellofy.com') + '/' },
+            { "@type": "ListItem", "position": 2, "name": "Contact", "item": (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.71mellofy.com') + '/contact' }
+          ]
+        })}
+      </Script>
       <div className="absolute inset-0 opacity-30">
         <Aurora
           colorStops={["#2563eb", "#9333ea", "#db2777"]}

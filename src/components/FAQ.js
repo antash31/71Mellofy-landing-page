@@ -2,15 +2,24 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import Aurora from "./Aurora";
+import Script from 'next/script';
 
 const faqs = [
   {
-    question: "How does the AI SDR actually work?",
-    answer: "Our AI SDR uses advanced machine learning to analyze your ideal customer profile, find matching prospects, and engage them with personalized messages. It learns from successful interactions to continuously improve its approach, handling everything from initial outreach to meeting scheduling."
+    question: "What is an AI SDR?",
+    answer: "An AI SDR is an AI sales assistant that automates sales development tasks like prospecting, qualifying, and booking meetings. It uses data-driven personalization and response handling to engage leads at scale."
+  },
+  {
+    question: "How does AI sales automation work?",
+    answer: "AI sales automation connects to your CRM, learns your ICP, builds targeted lists, personalizes outreach, and handles replies and follow-ups in real time to move prospects to meetings."
   },
   {
     question: "Will prospects know they're talking to an AI?",
     answer: "Our AI is designed to be transparent while maintaining natural, professional communication. While it can identify itself as an AI assistant if required, its communications are so well-crafted that prospects often engage just as they would with a human SDR."
+  },
+  {
+    question: "How much does AI SDR software cost?",
+    answer: "Plans start with a free trial and scale based on usage and features. Teams typically see ROI within the first 30 days due to increased booked meetings and reduced manual effort."
   },
   {
     question: "How long does it take to get started?",
@@ -25,6 +34,10 @@ const faqs = [
     answer: "We maintain the highest standards of data security with SOC 2 Type II compliance, end-to-end encryption, and regular security audits. Your data is stored in secure, encrypted databases with strict access controls."
   },
   {
+    question: "Can AI replace human SDRs?",
+    answer: "AI augments your team by handling repetitive tasks and scaling outreach. Human SDRs remain essential for complex conversations and relationship-building, while AI handles the heavy lifting."
+  },
+  {
     question: "Can I customize the AI's outreach strategy?",
     answer: "Absolutely! You can customize everything from the tone of voice to outreach cadence, preferred channels, and response handling. The AI adapts to your brand voice and sales methodology."
   }
@@ -35,6 +48,17 @@ export default function FAQ() {
 
   return (
     <section className="relative py-24 px-6 bg-black overflow-hidden">
+      <Script id="faq-schema" type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": faqs.map((f) => ({
+            "@type": "Question",
+            "name": f.question,
+            "acceptedAnswer": { "@type": "Answer", "text": f.answer },
+          })),
+        })}
+      </Script>
       <div className="absolute inset-0 opacity-30">
         <Aurora
           colorStops={["#000000", "#1a1a1a", "#000000"]}

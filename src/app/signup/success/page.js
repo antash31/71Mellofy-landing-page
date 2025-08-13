@@ -5,6 +5,11 @@ import Link from 'next/link';
 
 const DynamicAurora = dynamic(() => import("@/components/Aurora"), { ssr: false });
 
+export const metadata = {
+  title: 'Signup Success',
+  robots: { index: false, follow: false },
+};
+
 export default function SuccessPage() {
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white flex items-center justify-center py-20 px-4 relative overflow-hidden">

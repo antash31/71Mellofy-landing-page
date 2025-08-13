@@ -4,24 +4,24 @@ import Aurora from "./Aurora";
 
 const stats = [
   {
-    value: "17%",
-    label: "Avg. Response Rate",
-    description: "Up from 5% with our 3-agent AI system for 3× engagement",
+    value: "40%",
+    label: "More Booked Meetings",
+    description: "Average increase in meetings within 30 days using AI SDR software",
   },
   {
     value: "90%",
     label: "Cost Savings",
-    description: "Replace a $60k SDR with a $6k AI platform",
+    description: "Replace a $60k SDR with a $6k AI sales assistant",
   },
   {
     value: "5x",
-    label: "More Meetings",
-    description: "20 qualified leads daily vs 4 using traditional methods",
+    label: "Faster Response",
+    description: "Handle objections and follow-ups instantly with AI sales automation",
   },
   {
     value: "43%",
     label: "Better Lead Qualification",
-    description: "AI scoring analyzes 50+ intent signals in real-time",
+    description: "Automated lead generation analyzes 50+ intent signals in real time",
   },
 ];
 
@@ -99,7 +99,7 @@ export default function Benefits() {
           className="mt-24"
         >
           <h3 className="text-4xl font-poppins font-semibold tracking-tight text-white mb-12 text-center">
-            Additional Benefits
+            Why Top Sales Teams Choose Our AI SDR
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {benefits.map((benefit, index) => (

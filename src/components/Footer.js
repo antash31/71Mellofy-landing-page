@@ -5,21 +5,21 @@ import Aurora from "./Aurora";
 
 const footerLinks = {
   Product: [
-    { name: "Features", href: "#" },
-    { name: "Pricing", href: "#" },
-    { name: "Case Studies", href: "#" },
-    { name: "Documentation", href: "#" }
+    { name: "AI SDR Automation", href: "/ai-sdr-automation" },
+    { name: "Sales Automation Software", href: "/sales-automation-software" },
+    { name: "Automated Lead Generation", href: "/automated-lead-generation" },
+    { name: "Pricing", href: "/pricing" }
   ],
   Company: [
-    { name: "About", href: "#" },
-    { name: "Blog", href: "#" },
-    { name: "Careers", href: "#" },
-    { name: "Contact", href: "#" }
+    { name: "About", href: "/#" },
+    { name: "Blog", href: "/#" },
+    { name: "Careers", href: "/#" },
+    { name: "Contact", href: "/contact" }
   ],
   Legal: [
-    { name: "Privacy", href: "#" },
-    { name: "Terms", href: "#" },
-    { name: "Security", href: "#" }
+    { name: "Privacy", href: "/privacy" },
+    { name: "Terms", href: "/terms" },
+    { name: "Security", href: "/#" }
   ],
   Social: [
     { name: "Twitter", href: "#" },
