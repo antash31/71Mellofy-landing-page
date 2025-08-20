@@ -1,5 +1,5 @@
 "use client";
-import { GalleryVerticalEnd } from "lucide-react"
+import { Clock1 } from "lucide-react"
 import { SignupForm } from "@/components/signup-form";
 
 export default function LoginPage() {
@@ -10,7 +10,7 @@ export default function LoginPage() {
           <a href="https://71mellofy.com" className="flex items-center gap-2 font-medium">
             <div
               className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <GalleryVerticalEnd className="size-4" />
+              <Clock1 className="size-4" />
             </div>
             71Mellofy
           </a>
@@ -26,8 +26,6 @@ export default function LoginPage() {
           src="/image.jpg"
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover" />
-        
-        {/* Overlay Text */}
         <div className="absolute inset-0 flex items-end justify-center bg-black/40">
           <div className="text-center px-8 pb-16">
              <h2 className="text-3xl xl:text-5xl 2xl:text-8xl font-light text-white leading-tight font-poppins drop-shadow-2xl">

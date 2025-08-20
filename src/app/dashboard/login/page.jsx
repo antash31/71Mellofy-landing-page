@@ -1,5 +1,5 @@
 "use client";
-import { GalleryVerticalEnd } from "lucide-react"
+import { Clock1 } from "lucide-react"
 import { LoginForm } from "@/components/login-form"
 
 export default function LoginPage() {
@@ -10,7 +10,7 @@ export default function LoginPage() {
           <a href="https://71mellofy.com" className="flex items-center gap-2 font-medium">
             <div
               className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <GalleryVerticalEnd className="size-4" />
+              <Clock1 className="size-4" />
             </div>
             71Mellofy
           </a>
