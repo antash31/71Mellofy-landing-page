@@ -146,7 +146,7 @@ export function LoginForm({
 
       <div className="text-sm text-center">
         Don&apos;t have an account?{" "}
-        <a href="/dashboard/signup" className="text-sm font-roboto underline underline-offset-4">
+        <a href="/auth/signup" className="text-sm font-roboto underline underline-offset-4">
           Sign up
         </a>
       </div>

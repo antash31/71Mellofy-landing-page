@@ -7,7 +7,7 @@ import Link from 'next/link';
 export default function Hero() {
   return (
     <section className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
-      <div className="absolute inset-0 z-1">
+      <div className="absolute inset-0 z-[1]">
         <Aurora
           colorStops={["#2563eb", "#9333ea", "#db2777"]}
           blend={0.8}
@@ -16,7 +16,7 @@ export default function Hero() {
         />
       </div>
 
-      <div className="relative z-2 max-w-4xl mx-auto flex flex-col items-center">
+      <div className="relative z-[20] max-w-4xl mx-auto flex flex-col items-center">
         <div className="mb-2 text-xs font-sans tracking-ultra text-white/80 uppercase">
           Introducing
         </div>
@@ -55,10 +55,10 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1, duration: 0.5 }}
-          className="flex justify-center mt-14"
+          className="flex justify-center mt-14 relative z-[30]"
         >
-          <Link href="/signup">
-            <button className="btn group relative px-8 py-4 text-black transition-all duration-300">
+          <Link href="/pricing" className="relative z-[30]">
+            <button className="btn group relative z-[30] px-8 py-4 text-black transition-all duration-300" style={{ transform: 'translate3d(0,0,0)' }}>
               {/* Button background */}
               <div className="absolute inset-0 bg-white rounded-xl transition-all duration-300 transform group-hover:-translate-y-1 shadow-[0_4px_8px_rgba(0,0,0,0.1)] group-hover:shadow-[0_8px_16px_rgba(0,0,0,0.1)]" />
 
@@ -66,7 +66,7 @@ export default function Hero() {
               <div className="absolute inset-0 rounded-xl bg-white/90 -bottom-1 translate-y-1 group-hover:translate-y-0.5 transition-transform duration-300 shadow-[0_2px_4px_rgba(0,0,0,0.05)]" />
 
               {/* Button text */}
-              <span className="relative z-10 uppercase">Get Early Access</span>
+              <span className="relative z-[40] uppercase">Buy an AI SDR</span>
 
               {/* Button shine effect */}
               <div

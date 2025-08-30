@@ -6,6 +6,7 @@ import {
     Frame,
     GalleryVerticalEnd,
     LifeBuoy,
+    Mail,
     Map,
     PieChart,
     Send,
@@ -24,16 +25,6 @@ import {
         name: "Acme Inc",
         logo: GalleryVerticalEnd,
         plan: "Enterprise",
-      },
-      {
-        name: "Acme Corp.",
-        logo: AudioWaveform,
-        plan: "Startup",
-      },
-      {
-        name: "Evil Corp.",
-        logo: Command,
-        plan: "Free",
       },
     ],
     navMain: [
@@ -137,19 +128,19 @@ import {
     ],
     projects: [
       {
+        name: "Dashboard",
+        url: "/dashboard",
+        icon: PieChart,
+      },
+      {
         name: "Leads",
         url: "/dashboard/leads",
         icon: Frame,
       },
       {
-        name: "Sales & Marketing",
-        url: "#",
-        icon: PieChart,
-      },
-      {
-        name: "Travel",
-        url: "#",
-        icon: Map,
+        name: "Email Accounts",
+        url: "/dashboard/email-accounts",
+        icon: Mail,
       },
     ],
   }

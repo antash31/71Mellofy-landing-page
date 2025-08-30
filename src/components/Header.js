@@ -1,11 +1,12 @@
 "use client";
 import Link from "next/link";
 import { User2, Home, Mail } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import Logo from "./Logo";
 
 // Navigation visibility flags
-const SHOW_PRICING = false;
-const SHOW_LOGIN = false;
+const SHOW_PRICING = true;
+const SHOW_LOGIN = true;
 
 export default function Header() {
   return (
@@ -48,40 +49,22 @@ export default function Header() {
         </nav>
 
         {/* Right section with auth buttons */}
-        <div className="w-[240px] flex items-center justify-end gap-3">
+        <div className="flex items-center justify-end gap-3">
           {/* Login Button */}
           {SHOW_LOGIN && (
-            <Link
-              href="/login"
-              className="px-4 py-2 text-caption text-white/90 hover:text-white transition-colors duration-200 whitespace-nowrap"
-            >
-              Log In
-            </Link>
+            <Button asChild variant="ghost" size="sm" className="text-white/90 hover:text-white hover:bg-white/10">
+              <Link href="/auth/login">
+                Login
+              </Link>
+            </Button>
           )}
 
-          {/* Sign Up Button */}
-          <Link href="/signup" className="group relative px-4 py-2">
-            {/* Button background and effects */}
-            <div className="absolute inset-0 bg-white/10 rounded-lg transition-all duration-300 group-hover:bg-white/20" />
-            <div className="absolute inset-0 rounded-lg border border-white/30 transition-all duration-300 group-hover:border-white group-hover:scale-105" />
-
-            {/* Gradient line at the bottom */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2/3 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-            {/* Button text */}
-            <span className="relative text-caption text-white whitespace-nowrap">
-              Register Now
-            </span>
-          </Link>
-
-          {/* Account Icon */}
-          {/* <div className="h-8 w-[1px] bg-white/10 mx-1" />
-            <Link
-            href="/account"
-            className="grid h-10 w-10 place-content-center rounded-md border border-white/30 text-gray-200 transition-all duration-300 hover:border-white hover:text-white hover:scale-105"
-           >
-            <User2 size={20} strokeWidth={1.5} />
-            </Link> */}
+          {/* Get Started Button */}
+          <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Link href="/auth/signup">
+              Get Started For Free
+            </Link>
+          </Button>
         </div>
       </div>
     </header>

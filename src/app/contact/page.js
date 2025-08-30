@@ -1,4 +1,5 @@
 "use client";
+import Header from "@/components/Header";
 import { motion } from "framer-motion";
 import Aurora from "@/components/Aurora";
 import BlurText from "@/components/BlurText";
@@ -33,7 +34,9 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-20 px-4 relative overflow-hidden">
+    <>
+      <Header />
+      <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-20 px-4 relative overflow-hidden">
       <div className="absolute inset-0 opacity-30">
         <Aurora
           colorStops={["#2563eb", "#9333ea", "#db2777"]}
@@ -220,5 +223,6 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
