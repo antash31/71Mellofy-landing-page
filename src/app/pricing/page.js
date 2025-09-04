@@ -1,140 +1,184 @@
 "use client";
-import TiltedCard from "@/components/TiltedCard";
+import Header from "@/components/Header";
 import { motion } from "framer-motion";
 import Aurora from "@/components/Aurora";
+import { Check } from "lucide-react";
 
 export default function PricingPage() {
-  const plans = [
-    {
-      name: "Starter",
-      price: "$99",
-      description: "Perfect for small businesses starting with AI SDR",
-      features: [
-        "Up to 100 leads/month",
-        "Basic AI personalization",
-        "Email outreach",
-        "Basic analytics",
-      ],
-    },
-    {
-      name: "Professional",
-      price: "$299",
-      description: "Ideal for growing teams with advanced needs",
-      features: [
-        "Up to 500 leads/month",
-        "Advanced AI personalization",
-        "Multi-channel outreach",
-        "Advanced analytics & reporting",
-        "Priority support",
-      ],
-    },
-    {
-      name: "Enterprise",
-      price: "Custom",
-      description: "For large organizations requiring custom solutions",
-      features: [
-        "Unlimited leads",
-        "Custom AI model training",
-        "Full API access",
-        "Dedicated account manager",
-        "Custom integrations",
-        "24/7 premium support",
-      ],
-    },
-  ];
+  const plan = {
+    name: "AI SDR Pro",
+    price: "$497",
+    period: "/month",
+    description: "Complete AI-powered sales development solution for serious revenue growth",
+    features: [
+      "Unlimited lead scoring & qualification",
+      "Advanced AI personalization engine",
+      "Multi-channel outreach (Email + LinkedIn)",
+      "Intelligent response handling",
+      "Real-time analytics & reporting",
+      "CRM integrations (HubSpot, Salesforce)",
+      "A/B testing for email sequences",
+      "Priority support & onboarding",
+      "Custom AI model training",
+      "Dedicated success manager"
+    ],
+    highlighted: [
+      "10x faster lead qualification",
+      "3x higher response rates",
+      "50% reduction in sales cycle"
+    ]
+  };
+
+  const handleBuyNow = () => {
+    // This would typically integrate with your payment processor
+    // For now, we'll redirect to a checkout or contact page
+    window.location.href = '/auth/signup';
+  };
 
   return (
-    <div className="min-h-screen w-full bg-black text-white py-20 px-4 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-30">
-        <Aurora
-          colorStops={["#000000", "#1a1a1a", "#000000"]}
-          amplitude={0.5}
-          blend={0.8}
-        />
-      </div>
-      <div className="max-w-7xl mx-auto relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
-          <div className="inline-block px-6 py-2 bg-white/10 backdrop-blur-lg rounded-full mb-8">
-            <span className="font-montserrat text-sm tracking-ultra uppercase text-white/80">
-              Choose Your Plan
-            </span>
-          </div>
-          <h1 className="text-5xl md:text-7xl font-normal tracking-elegant text-white font-cormorant mb-4">
-            Pricing Plans
-          </h1>
-          <p className="text-lg text-white/60 max-w-2xl mx-auto font-montserrat tracking-wide leading-relaxed">
-            Scale your outreach with AI-powered precision. Select the plan that
-            best fits your needs.
-          </p>
-        </motion.div>
+    <>
+      <Header />
+      <div className="min-h-screen w-full bg-black text-white py-20 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-30 pointer-events-none">
+          <Aurora
+            colorStops={["#2563eb", "#9333ea", "#db2777"]}
+            amplitude={0.5}
+            blend={0.8}
+          />
+        </div>
+        
+        <div className="max-w-4xl mx-auto relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
+            <div className="inline-block px-6 py-2 bg-white/10 backdrop-blur-lg rounded-full mb-8">
+              <span className="font-inter text-sm tracking-ultra uppercase text-white/80">
+                Simple Pricing
+              </span>
+            </div>
+            <h1 className="text-hero text-white mb-4">
+              One Plan, Unlimited Growth
+            </h1>
+            <p className="text-subtitle text-white/60 max-w-2xl mx-auto leading-luxurious">
+              Everything you need to transform your sales process with AI-powered precision
+            </p>
+          </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {plans.map((plan, index) => (
-            <motion.div
-              key={plan.name}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
-              <TiltedCard
-                containerHeight="500px"
-                containerWidth="100%"
-                imageHeight="500px"
-                imageWidth="100%"
-                showMobileWarning={false}
-                showTooltip={false}
-                displayOverlayContent={true}
-                scaleOnHover={1.05}
-                rotateAmplitude={10}
-                overlayContent={
-                  <div className="text-center p-6 w-full bg-gradient-to-b from-black/60 via-black/40 to-black/60 backdrop-blur-xl rounded-lg border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.07)] relative z-10">
-                    <div className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent rounded-lg" />
-                    <div className="relative z-20">
-                      <span className="inline-block px-4 py-1 bg-white/10 rounded-full text-sm font-montserrat tracking-wide mb-2">
-                        {plan.name}
-                      </span>
-                      <div className="text-4xl font-cormorant font-light tracking-wide mb-2 text-white">
-                        {plan.price}
-                      </div>
-                      <p className="text-white/60 mb-6 font-montserrat text-sm tracking-wide">{plan.description}</p>
-                      <ul className="text-left space-y-3 mb-8">
-                        {plan.features.map((feature) => (
-                          <li key={feature} className="flex items-center">
-                            <svg
-                              className="w-5 h-5 mr-2 text-green-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                            <span className="text-white/80 font-montserrat text-sm tracking-wide">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <button className="relative overflow-hidden group bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-lg transition-all duration-500 border border-white/30 hover:border-white">
-                        <div className="absolute inset-0 w-3/12 bg-gradient-to-r from-white/0 via-white/10 to-white/0 opacity-40 blur-lg group-hover:w-6/12 transition-all duration-500" />
-                        <div className="absolute inset-[-1px] bg-gradient-to-r from-white/20 via-white/40 to-white/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        <span className="relative font-montserrat text-sm tracking-wide">Get Started</span>
-                      </button>
-                    </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="max-w-lg mx-auto"
+          >
+            {/* Main Pricing Card */}
+            <div className="relative group">
+              {/* Glow Effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
+              
+              {/* Card */}
+              <div className="relative bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-8 group-hover:border-white/40 transition-all duration-300 shadow-[0_0_30px_rgba(37,99,235,0.1)] group-hover:shadow-[0_0_50px_rgba(147,51,234,0.2)]">
+                
+                {/* Popular Badge */}
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 rounded-full text-sm font-semibold">
+                    Most Popular
                   </div>
-                }
-              />
-            </motion.div>
-          ))}
+                </div>
+
+                {/* Header */}
+                <div className="text-center mb-8 pt-4">
+                  <h3 className="h2 text-white mb-2">
+                    {plan.name}
+                  </h3>
+                  <div className="flex items-baseline justify-center mb-4">
+                    <span className="text-hero text-white">
+                      {plan.price}
+                    </span>
+                    <span className="text-white/60 ml-1 text-caption">
+                      {plan.period}
+                    </span>
+                  </div>
+                  <p className="text-white/70 body-text leading-relaxed">
+                    {plan.description}
+                  </p>
+                </div>
+
+                {/* Key Highlights */}
+                <div className="mb-8">
+                  <h4 className="h3 text-white mb-4">Key Results:</h4>
+                  <div className="grid gap-3">
+                    {plan.highlighted.map((highlight, index) => (
+                      <div key={index} className="flex items-center gap-3 p-3 bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-lg border border-green-500/20">
+                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                        <span className="text-white/90 font-medium body-text">{highlight}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Features List */}
+                <div className="mb-8">
+                  <h4 className="h3 text-white mb-4">Everything Included:</h4>
+                  <div className="grid gap-3">
+                    {plan.features.map((feature, index) => (
+                      <div key={index} className="flex items-center gap-3">
+                        <Check className="w-5 h-5 text-green-400 flex-shrink-0" />
+                        <span className="text-white/80 body-text">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* CTA Button */}
+                <button 
+                  onClick={handleBuyNow}
+                  className="w-full group relative overflow-hidden bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-8 py-4 rounded-xl transition-all duration-300 font-semibold text-lg shadow-[0_4px_20px_rgba(37,99,235,0.3)] hover:shadow-[0_8px_30px_rgba(147,51,234,0.4)] transform hover:-translate-y-1"
+                >
+                  {/* Button shine effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform translate-x-[-100%] group-hover:translate-x-[100%]" />
+                  
+                  <span className="relative btn">
+                    Start Your AI SDR Today
+                  </span>
+                </button>
+
+                {/* Money Back Guarantee */}
+                <div className="text-center mt-6">
+                  <p className="text-white/60 text-caption">
+                    30-day money-back guarantee • Cancel anytime
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Trust Indicators */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="text-center mt-16"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
+              <div className="text-center">
+                <div className="h1 text-white mb-2">500+</div>
+                <div className="text-white/60 body-text">Companies Growing</div>
+              </div>
+              <div className="text-center">
+                <div className="h1 text-white mb-2">10M+</div>
+                <div className="text-white/60 body-text">Emails Sent</div>
+              </div>
+              <div className="text-center">
+                <div className="h1 text-white mb-2">300%</div>
+                <div className="text-white/60 body-text">Average ROI</div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

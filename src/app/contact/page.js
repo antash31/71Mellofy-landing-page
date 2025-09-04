@@ -1,8 +1,10 @@
 "use client";
+import Header from "@/components/Header";
 import { motion } from "framer-motion";
 import Aurora from "@/components/Aurora";
 import BlurText from "@/components/BlurText";
 import { useState } from 'react';
+import { contactService } from '@/services/api';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({ name: '', email: '', company: '', message: '' });
@@ -16,24 +18,19 @@ export default function ContactPage() {
     e.preventDefault();
     setStatus('Sending...');
     try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      if (res.ok) {
-        setStatus('Message sent successfully!');
-        setFormData({ name: '', email: '', company: '', message: '' });
-      } else {
-        setStatus('Error sending message.');
-      }
+      await contactService.sendMessage(formData);
+      setStatus('Message sent successfully!');
+      setFormData({ name: '', email: '', company: '', message: '' });
     } catch (error) {
-      setStatus('Error sending message.');
+      console.error('Contact form error:', error);
+      setStatus('Error sending message. Please try again.');
     }
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-20 px-4 relative overflow-hidden">
+    <>
+      <Header />
+      <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-20 px-4 relative overflow-hidden">
       <div className="absolute inset-0 opacity-30">
         <Aurora
           colorStops={["#2563eb", "#9333ea", "#db2777"]}
@@ -220,5 +217,6 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
