@@ -1,10 +1,12 @@
 "use client";
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { supabase } from "@/utils/supabase"
+import { useRouter } from "next/navigation";
+
 
 export function LoginForm({
   className,
@@ -15,7 +17,21 @@ export function LoginForm({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
-
+  const router = useRouter()
+  
+  // Check for existing session and store access token on component mount
+  useEffect(() => {
+    const checkAndStoreSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        localStorage.setItem('access_token', session.access_token);
+        console.log("Access token restored from session");
+      }
+    };
+    
+    checkAndStoreSession();
+  }, []);
+  
   // Handle email/password login
   const handleEmailLogin = async (e) => {
     e.preventDefault()
@@ -28,7 +44,17 @@ export function LoginForm({
         password,
       })
 
-      if (error) throw error
+      if (error) throw error;
+
+      // Store the access token in localStorage
+      if (data.session?.access_token) {
+        localStorage.setItem('access_token', data.session.access_token);
+        console.log("Access token stored in localStorage");
+      }
+
+      router.push("/dashboard");
+
+      console.log("Login successful:", data)
 
       setSuccess(true)
       setError(null)
@@ -55,6 +81,9 @@ export function LoginForm({
       })
 
       if (error) throw error
+      
+      // For OAuth, the token will be handled when redirected back
+      // The access token will be available in the session after redirect
     } catch (error) {
       setError(error.message)
       setLoading(false)

@@ -1,13 +1,21 @@
 "use client";
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Plus, Mail, CheckCircle, AlertCircle, Settings } from "lucide-react";
+import { Plus, Mail, CheckCircle, AlertCircle, Settings, Loader2, RefreshCw } from "lucide-react";
 import AddEmailModal from "@/components/AddEmailModal";
 import { useEmailAccounts } from "@/contexts/EmailAccountsContext";
 
 const EmailAccountsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { emailAccounts, addEmailAccount, removeEmailAccount } = useEmailAccounts();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { 
+    emailAccounts, 
+    addEmailAccount, 
+    removeEmailAccount, 
+    refreshEmailAccounts, 
+    isLoading, 
+    error 
+  } = useEmailAccounts();
 
   const handleAddEmail = () => {
     setIsModalOpen(true);
@@ -27,6 +35,17 @@ const EmailAccountsPage = () => {
     }
   };
 
+  const handleRefreshAccounts = async () => {
+    try {
+      setIsRefreshing(true);
+      await refreshEmailAccounts();
+    } catch (err) {
+      console.error('Failed to refresh email accounts:', err);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -37,14 +56,61 @@ const EmailAccountsPage = () => {
             Manage your email accounts for SDR campaigns
           </p>
         </div>
-        <Button onClick={handleAddEmail} className="flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          Add Email
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button 
+            onClick={handleRefreshAccounts}
+            disabled={isRefreshing || isLoading}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            {isRefreshing ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <RefreshCw className="w-4 h-4" />
+            )}
+            Refresh
+          </Button>
+          <Button onClick={handleAddEmail} className="flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+            Add Email
+          </Button>
+        </div>
       </div>
 
-      {/* Empty State or Email List */}
-      {emailAccounts.length === 0 ? (
+      {/* Loading State */}
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+            <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">
+            Loading Email Accounts
+          </h3>
+          <p className="text-muted-foreground">
+            Fetching your email accounts from the server...
+          </p>
+        </div>
+      ) : error ? (
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+            <AlertCircle className="w-8 h-8 text-red-600" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">
+            Error Loading Email Accounts
+          </h3>
+          <p className="text-muted-foreground mb-4">
+            {error}
+          </p>
+          <Button onClick={handleRefreshAccounts} disabled={isRefreshing}>
+            {isRefreshing ? (
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+            ) : (
+              <RefreshCw className="w-4 h-4 mr-2" />
+            )}
+            Try Again
+          </Button>
+        </div>
+      ) : emailAccounts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
             <Mail className="w-8 h-8 text-muted-foreground" />
@@ -88,13 +154,20 @@ const EmailAccountsPage = () => {
                     <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
                       <span>{account.provider}</span>
                       <span>•</span>
-                      <span>{account.messagesPerDay} msgs/day</span>
-                      {account.lastUsed && (
+                      <span>{account.messagePerDay} msgs/day</span>
+                      <span>•</span>
+                      <span>{account.dailySentCount} sent today</span>
+                      {account.campaignCount > 0 && (
                         <>
                           <span>•</span>
-                          <span>Last used: {account.lastUsed}</span>
+                          <span>{account.campaignCount} campaigns</span>
                         </>
                       )}
+                    </div>
+                    <div className="flex items-center gap-2 mt-2 text-xs">
+                      <span className="text-muted-foreground">
+                        SMTP: {account.smtpHost}:{account.smtpPort} ({account.smtpPortType})
+                      </span>
                     </div>
                   </div>
                 </div>

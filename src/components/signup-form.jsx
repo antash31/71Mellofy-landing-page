@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { supabase } from "@/utils/supabase"
 import { Check, ChevronsUpDown } from "lucide-react"
 import {
   Command,
@@ -98,51 +97,51 @@ export function SignupForm({
     }
 
     try {
-      // Sign up the user with Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            first_name: formData.first_name,
-            last_name: formData.last_name,
-            phone_no: formData.phone_no,
-            company_name: formData.company_name,
-            referral_source: formData.referral_source,
-            role: formData.role
-          }
-        }
+      // Call the PostRegistrations API
+      const response = await fetch('https://yofoleesojtwibrcfddx.supabase.co/functions/v1/PostRegistrations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvZm9sZWVzb2p0d2licmNmZGR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NzUwMTYsImV4cCI6MjA2ODI1MTAxNn0.XMKrB0qx0oGzijMeJUegdmYcAB336rkrAiO2mR0cFrA'
+        },
+        body: JSON.stringify({
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          email: formData.email,
+          password: formData.password,
+          phone_no: formData.phone_no,
+          company_name: formData.company_name,
+          referral_source: formData.referral_source,
+          role: formData.role
+        })
       })
 
-      if (authError) throw authError
-
-      // Create profile record in the profiles table
-      if (authData.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert([{
-            id: authData.user.id, // This will match auth.uid()
-            first_name: formData.first_name,
-            last_name: formData.last_name,
-            email: formData.email,
-            phone_no: formData.phone_no,
-            company_name: formData.company_name,
-            referral_source: formData.referral_source,
-            role: formData.role,
-            client_id: null // Set to null for now, can be updated later
-          }])
-
-        if (profileError) {
-          console.warn('Profile creation failed:', profileError)
-          // Don't throw error as user account is already created
-        }
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.message || `Registration failed with status: ${response.status}`)
       }
+
+      const result = await response.json()
+      console.log('Registration successful:', result)
 
       setSuccess(true)
       setError(null)
-      // Show success message instead of navigation
+      
+      // Reset form after successful registration
+      setFormData({
+        first_name: "",
+        last_name: "",
+        email: "",
+        password: "",
+        phone_no: "",
+        company_name: "",
+        referral_source: "",
+        role: "user"
+      })
+      
     } catch (error) {
-      setError(error.message)
+      console.error('Registration error:', error)
+      setError(error.message || 'Registration failed. Please try again.')
       setSuccess(false)
     } finally {
       setLoading(false)

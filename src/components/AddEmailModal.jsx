@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { toast } from 'sonner';
 import { X, Eye, EyeOff, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,8 +18,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { emailAccountsService } from '@/services/api';
+import { useEmailAccounts } from '@/contexts/EmailAccountsContext';
 
 export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
+  const { refreshEmailAccounts } = useEmailAccounts();
   const [formData, setFormData] = useState({
     fromName: "",
     fromEmail: "",
@@ -38,6 +42,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
   
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
   const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
@@ -80,15 +85,43 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
     setIsLoading(true);
 
     try {
-      // Simulate API call to verify and save email account
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // Prepare the API payload
+      const apiPayload = {
+        id: null,
+        from_name: formData.fromName,
+        from_email: formData.fromEmail,
+        user_name: formData.userName,
+        password: formData.password,
+        smtp_host: formData.smtpHost,
+        smtp_port: parseInt(formData.smtpPort),
+        imap_host: formData.useDifferentIMAP ? formData.imapHost : formData.smtpHost.replace('smtp', 'imap'),
+        imap_port: parseInt(formData.useDifferentIMAP ? formData.imapPort : '993'),
+        max_email_per_day: parseInt(formData.messagesPerDay),
+        custom_tracking_url: "",
+        bcc: "",
+        signature: "",
+        warmup_enabled: false,
+        total_warmup_per_day: null,
+        daily_rampup: null,
+        reply_rate_percentage: null,
+        client_id: null
+      };
+
+      // Make API call to create email account using axios
+      const result = await emailAccountsService.create(apiPayload);
+      console.log("Email account created successfully:", result);
       
-      console.log("Adding email account:", formData);
+      // Refresh the email accounts context to get the latest data
+      try {
+        await refreshEmailAccounts();
+      } catch (refreshError) {
+        console.warn("Failed to refresh email accounts:", refreshError);
+      }
       
       // Call the callback to update parent component
       if (onEmailAdded) {
         onEmailAdded({
-          id: Date.now().toString(),
+          id: result.id || Date.now().toString(),
           email: formData.fromEmail,
           fromName: formData.fromName,
           provider: formData.smtpHost.includes('gmail') ? 'Gmail' : 
@@ -117,33 +150,70 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
       setErrors({});
       onClose();
       
-      alert("Email account added and verified successfully!");
+      toast.success("Email account added and verified successfully!");
       
     } catch (error) {
       console.error("Error adding email account:", error);
-      alert("Error adding email account. Please check your settings and try again.");
+      const errorMessage = error.response?.data?.message || error.message || 'Unknown error occurred';
+      toast.error(`Error adding email account: ${errorMessage}`);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleVerifyEmail = async () => {
+    if (!validateForm()) return;
+    
+    setIsVerifying(true);
+
+    try {
+      // Same API call but just for verification
+      const apiPayload = {
+        id: null,
+        from_name: formData.fromName,
+        from_email: formData.fromEmail,
+        user_name: formData.userName,
+        password: formData.password,
+        smtp_host: formData.smtpHost,
+        smtp_port: parseInt(formData.smtpPort),
+        imap_host: formData.useDifferentIMAP ? formData.imapHost : formData.smtpHost.replace('smtp', 'imap'),
+        imap_port: parseInt(formData.useDifferentIMAP ? formData.imapPort : '993'),
+        max_email_per_day: parseInt(formData.messagesPerDay),
+        custom_tracking_url: "",
+        bcc: "",
+        signature: "",
+        warmup_enabled: false,
+        total_warmup_per_day: null,
+        daily_rampup: null,
+        reply_rate_percentage: null,
+        client_id: null
+      };
+
+      // Use axios to verify email account
+      const result = await emailAccountsService.verify(apiPayload);
+      console.log("Email account verified successfully:", result);
+      toast.success("Email account verified successfully! Connection is working.");
+      
+    } catch (error) {
+      console.error("Error verifying email account:", error);
+      const errorMessage = error.response?.data?.message || error.message || 'Verification failed';
+      toast.error(`Verification failed: ${errorMessage}`);
+    } finally {
+      setIsVerifying(false);
     }
   };
 
   return (
     <TooltipProvider>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto bg-white border border-gray-200 text-gray-900">
-          <DialogHeader className="border-b pb-4">
-            <DialogTitle className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+        <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto bg-card border text-card-foreground">
+          <DialogHeader className="border-b border-border pb-4">
+            <DialogTitle className="text-xl font-semibold text-card-foreground">
               Add Email
-              <button
-                onClick={onClose}
-                className="ml-auto p-1 hover:bg-gray-100 rounded"
-              >
-                <X className="w-4 h-4" />
-              </button>
             </DialogTitle>
-            <DialogDescription className="text-gray-600">
+            <DialogDescription className="text-muted-foreground">
               Read the full tutorial on setting up your{" "}
-              <a href="#" className="text-blue-500 hover:underline">
+              <a href="#" className="text-primary hover:underline">
                 email account here
               </a>
             </DialogDescription>
@@ -152,27 +222,28 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
           <form onSubmit={handleSubmit} className="space-y-6 mt-6">
             {/* SMTP Settings */}
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
+              <h3 className="text-lg font-medium text-card-foreground mb-4">
                 SMTP Settings (sending emails)
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* From Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="fromName" className="text-gray-700 font-medium">
+                  <Label htmlFor="fromName" className="text-foreground font-medium">
                     From Name
                   </Label>
                   <Input
                     id="fromName"
                     name="fromName"
                     type="text"
+                    placeholder="e.g. John Doe"
                     value={formData.fromName}
                     onChange={handleInputChange}
-                    className={`${errors.fromName ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500`}
+                    className={`${errors.fromName ? 'border-destructive' : 'border-input'} focus:border-primary bg-background text-foreground`}
                     required
                   />
                   {errors.fromName && (
-                    <p className="text-red-500 text-sm flex items-center gap-1">
+                    <p className="text-destructive text-sm flex items-center gap-1">
                       <span>!</span> {errors.fromName}
                     </p>
                   )}
@@ -180,45 +251,47 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
 
                 {/* From Email */}
                 <div className="space-y-2">
-                  <Label htmlFor="fromEmail" className="text-gray-700 font-medium">
+                  <Label htmlFor="fromEmail" className="text-foreground font-medium">
                     From Email
                   </Label>
                   <Input
                     id="fromEmail"
                     name="fromEmail"
                     type="email"
+                    placeholder="john@company.com"
                     value={formData.fromEmail}
                     onChange={handleInputChange}
-                    className={`${errors.fromEmail ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500`}
+                    className={`${errors.fromEmail ? 'border-destructive' : 'border-input'} focus:border-primary bg-background text-foreground`}
                     required
                   />
                   {errors.fromEmail && (
-                    <p className="text-red-500 text-sm">{errors.fromEmail}</p>
+                    <p className="text-destructive text-sm">{errors.fromEmail}</p>
                   )}
                 </div>
 
                 {/* User Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="userName" className="text-gray-700 font-medium">
+                  <Label htmlFor="userName" className="text-foreground font-medium">
                     User Name
                   </Label>
                   <Input
                     id="userName"
                     name="userName"
                     type="text"
+                    placeholder="your_email@company.com"
                     value={formData.userName}
                     onChange={handleInputChange}
-                    className={`${errors.userName ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500`}
+                    className={`${errors.userName ? 'border-destructive' : 'border-input'} focus:border-primary bg-background text-foreground`}
                     required
                   />
                   {errors.userName && (
-                    <p className="text-red-500 text-sm">{errors.userName}</p>
+                    <p className="text-destructive text-sm">{errors.userName}</p>
                   )}
                 </div>
 
                 {/* Password */}
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-700 font-medium">
+                  <Label htmlFor="password" className="text-foreground font-medium">
                     Password
                   </Label>
                   <div className="relative">
@@ -226,46 +299,48 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
                       id="password"
                       name="password"
                       type={showPassword ? "text" : "password"}
+                      placeholder="Your email password or app password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      className={`${errors.password ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500 pr-10`}
+                      className={`${errors.password ? 'border-destructive' : 'border-input'} focus:border-primary bg-background text-foreground pr-10`}
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="text-red-500 text-sm">{errors.password}</p>
+                    <p className="text-destructive text-sm">{errors.password}</p>
                   )}
                 </div>
 
                 {/* SMTP Host */}
                 <div className="space-y-2">
-                  <Label htmlFor="smtpHost" className="text-gray-700 font-medium">
+                  <Label htmlFor="smtpHost" className="text-foreground font-medium">
                     SMTP Host
                   </Label>
                   <Input
                     id="smtpHost"
                     name="smtpHost"
                     type="text"
+                    placeholder="smtp.gmail.com"
                     value={formData.smtpHost}
                     onChange={handleInputChange}
-                    className={`${errors.smtpHost ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500`}
+                    className={`${errors.smtpHost ? 'border-destructive' : 'border-input'} focus:border-primary bg-background text-foreground`}
                     required
                   />
                   {errors.smtpHost && (
-                    <p className="text-red-500 text-sm">{errors.smtpHost}</p>
+                    <p className="text-destructive text-sm">{errors.smtpHost}</p>
                   )}
                 </div>
 
                 {/* SMTP Port */}
                 <div className="space-y-2">
-                  <Label htmlFor="smtpPort" className="text-gray-700 font-medium">
+                  <Label htmlFor="smtpPort" className="text-foreground font-medium">
                     SMTP Port
                   </Label>
                   <div className="flex gap-2">
@@ -273,9 +348,10 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
                       id="smtpPort"
                       name="smtpPort"
                       type="number"
+                      placeholder="465"
                       value={formData.smtpPort}
                       onChange={handleInputChange}
-                      className="border-gray-300 focus:border-blue-500 w-24"
+                      className="border-input focus:border-primary bg-background text-foreground w-24"
                     />
                     <div className="flex gap-4">
                       {['SSL', 'TLS', 'None'].map((option) => (
@@ -286,9 +362,9 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
                             value={option}
                             checked={formData.smtpSecurity === option}
                             onChange={handleInputChange}
-                            className="text-blue-500"
+                            className="text-primary"
                           />
-                          <span className="text-gray-700">{option}</span>
+                          <span className="text-foreground">{option}</span>
                         </label>
                       ))}
                     </div>
@@ -297,11 +373,11 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
 
                 {/* Messages Per Day */}
                 <div className="space-y-2">
-                  <Label htmlFor="messagesPerDay" className="text-gray-700 font-medium flex items-center gap-1">
+                  <Label htmlFor="messagesPerDay" className="text-foreground font-medium flex items-center gap-1">
                     Message Per Day (Warmups not included)
                     <Tooltip>
                       <TooltipTrigger>
-                        <HelpCircle className="w-4 h-4 text-gray-400" />
+                        <HelpCircle className="w-4 h-4 text-muted-foreground" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Maximum number of messages to send per day</p>
@@ -312,19 +388,20 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
                     id="messagesPerDay"
                     name="messagesPerDay"
                     type="number"
+                    placeholder="25"
                     value={formData.messagesPerDay}
                     onChange={handleInputChange}
-                    className="border-gray-300 focus:border-blue-500"
+                    className="border-input focus:border-primary bg-background text-foreground"
                   />
                 </div>
 
                 {/* Minimum Time Gap */}
                 <div className="space-y-2">
-                  <Label htmlFor="minimumTimeGap" className="text-gray-700 font-medium flex items-center gap-1">
+                  <Label htmlFor="minimumTimeGap" className="text-foreground font-medium flex items-center gap-1">
                     Minimum time gap (min)
                     <Tooltip>
                       <TooltipTrigger>
-                        <HelpCircle className="w-4 h-4 text-gray-400" />
+                        <HelpCircle className="w-4 h-4 text-muted-foreground" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Minimum time between messages in minutes</p>
@@ -335,9 +412,10 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
                     id="minimumTimeGap"
                     name="minimumTimeGap"
                     type="number"
+                    placeholder="15"
                     value={formData.minimumTimeGap}
                     onChange={handleInputChange}
-                    className="border-gray-300 focus:border-blue-500"
+                    className="border-input focus:border-primary bg-background text-foreground"
                   />
                 </div>
               </div>
@@ -352,14 +430,14 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
                     onChange={handleInputChange}
                     className="rounded"
                   />
-                  <span className="text-gray-700">Set a different reply to address</span>
+                  <span className="text-foreground">Set a different reply to address</span>
                 </label>
               </div>
             </div>
 
             {/* IMAP Settings */}
-            <div className="border-t pt-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <div className="border-t border-border pt-6">
+              <h3 className="text-lg font-medium text-card-foreground mb-4">
                 IMAP Settings (receives emails)
               </h3>
 
@@ -372,29 +450,30 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
                     onChange={handleInputChange}
                     className="rounded"
                   />
-                  <span className="text-gray-700">Use different email accounts for receiving emails</span>
+                  <span className="text-foreground">Use different email accounts for receiving emails</span>
                 </label>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* IMAP Host */}
                 <div className="space-y-2">
-                  <Label htmlFor="imapHost" className="text-gray-700 font-medium">
+                  <Label htmlFor="imapHost" className="text-foreground font-medium">
                     IMAP Host
                   </Label>
                   <Input
                     id="imapHost"
                     name="imapHost"
                     type="text"
+                    placeholder="imap.gmail.com"
                     value={formData.imapHost}
                     onChange={handleInputChange}
-                    className="border-gray-300 focus:border-blue-500"
+                    className="border-input focus:border-primary bg-background text-foreground"
                   />
                 </div>
 
                 {/* IMAP Port */}
                 <div className="space-y-2">
-                  <Label htmlFor="imapPort" className="text-gray-700 font-medium">
+                  <Label htmlFor="imapPort" className="text-foreground font-medium">
                     IMAP Port
                   </Label>
                   <div className="flex gap-2">
@@ -402,9 +481,10 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
                       id="imapPort"
                       name="imapPort"
                       type="number"
+                      placeholder="993"
                       value={formData.imapPort}
                       onChange={handleInputChange}
-                      className="border-gray-300 focus:border-blue-500 w-24"
+                      className="border-input focus:border-primary bg-background text-foreground w-24"
                     />
                     <div className="flex gap-4">
                       {['SSL', 'TLS', 'None'].map((option) => (
@@ -415,9 +495,9 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
                             value={option}
                             checked={formData.imapSecurity === option}
                             onChange={handleInputChange}
-                            className="text-blue-500"
+                            className="text-primary"
                           />
-                          <span className="text-gray-700">{option}</span>
+                          <span className="text-foreground">{option}</span>
                         </label>
                       ))}
                     </div>
@@ -427,37 +507,44 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-3 pt-6 border-t">
+            <div className="flex gap-3 pt-6 border-t border-border">
               <Button
                 type="button"
                 variant="outline"
                 onClick={onClose}
                 className="flex-1"
-                disabled={isLoading}
+                disabled={isLoading || isVerifying}
               >
                 Cancel
               </Button>
               <Button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-600 text-white"
-                disabled={isLoading}
+                type="button"
+                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                disabled={isLoading || isVerifying}
+                onClick={handleVerifyEmail}
               >
-                {isLoading ? (
+                {isVerifying ? (
                   <div className="flex items-center gap-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    Verifying Email Account...
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-secondary-foreground"></div>
+                    Verifying...
                   </div>
                 ) : (
                   "Verify Email Account"
                 )}
               </Button>
               <Button
-                type="button"
-                className="bg-blue-500 hover:bg-blue-600 text-white px-8"
-                disabled={isLoading}
-                onClick={handleSubmit}
+                type="submit"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8"
+                disabled={isLoading || isVerifying}
               >
-                Save
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
+                    Saving...
+                  </div>
+                ) : (
+                  "Save"
+                )}
               </Button>
             </div>
           </form>
