@@ -1,3 +1,7 @@
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/utils/supabase";
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -16,6 +20,32 @@ import {
 import { EmailAccountsProvider } from "@/contexts/EmailAccountsContext"
 
 export default function Layout({ children }) {
+  const router = useRouter();
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  useEffect(() => {
+    const ensureAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.access_token) {
+          router.replace("/auth/login");
+          return;
+        }
+        setIsAuthorized(true);
+      } catch (e) {
+        router.replace("/auth/login");
+      }
+    };
+    ensureAuth();
+  }, [router]);
+
+  if (!isAuthorized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+      </div>
+    );
+  }
   return (
     <EmailAccountsProvider>
       <SidebarProvider>

@@ -12,12 +12,13 @@ const axiosInstance = axios.create({
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Add auth token if available
+    // Add auth token if available (only for requests that need it)
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem('access_token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+      // Don't reject requests without tokens - let individual endpoints handle auth
     }
 
     // Log request in development
@@ -25,6 +26,7 @@ axiosInstance.interceptors.request.use(
       console.log('🚀 Request:', {
         method: config.method?.toUpperCase(),
         url: config.url,
+        hasAuth: !!config.headers.Authorization,
         data: config.data,
       });
     }
@@ -60,8 +62,8 @@ axiosInstance.interceptors.response.use(
         case 401:
           // Unauthorized - redirect to login
           if (typeof window !== 'undefined') {
-            // localStorage.removeItem('authToken');
-            // window.location.href = '/auth/login';
+            localStorage.removeItem('access_token');
+            window.location.href = '/auth/login';
           }
           break;
         case 403:
@@ -111,10 +113,10 @@ export default axiosInstance;
 export const setAuthToken = (token) => {
   if (typeof window !== 'undefined') {
     if (token) {
-      localStorage.setItem('authToken', token);
+      localStorage.setItem('access_token', token);
       axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     } else {
-      localStorage.removeItem('authToken');
+      localStorage.removeItem('access_token');
       delete axiosInstance.defaults.headers.common['Authorization'];
     }
   }
@@ -122,7 +124,7 @@ export const setAuthToken = (token) => {
 
 export const removeAuthToken = () => {
   if (typeof window !== 'undefined') {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('access_token');
     delete axiosInstance.defaults.headers.common['Authorization'];
   }
 };

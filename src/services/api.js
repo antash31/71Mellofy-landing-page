@@ -104,13 +104,8 @@ export const emailAccountsService = {
 
   create: async (emailAccountData) => {
     // Use the specific Supabase endpoint for creating email accounts
-    const token = (await supabase.auth.getSession()).data.session.access_token;
-    const response = await api.post('https://yofoleesojtwibrcfddx.supabase.co/functions/v1/create-email-account', emailAccountData, {
-      headers: {
-        'Authorization': token ? `Bearer ${token}` : '',
-        'Content-Type': 'application/json',
-      }
-    });
+    // The axios interceptor will automatically add the Authorization header
+    const response = await api.post('https://yofoleesojtwibrcfddx.supabase.co/functions/v1/create-email-account', emailAccountData);
     return response.data;
   },
 
@@ -126,13 +121,8 @@ export const emailAccountsService = {
 
   verify: async (emailAccountData) => {
     // Use the same endpoint as create for verification (since they seem to use the same endpoint)
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-    const response = await api.post('http://127.0.0.1:54321/functions/v1/create-email-account', emailAccountData, {
-      headers: {
-        'Authorization': token ? `Bearer ${token}` : '',
-        'Content-Type': 'application/json',
-      }
-    });
+    // The axios interceptor will automatically add the Authorization header
+    const response = await api.post('https://yofoleesojtwibrcfddx.supabase.co/functions/v1/create-email-account', emailAccountData);
     return response.data;
   },
 };
@@ -229,12 +219,8 @@ export const sdrService = {
 export const campaignService = {
   createCampaignTemplate: async (campaignData) => {
     // Use the specific Supabase endpoint for creating campaign templates
-    const response = await api.post('https://yofoleesojtwibrcfddx.supabase.co/functions/v1/create-campaign-template', campaignData, {
-      headers: {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvZm9sZWVzb2p0d2licmNmZGR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NzUwMTYsImV4cCI6MjA2ODI1MTAxNn0.XMKrB0qx0oGzijMeJUegdmYcAB336rkrAiO2mR0cFrA',
-        'Content-Type': 'application/json',
-      }
-    });
+    // The axios interceptor will automatically add the Authorization header
+    const response = await api.post('https://yofoleesojtwibrcfddx.supabase.co/functions/v1/create-campaign-template', campaignData);
     return response.data;
   },
 
