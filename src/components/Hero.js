@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function Hero() {
   return (
-    <section className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
+    <section className="relative isolate flex min-h-[70dvh] flex-col items-center justify-center overflow-hidden px-6 py-28 text-center">
       <div className="absolute inset-0 z-[1]">
         <Aurora
           colorStops={["#2563eb", "#9333ea", "#db2777"]}

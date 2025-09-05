@@ -7,8 +7,8 @@ import TiltedCard from "./TiltedCard";
 
 const features = [
   {
-    title: "AI Lead Scoring Agent",
-    headline: "Quality Over Quantity: AI That Finds Your Perfect Prospects",
+    title: "AI Automated ICP Finder",
+    headline: "Quality Over Quantity: AI That Builds The Best ICP and Finds Your Perfect Prospects",
     description:
       "Our AI analyzes 200+ data points to identify high-intent leads, so you spend time on prospects who are ready to buy, not tire-kickers.",
     metric: "77% increase in ROI",
@@ -37,7 +37,7 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="relative py-24 px-6 bg-black overflow-hidden">
+    <section className="relative py-14 px-6 bg-black overflow-hidden">
       <div className="absolute inset-0 opacity-30">
         <Aurora
           colorStops={["#000000", "#1a1a1a", "#000000"]}

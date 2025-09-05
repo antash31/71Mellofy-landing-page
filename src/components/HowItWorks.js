@@ -10,7 +10,7 @@ const steps = [
     title: "Connect Your Data",
     description:
       "Integrate with your CRM and existing tools to sync your customer data and preferences.",
-    icon: "/file.svg", // Assuming public/file.svg exists
+    icon: "/file.svg",
   },
   {
     number: "02",
@@ -50,11 +50,11 @@ const howToSchema = {
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="relative py-24 px-6 bg-gradient-to-b from-gray-900 to-black overflow-hidden">
+    <section id="how-it-works" className="relative py-24 px-6 bg-gradient-to-b from-gray-900 to-black overflow-hidden ">
       <Script id="howto-schema" type="application/ld+json">
         {JSON.stringify(howToSchema)}
       </Script>
-      <div className="absolute inset-0 opacity-30">
+      <div className="absolute inset-0 opacity-30 pointer-events-none">
         <Aurora
           colorStops={["#000000", "#1a1a1a", "#000000"]}
           amplitude={0.5}
@@ -66,7 +66,7 @@ export default function HowItWorks() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
@@ -84,16 +84,15 @@ export default function HowItWorks() {
           </p>
         </motion.div>
 
-        {/* Workflow Diagram */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
           className="mb-16"
         >
           <WorkflowDiagram />
-        </motion.div>
+        </motion.div> */}
 
         <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
           {steps.map((step, index) => (
@@ -101,16 +100,14 @@ export default function HowItWorks() {
               key={step.number}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.2 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.5, delay: index * 0.2 + 0.1 }}
               className="relative"
             >
-              {/* Connector line */}
               {index < steps.length - 1 && (
                 <div className="hidden lg:block absolute top-1/2 right-0 w-full h-[1px] bg-white/10 transform translate-y-[-50%] z-0" />
               )}
 
-              {/* Step content */}
               <div className="relative z-10 p-8 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/30 hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
                 <div className="relative flex flex-col flex-grow">

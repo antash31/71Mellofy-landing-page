@@ -2,6 +2,8 @@
 import { api, setAuthToken, removeAuthToken } from '@/lib/axios';
 import { supabase } from '@/utils/supabase';
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
 // Authentication services
 export const authService = {
   login: async (credentials) => {
@@ -213,88 +215,143 @@ export const sdrService = {
   },
 };
 
-
-
-// Campaign services
 export const campaignService = {
-  createCampaignTemplate: async (campaignData) => {
-    // Use the specific Supabase endpoint for creating campaign templates
-    // The axios interceptor will automatically add the Authorization header
-    const response = await api.post('https://yofoleesojtwibrcfddx.supabase.co/functions/v1/create-campaign-template', campaignData);
+
+  // Create a campaign functions (Only for create campaign)
+  createCampaign: async (campaignData) => {
+    const response = await api.post(supabaseUrl + '/functions/v1/POST-Create-Campaign-Edge-Function', campaignData);
+    return response.data;
+  },
+
+  //To update the campaign schedule
+  updateCampaignSchedule: async (campaignSchedule) => {
+    const response = await api.post(supabaseUrl + '/functions/v1/POST-Update-Campaign-Schedule-Edge-Function', campaignSchedule);
+    return response.data;
+  },
+
+  //To update the campaign settings
+  updateCampaignSettings: async (campaignSettings) => {
+    const response = await api.post(supabaseUrl + '/functions/v1/POST-Update-Campaign-General-Settings-Edge-Function', campaignSettings);
+    return response.data;
+  },
+
+  //To create the sequence and adding it to the campaign. 
+  createSequence: async () => {
+    const response = await api.post(supabaseUrl + '/functions/v1/POST-Save-Campaign-Sequence-Edge-Function');
+    return response.data;
+  },
+
+  //To attach the email account to the campaign
+  attachEmailAccountToCampaign: async (campaignData) => {
+    const response = await api.post(supabaseUrl + '/functions/v1/POST-Attach-Email-Webhook-to-the-Campaign-Update-Domain', campaignData);
     return response.data;
   },
 
   // Helper function to build campaign data from form inputs
-  buildCampaignData: (formData, emailAccountInfo) => {
+  buildCampaignData: (formData, selectedEmailAccount) => {
+    const timestamp = Date.now();
+    const campaignName = `Campaign_${formData.domain}_${timestamp}`;
+    
     return {
-      campaignName: `Campaign for ${formData.domain}`,
-      clientId: null,
-      sequenceData: {
-        sequences: [
-          {
-            seq_number: 1,
-            seq_delay_details: {
-              delay_in_days: 1
-            },
-            subject: "{{subject_1}}", 
-            email_body: "{{email_body_1}}"
-          },
-          {
-            seq_number: 2,
-            seq_delay_details: {
-              delay_in_days: 1
-            },
-            subject: "{{subject_2}}", 
-            email_body: "{{email_body_2}}"
-          }
-        ]
-      },
-      scheduleData: {
-        timezone: "Asia/Kolkata",
-        days_of_the_week: [1, 2, 3, 4, 5],  
-        start_hour: "09:00",                
-        end_hour: "18:00",                  
-        min_time_btw_emails: 15,            
-        max_new_leads_per_day: 25,          
-        schedule_start_time: new Date().toISOString()
-      },
-      settingsData: {
-        name: `Campaign for ${formData.domain}`,
-        track_settings: ["DONT_TRACK_EMAIL_OPEN"],
-        stop_lead_settings: "REPLY_TO_AN_EMAIL", 
-        unsubscribe_text: "",
-        send_as_plain_text: false,
-        follow_up_percentage: 100,
-        client_id: null, 
-        enable_ai_esp_matching: true,
-        out_of_office_detection_settings: {
-          ignoreOOOasReply: true
-        }
-      },
-      webhookData: {
-        name: `Webhook for ${formData.domain}`,
-        webhook_url: "https://webhook.site/8222f684-0cf6-43ac-9360-28227fc36d32",
-        event_types: ["LEAD_CATEGORY_UPDATED"],
-        categories: ["Interested"]
-      },
-      emailAccountData: {
-        email: emailAccountInfo.email,
-        password: "securepass" // Note: In production, this should be handled securely
-      },
-      supabaseData: {
-        name: `SDR Campaign - ${formData.domain}`,
-        sequence_steps: 2,
-        sequence_template: {
-          step1: "Email intro",
-          step2: "Follow-up"
-        },
-        status: "active"
-      }
+      campaignName,
+      domain: formData.domain,
+      emailAccount: selectedEmailAccount,
+      targetRegions: formData.targetRegions,
+      createdAt: new Date().toISOString()
     };
-  }
+  },
+
+  // Main orchestration function for creating complete campaign template
+  createCampaignTemplate: async (campaignData) => {
+    try {
+      // Step 1: Create the main campaign
+      console.log('Creating campaign with data:', { name: campaignData.campaignName });
+      const campaignResult = await campaignService.createCampaign({ 
+        name: campaignData.campaignName 
+      });
+      
+      console.log('Campaign created successfully:', campaignResult);
+
+      // Step 2: Execute all follow-up API calls in parallel
+      const parallelCalls = [
+        // Update campaign schedule
+        campaignService.updateCampaignSchedule({
+          timezone: "America/Los_Angeles",
+          days_of_the_week: [1, 2, 3, 4, 5], 
+          start_hour: "09:00",
+          end_hour: "17:00",
+          min_time_btw_emails: 15,
+          max_new_leads_per_day: 25
+        }),
+
+        // Update campaign settings (empty body as requested)
+        campaignService.updateCampaignSettings({}),
+
+        // Create sequence (no body needed)
+        campaignService.createSequence(),
+
+        // Attach email account to campaign
+        campaignService.attachEmailAccountToCampaign({
+          domain: campaignData.domain
+        })
+      ];
+
+      console.log('Executing parallel API calls...');
+      const parallelResults = await Promise.allSettled(parallelCalls);
+
+      // Log results of parallel calls
+      const [scheduleResult, settingsResult, sequenceResult, attachResult] = parallelResults;
+      
+      console.log('Campaign schedule update:', scheduleResult);
+      console.log('Campaign settings update:', settingsResult);
+      console.log('Sequence creation:', sequenceResult);
+      console.log('Email account attachment:', attachResult);
+
+      // Check if any parallel calls failed
+      const failedCalls = parallelResults.filter(result => result.status === 'rejected');
+      if (failedCalls.length > 0) {
+        console.warn(`${failedCalls.length} parallel API calls failed:`, failedCalls);
+        // Continue execution but log warnings
+      }
+
+      return {
+        campaign: campaignResult,
+        parallelResults: {
+          schedule: scheduleResult,
+          settings: settingsResult,
+          sequence: sequenceResult,
+          attachment: attachResult
+        },
+        campaignData
+      };
+
+    } catch (error) {
+      console.error('Error in campaign template creation:', error);
+      throw error;
+    }
+  },
+
+  getCampaignStatus: async () => {
+    const response = await api.get(supabaseUrl + '/functions/v1/GET-Campaign-Exists-Check-Edge-Function');
+    return response.data;
+  },
+
+  getCampaignAnalytics: async () => {
+    const response = await api.get(supabaseUrl + '/functions/v1/Get-Campaign-Analytics-');
+    return response.data;
+  },
+
+  getCampaignLeadStatistics: async (limit = 10, offset = 0) => {
+    const response = await api.get(supabaseUrl + `/functions/v1/Get-Campaign-Lead-Statistics?limit=${limit}&offset=${offset}`);
+    return response.data;
+  },
+
+  getCampaignMailboxStatistics: async () => {
+    const response = await api.get(supabaseUrl + '/functions/v1/Get-Campaign-Mailbox-Statistics');
+    return response.data;
+  },
 };
 
-// Client services
 export const clientService = {
   createClient: async (clientData) => {
     const response = await api.post('/clients', clientData);
