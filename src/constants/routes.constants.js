@@ -22,7 +22,7 @@ import {
     },
     teams: [
       {
-        name: "Acme Inc",
+        name: "71Mellofy",
         logo: GalleryVerticalEnd,
         plan: "Enterprise",
       },

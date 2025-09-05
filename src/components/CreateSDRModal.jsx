@@ -176,20 +176,43 @@ export default function CreateSDRModal({ isOpen, onClose }) {
         // Continue even if client creation fails, as it might already exist
       }
 
-      // Step 2: Create campaign template
+      // Step 2: Create campaign template with orchestrated API calls
       const campaignData = campaignService.buildCampaignData(formData, selectedEmailAccount);
       const campaignResult = await campaignService.createCampaignTemplate(campaignData);
       
       console.log("Campaign template created successfully:", campaignResult);
       
+      // Check for any failed parallel operations and show warnings
+      const { parallelResults } = campaignResult;
+      const failedOperations = [];
+      
+      if (parallelResults.schedule.status === 'rejected') {
+        failedOperations.push('Schedule update');
+      }
+      if (parallelResults.settings.status === 'rejected') {
+        failedOperations.push('Settings update');
+      }
+      if (parallelResults.sequence.status === 'rejected') {
+        failedOperations.push('Sequence creation');
+      }
+      if (parallelResults.attachment.status === 'rejected') {
+        failedOperations.push('Email attachment');
+      }
+      
       // Reset form and close modal
       setFormData({ domain: "", emailAccount: "", targetRegions: [] });
       onClose();
       
-      // Success message
-      toast.success(`SDR Agent created for ${formData.domain}`, {
-        description: `Campaign: ${campaignData.campaignName} • Email: ${selectedEmailAccount.email} • Regions: ${formData.targetRegions.length}`
-      });
+      // Success message with warnings if any operations failed
+      if (failedOperations.length > 0) {
+        toast.success(`SDR Agent created for ${formData.domain}`, {
+          description: `Campaign created successfully. Warning: ${failedOperations.join(', ')} failed but can be configured later.`
+        });
+      } else {
+        toast.success(`SDR Agent created for ${formData.domain}`, {
+          description: `Campaign: ${campaignData.campaignName} • Email: ${selectedEmailAccount.email} • Regions: ${formData.targetRegions.length}`
+        });
+      }
       
     } catch (error) {
       console.error("Error creating SDR agent:", error);

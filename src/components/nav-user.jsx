@@ -7,6 +7,7 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
+  Loader2,
 } from "lucide-react"
 
 import {
@@ -29,11 +30,44 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useUser } from "@/contexts/UserContext"
+import { useState } from "react"
 
-export function NavUser({
-  user
-}) {
+export function NavUser() {
   const { isMobile } = useSidebar()
+  const { user, logout } = useUser()
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  const handleLogout = async () => {
+    try {
+      console.log('NavUser: handleLogout called');
+      setIsLoggingOut(true)
+      console.log('NavUser: calling logout function from context...');
+      await logout()
+      console.log('NavUser: logout function completed');
+    } catch (error) {
+      console.error('NavUser: Logout failed:', error)
+    } finally {
+      setIsLoggingOut(false)
+      console.log('NavUser: handleLogout finished');
+    }
+  }
+
+  // Show loading state if no user data
+  if (!user) {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton size="lg" disabled>
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span className="text-sm">Loading...</span>
+            </div>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    )
+  }
 
   return (
     (<SidebarMenu>
@@ -45,7 +79,7 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{user.initials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.name}</span>
@@ -63,7 +97,7 @@ export function NavUser({
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">{user.initials}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{user.name}</span>
@@ -94,9 +128,17 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
+            <DropdownMenuItem 
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="text-destructive focus:text-destructive cursor-pointer"
+            >
+              {isLoggingOut ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <LogOut />
+              )}
+              {isLoggingOut ? 'Logging out...' : 'Log out'}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
