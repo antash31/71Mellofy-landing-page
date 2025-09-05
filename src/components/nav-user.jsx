@@ -35,7 +35,7 @@ import { useState } from "react"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
-  const { user, logout } = useUser()
+  const { user, logout, isLoading } = useUser()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   const handleLogout = async () => {
@@ -53,8 +53,8 @@ export function NavUser() {
     }
   }
 
-  // Show loading state if no user data
-  if (!user) {
+  // Show loading state if no user data or still loading
+  if (isLoading || !user) {
     return (
       <SidebarMenu>
         <SidebarMenuItem>

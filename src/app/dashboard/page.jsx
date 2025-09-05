@@ -16,13 +16,21 @@ export default function Page() {
   const [analyticsData, setAnalyticsData] = useState(null);
   const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
   const [analyticsError, setAnalyticsError] = useState(null);
+  const [isClient, setIsClient] = useState(false);
   const { hasEmailAccounts, emailAccounts, isLoading, error, refreshEmailAccounts } = useEmailAccounts();
   
   // Ref to prevent double API calls in development (React Strict Mode)
   const hasFetchedRef = useRef(false);
 
+  // Handle hydration
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // Fetch campaign status on component mount
   useEffect(() => {
+    if (!isClient) return; // Wait for hydration
+    
     // Prevent double API calls in development (React Strict Mode)
     if (hasFetchedRef.current) {
       return;
@@ -52,7 +60,7 @@ export default function Page() {
     };
 
     fetchCampaignStatus();
-  }, []);
+  }, [isClient]);
 
   // Fetch analytics data
   const fetchAnalytics = async () => {
@@ -116,6 +124,25 @@ export default function Page() {
       setIsLoadingCampaign(false);
     }
   };
+
+  // Show loading during hydration
+  if (!isClient) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
+        <div className="text-center space-y-4">
+          <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          </div>
+          <h1 className="text-3xl font-bold text-foreground">
+            AI SDR Dashboard
+          </h1>
+          <p className="text-muted-foreground max-w-md">
+            Loading...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // Show loading state while fetching email accounts or campaign status
   if (isLoading || isLoadingCampaign) {

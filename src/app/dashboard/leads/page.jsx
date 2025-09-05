@@ -97,40 +97,92 @@ const Leads = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [totalLeads, setTotalLeads] = useState(0);
+  const [isClient, setIsClient] = useState(false);
   const hasFetchedRef = useRef(false);
 
   const fetchLeads = async (page = 1) => {
     try {
+      console.log('🔄 Starting fetchLeads...');
       setIsLoading(true);
       setError(null);
       
       const offset = (page - 1) * LEADS_PER_PAGE;
-      console.log(`Fetching leads: page ${page}, offset ${offset}, limit ${LEADS_PER_PAGE}`);
+      console.log(`📊 Fetching leads: page ${page}, offset ${offset}, limit ${LEADS_PER_PAGE}`);
       
-      const response = await campaignService.getCampaignLeadStatistics(LEADS_PER_PAGE, offset);
-      console.log('Leads data received:', response);
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Request timeout after 10 seconds - API may be unavailable')), 10000)
+      );
+      
+      const apiPromise = campaignService.getCampaignLeadStatistics(LEADS_PER_PAGE, offset);
+      
+      console.log('⏳ Making API call...');
+      const response = await Promise.race([apiPromise, timeoutPromise]);
+      console.log('✅ Leads data received:', response);
+      
+      if (!response) {
+        throw new Error('No response received from API');
+      }
       
       setLeads(response.data || []);
       setHasMore(response.hasMore || false);
       setTotalLeads(response.total || response.data?.length || 0);
       setCurrentPage(page);
+      
+      console.log(`📈 Set leads: ${response.data?.length || 0} items, hasMore: ${response.hasMore}, total: ${response.total}`);
     } catch (err) {
-      console.error('Error fetching leads:', err);
+      console.error('❌ Error fetching leads:', err);
+      console.error('❌ Error details:', {
+        message: err.message,
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        data: err.response?.data
+      });
       setError(err.message || 'Failed to fetch leads data');
     } finally {
+      console.log('🏁 fetchLeads completed');
       setIsLoading(false);
     }
   };
 
+  // Handle hydration
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return; // Wait for hydration
+    
+    console.log('🚀 Leads useEffect triggered');
+    console.log('🔍 hasFetchedRef.current:', hasFetchedRef.current);
+    
+    // Check authentication status
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('access_token');
+      console.log('🔑 Access token exists:', !!token);
+      console.log('🔑 Token preview:', token ? token.substring(0, 20) + '...' : 'null');
+    }
+    
     // Prevent double API calls in development (React Strict Mode)
     if (hasFetchedRef.current) {
+      console.log('⏭️ Skipping fetch - already fetched');
       return;
     }
     
+    console.log('✨ Setting hasFetchedRef to true and calling fetchLeads');
     hasFetchedRef.current = true;
-    fetchLeads(1);
-  }, []);
+    
+    // Set a fallback timeout to prevent infinite loading
+    const fallbackTimeout = setTimeout(() => {
+      console.log('⚠️ Fallback timeout triggered - forcing error state');
+      setIsLoading(false);
+      setError('Request is taking too long. Please check your connection and try again.');
+    }, 15000);
+    
+    fetchLeads(1).finally(() => {
+      clearTimeout(fallbackTimeout);
+    });
+  }, [isClient]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && (hasMore || newPage < currentPage)) {
@@ -156,6 +208,16 @@ const Leads = () => {
     if (!history || history.length === 0) return null;
     return history[history.length - 1];
   };
+
+  // Show loading during hydration
+  if (!isClient) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
 
   if (isLoading && leads.length === 0) {
     return (
@@ -205,6 +267,34 @@ const Leads = () => {
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh
+          </Button>
+          <Button 
+            onClick={async () => {
+              console.log('🧪 Manual test API call');
+              try {
+                console.log('🔗 Testing direct API call...');
+                const response = await fetch('https://yofoleesojtwibrcfddx.supabase.co/functions/v1/Get-Campaign-Lead-Statistics?limit=10&offset=0', {
+                  headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                    'Content-Type': 'application/json'
+                  }
+                });
+                console.log('📡 Direct API response status:', response.status);
+                const data = await response.json();
+                console.log('📊 Direct API response data:', data);
+              } catch (err) {
+                console.error('❌ Direct API test failed:', err);
+              }
+              
+              // Also test the service method
+              hasFetchedRef.current = false;
+              fetchLeads(1);
+            }} 
+            variant="secondary" 
+            disabled={isLoading}
+            className="flex items-center gap-2"
+          >
+            🧪 Test API
           </Button>
         </div>
       </div>
