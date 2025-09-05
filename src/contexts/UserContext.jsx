@@ -34,6 +34,7 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
 
   // Get user initials for avatar fallback
@@ -54,19 +55,25 @@ export const UserProvider = ({ children }) => {
   // Fetch user data from Supabase
   const fetchUser = async () => {
     try {
+      console.log('🔄 UserContext: Starting fetchUser...');
       setIsLoading(true);
       setError(null);
 
+      console.log('🔍 UserContext: Getting session from Supabase...');
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError) {
+        console.error('❌ UserContext: Session error:', sessionError);
         throw sessionError;
       }
 
       if (!session?.user) {
+        console.log('⚠️ UserContext: No session or user found');
         setUser(null);
         return;
       }
+
+      console.log('✅ UserContext: Session found, user ID:', session.user.id);
 
       const supabaseUser = session.user;
       
@@ -90,12 +97,14 @@ export const UserProvider = ({ children }) => {
         createdAt: supabaseUser.created_at
       };
 
+      console.log('👤 UserContext: User data set:', userData.email);
       setUser(userData);
     } catch (err) {
-      console.error('Error fetching user:', err);
+      console.error('❌ UserContext: Error fetching user:', err);
       setError(err.message || 'Failed to fetch user data');
       setUser(null);
     } finally {
+      console.log('🏁 UserContext: fetchUser completed');
       setIsLoading(false);
     }
   };
@@ -162,21 +171,39 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  // Handle hydration
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // Listen for auth state changes
   useEffect(() => {
+    if (!isClient) return; // Wait for hydration
+    
+    console.log('🚀 UserContext: useEffect triggered');
+    
+    // Set a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      console.log('⚠️ UserContext: Timeout reached, forcing loading to false');
+      setIsLoading(false);
+      setError('Authentication check timed out. Please refresh the page.');
+    }, 10000); // 10 second timeout
+
     // Initial fetch
-    fetchUser();
+    fetchUser().finally(() => {
+      clearTimeout(timeoutId);
+    });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
+        console.log('🔄 UserContext: Auth state changed:', event, session?.user?.email);
         
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          console.log('User signed in or token refreshed, fetching user data...');
+          console.log('✅ UserContext: User signed in or token refreshed, fetching user data...');
           await fetchUser();
         } else if (event === 'SIGNED_OUT') {
-          console.log('User signed out, clearing user state...');
+          console.log('👋 UserContext: User signed out, clearing user state...');
           setUser(null);
           setIsLoading(false);
         }
@@ -184,9 +211,10 @@ export const UserProvider = ({ children }) => {
     );
 
     return () => {
+      clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
-  }, []);
+  }, [isClient]);
 
   const value = {
     user,
