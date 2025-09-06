@@ -1,23 +1,10 @@
 
 "use client";
-import { useState } from "react"
-import { cn } from "@/lib/utils"
+import React, { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Check, ChevronsUpDown } from "lucide-react"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
 
 const referralSources = [
   { value: "google", label: "Google Search" },
@@ -38,6 +25,15 @@ export function SignupForm({
   className,
   ...props
 }) {
+  // Add error boundary protection
+  if (typeof React === 'undefined' || React === null) {
+    console.error('React is not available in SignupForm');
+    return (
+      <div className="text-center p-8">
+        <p className="text-destructive">Loading error. Please refresh the page.</p>
+      </div>
+    );
+  }
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -51,7 +47,7 @@ export function SignupForm({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
-  const [open, setOpen] = useState(false)
+  const router = useRouter()
 
   // List of personal email domains to block
   const personalEmailDomains = [
@@ -139,6 +135,11 @@ export function SignupForm({
         role: "user"
       })
       
+      // Redirect to success page after a short delay
+      setTimeout(() => {
+        router.push('/auth/signup/success')
+      }, 1000)
+      
     } catch (error) {
       console.error('Registration error:', error)
       setError(error.message || 'Registration failed. Please try again.')
@@ -149,11 +150,11 @@ export function SignupForm({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6 font-poppins", className)} {...props}>
+    <div className={`flex flex-col gap-6 font-poppins ${className || ""}`} {...props}>
       <div className="flex flex-col gap-2">
-        <h1 className="text-2xl lg:text-4xl font-light font-poppins">Get Started For Free</h1>
+        <h1 className="text-2xl lg:text-4xl font-light font-poppins">Get Started</h1>
         <p className="text-balance text-sm text-muted-foreground font-poppins">
-          Start your 7-day free trial. No credit card required.
+          Start your journey with us.
         </p>
       </div>
 
@@ -165,7 +166,7 @@ export function SignupForm({
 
       {success && (
         <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md dark:bg-green-900/20 dark:border-green-900/50">
-          Account created successfully! Please check your email to verify your account.
+          Account created successfully! Redirecting you to the next steps...
         </div>
       )}
 
@@ -259,48 +260,20 @@ export function SignupForm({
         </div>
         <div className="grid gap-2">
           <Label htmlFor="referral_source">Where did you hear about us?</Label>
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={open}
-                className="w-full justify-between bg-accent text-foreground border-input hover:bg-accent hover:text-foreground"
-              >
-                {formData.referral_source
-                  ? referralSources.find((source) => source.value === formData.referral_source)?.label
-                  : "Select an option..."}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[--radix-popover-trigger-width] p-0" side="bottom" align="start" sideOffset={4}>
-              <Command className="max-h-[300px]">
-                <CommandInput placeholder="Search source..." className="h-9" />
-                <CommandEmpty>No source found.</CommandEmpty>
-                <CommandGroup className="max-h-[250px] overflow-y-auto">
-                  {referralSources.map((source) => (
-                    <CommandItem
-                      key={source.value}
-                      value={source.value}
-                      onSelect={(currentValue) => {
-                        const newValue = currentValue === formData.referral_source ? "" : currentValue
-                        setFormData(prev => ({ ...prev, referral_source: newValue }))
-                        setOpen(false)
-                      }}
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          formData.referral_source === source.value ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      {source.label}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
+          <select
+            id="referral_source"
+            name="referral_source"
+            value={formData.referral_source}
+            onChange={handleChange}
+            className="flex h-10 w-full rounded-md border border-input bg-accent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <option value="">Select an option...</option>
+            {referralSources.map((source) => (
+              <option key={source.value} value={source.value}>
+                {source.label}
+              </option>
+            ))}
+          </select>
         </div>
         
         <div className="text-sm text-muted-foreground">

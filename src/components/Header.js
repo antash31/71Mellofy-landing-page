@@ -62,7 +62,7 @@ export default function Header() {
           {/* Get Started Button */}
           <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
             <Link href="/auth/signup">
-              Get Started For Free
+              Get Started 
             </Link>
           </Button>
         </div>
