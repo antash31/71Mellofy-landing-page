@@ -105,7 +105,7 @@ export function SignupForm({
           last_name: formData.last_name,
           email: formData.email,
           password: formData.password,
-          phone_no: formData.phone_no,
+          phone_number: formData.phone_no,
           company_name: formData.company_name,
           referral_source: formData.referral_source,
           role: formData.role
