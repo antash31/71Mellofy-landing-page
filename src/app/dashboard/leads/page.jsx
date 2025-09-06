@@ -210,14 +210,14 @@ const Leads = () => {
   };
 
   // Show loading during hydration
-  if (!isClient) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
-        <p className="text-muted-foreground">Loading...</p>
-      </div>
-    );
-  }
+  // if (!isClient) {
+  //   return (
+  //     <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+  //       <Loader2 className="w-8 h-8 text-primary animate-spin" />
+  //       <p className="text-muted-foreground">Loading...</p>
+  //     </div>
+  //   );
+  // }
 
   if (isLoading && leads.length === 0) {
     return (
