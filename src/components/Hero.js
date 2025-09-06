@@ -23,7 +23,7 @@ export default function Hero() {
 
         <div className="flex justify-center w-full">
           <BlurText
-            text="Turn Cold Emails into"
+            text="The Power of 7 SDRs"
             animateBy="words"
             delay={120}
             className="mb-3 text-hero font-poppins text-center"
@@ -31,7 +31,7 @@ export default function Hero() {
         </div>
 
         <BlurText
-          text="Warm Conversations with AI-Powered Precision"
+          text="in 1 Platform"
           animateBy="words"
           delay={150}
           direction="bottom"
@@ -57,7 +57,7 @@ export default function Hero() {
           transition={{ delay: 1, duration: 0.5 }}
           className="flex justify-center mt-14 relative z-[30]"
         >
-          <Link href="/pricing" className="relative z-[30]">
+          <Link href="/auth/signup" className="relative z-[30]">
             <button className="btn group relative z-[30] px-8 py-4 text-black transition-all duration-300" style={{ transform: 'translate3d(0,0,0)' }}>
               {/* Button background */}
               <div className="absolute inset-0 bg-white rounded-xl transition-all duration-300 transform group-hover:-translate-y-1 shadow-[0_4px_8px_rgba(0,0,0,0.1)] group-hover:shadow-[0_8px_16px_rgba(0,0,0,0.1)]" />
@@ -66,7 +66,7 @@ export default function Hero() {
               <div className="absolute inset-0 rounded-xl bg-white/90 -bottom-1 translate-y-1 group-hover:translate-y-0.5 transition-transform duration-300 shadow-[0_2px_4px_rgba(0,0,0,0.05)]" />
 
               {/* Button text */}
-              <span className="relative z-[40] uppercase">Buy an AI SDR</span>
+              <span className="relative z-[40] uppercase">Request a Demo</span>
 
               {/* Button shine effect */}
               <div
