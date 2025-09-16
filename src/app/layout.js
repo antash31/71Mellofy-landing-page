@@ -1,5 +1,6 @@
 import "./globals.css";
 import { inter, playfair, montserrat, roboto, poppins, oswald } from "@/fonts/fonts";
+import { ReduxProvider } from "@/store/provider";
 import { GoogleAnalytics } from '@next/third-parties/google';
 import { Toaster } from 'sonner';
 
@@ -22,10 +23,12 @@ export default function RootLayout({ children }) {
       <body
         className={`${inter.variable} ${playfair.variable} ${montserrat.variable} ${roboto.variable} ${poppins.variable} ${oswald.variable} font-sans antialiased min-h-screen bg-black relative`}
       >
+        <ReduxProvider>
         <div className="relative z-1">
           {children}
         </div>
         <Toaster richColors closeButton />
+        </ReduxProvider>
       </body>
       <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
     </html>
