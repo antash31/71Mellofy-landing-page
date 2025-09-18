@@ -13,14 +13,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useEmailAccounts } from "@/contexts/EmailAccountsContext";
+import { useEmailAccounts } from "@/hooks/useEmailAccounts";
 import { locationService, campaignService, clientService } from "@/services/api";
 
 export default function CreateSDRModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
     domain: "",
     emailAccount: "",
-    targetRegions: [], // Array of selected regions (countries/states)
+    targetRegions: [], 
   });
   const [isLoading, setIsLoading] = useState(false);
   const [locationOptions, setLocationOptions] = useState([]);

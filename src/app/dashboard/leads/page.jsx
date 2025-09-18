@@ -97,7 +97,6 @@ const Leads = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [totalLeads, setTotalLeads] = useState(0);
-  const [isClient, setIsClient] = useState(false);
   const hasFetchedRef = useRef(false);
 
   const fetchLeads = async (page = 1) => {
@@ -108,16 +107,11 @@ const Leads = () => {
       
       const offset = (page - 1) * LEADS_PER_PAGE;
       console.log(`📊 Fetching leads: page ${page}, offset ${offset}, limit ${LEADS_PER_PAGE}`);
-      
-      // Add timeout to prevent hanging
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Request timeout after 10 seconds - API may be unavailable')), 10000)
-      );
-      
+            
       const apiPromise = campaignService.getCampaignLeadStatistics(LEADS_PER_PAGE, offset);
       
-      console.log('⏳ Making API call...');
-      const response = await Promise.race([apiPromise, timeoutPromise]);
+      // console.log('⏳ Making API call...');
+      // const response = await Promise.race([apiPromise, timeoutPromise]);
       console.log('✅ Leads data received:', response);
       
       if (!response) {
@@ -145,14 +139,8 @@ const Leads = () => {
     }
   };
 
-  // Handle hydration
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
-  useEffect(() => {
-    if (!isClient) return; // Wait for hydration
-    
+  useEffect(() => {   
     console.log('🚀 Leads useEffect triggered');
     console.log('🔍 hasFetchedRef.current:', hasFetchedRef.current);
     
@@ -182,7 +170,7 @@ const Leads = () => {
     fetchLeads(1).finally(() => {
       clearTimeout(fallbackTimeout);
     });
-  }, [isClient]);
+  }, []);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && (hasMore || newPage < currentPage)) {
@@ -208,16 +196,6 @@ const Leads = () => {
     if (!history || history.length === 0) return null;
     return history[history.length - 1];
   };
-
-  // Show loading during hydration
-  // if (!isClient) {
-  //   return (
-  //     <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-  //       <Loader2 className="w-8 h-8 text-primary animate-spin" />
-  //       <p className="text-muted-foreground">Loading...</p>
-  //     </div>
-  //   );
-  // }
 
   if (isLoading && leads.length === 0) {
     return (

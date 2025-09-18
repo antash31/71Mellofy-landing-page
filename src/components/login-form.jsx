@@ -1,72 +1,19 @@
 "use client";
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { supabase } from "@/utils/supabase"
-import { useRouter } from "next/navigation";
-
+import { useAuth } from "@/hooks/useAuth"
 
 export function LoginForm({
   className,
   ...props
 }) {
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [success, setSuccess] = useState(false)
-  const router = useRouter()
+  const [password, setPassword] = useState("")  
+  const { loading, error, success, handleEmailLogin } = useAuth();
   
-  // Check for existing session and store access token on component mount
-  useEffect(() => {
-    const checkAndStoreSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.access_token) {
-        localStorage.setItem('access_token', session.access_token);
-        console.log("Access token restored from session");
-      }
-    };
-    
-    checkAndStoreSession();
-  }, []);
-  
-  // Handle email/password login
-  const handleEmailLogin = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
-
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) throw error;
-
-      // Store the access token in localStorage
-      if (data.session?.access_token) {
-        localStorage.setItem('access_token', data.session.access_token);
-        console.log("Access token stored in localStorage");
-      }
-
-      router.push("/dashboard");
-
-      console.log("Login successful:", data)
-
-      setSuccess(true)
-      setError(null)
-      // Show success message instead of navigation
-    } catch (error) {
-      setError(error.message)
-      setSuccess(false)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
     <div className={cn("flex flex-col gap-6 font-poppins", className)} {...props}>
       <div className="flex flex-col gap-2">
@@ -88,7 +35,7 @@ export function LoginForm({
         </div>
       )}
 
-      <form onSubmit={handleEmailLogin} className="grid gap-6">
+      <form onSubmit={(e) => handleEmailLogin(e, email, password)} className="grid gap-6">
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
           <Input 

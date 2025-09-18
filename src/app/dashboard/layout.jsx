@@ -1,7 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/utils/supabase";
 import { AppSidebar } from "@/components/app-sidebar"
 import { DynamicBreadcrumb } from "@/components/dynamic-breadcrumb"
 import { Separator } from "@/components/ui/separator"
@@ -10,76 +7,18 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { EmailAccountsProvider } from "@/contexts/EmailAccountsContext"
 import { UserProvider } from "@/contexts/UserContext"
-
+import { useDispatch } from "react-redux";
+import { checkEmailAccounts } from "@/store/slices/authSlice";
+import { useEffect } from "react";
 function DashboardContent({ children }) {
-  const router = useRouter();
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+  const dispatch = useDispatch();
 
-  // Handle hydration
-  // useEffect(() => {
-  //   setIsClient(true);
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!isClient) return; // Wait for hydration
-    
-  //   console.log('🔐 Dashboard: Starting auth check...');
-    
-  //   const ensureAuth = async () => {
-  //     try {
-  //       console.log('🔍 Dashboard: Getting session...');
-  //       const { data: { session } } = await supabase.auth.getSession();
-  //       console.log('📋 Dashboard: Session check result:', !!session?.access_token);
-        
-  //       if (!session?.access_token) {
-  //         console.log('❌ Dashboard: No access token, redirecting to login');
-  //         router.replace("/auth/login");
-  //         return;
-  //       }
-  //       console.log('✅ Dashboard: Auth successful, setting authorized');
-  //       setIsAuthorized(true);
-  //     } catch (e) {
-  //       console.error('❌ Dashboard: Auth error:', e);
-  //       router.replace("/auth/login");
-  //     }
-  //   };
-    
-  //   // Add timeout for auth check
-  //   const authTimeout = setTimeout(() => {
-  //     console.log('⚠️ Dashboard: Auth check timeout, forcing authorized state');
-  //     setIsAuthorized(true);
-  //   }, 8000);
-    
-  //   ensureAuth().finally(() => {
-  //     clearTimeout(authTimeout);
-  //   });
-  // }, [router, isClient]);
-
-  // Show loading during hydration
-  // if (!isClient) {
-  //   return (
-  //     <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-  //       <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
-  //       <div className="text-muted-foreground text-sm">Loading...</div>
-  //     </div>
-  //   );
-  // }
-
-  // if (!isAuthorized) {
-  //   return (
-  //     <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-  //       <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
-  //       <div className="text-muted-foreground text-sm">Checking authentication...</div>
-  //       <div className="text-xs text-muted-foreground">If this takes too long, please refresh the page</div>
-  //     </div>
-  //   );
-  // }
+  useEffect(()=>{
+    dispatch(checkEmailAccounts());
+  },[])
 
   return (
-    <EmailAccountsProvider>
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
@@ -96,7 +35,6 @@ function DashboardContent({ children }) {
           </div>
         </SidebarInset>
       </SidebarProvider>
-    </EmailAccountsProvider>
   );
 }
 

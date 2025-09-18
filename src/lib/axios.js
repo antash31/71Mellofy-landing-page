@@ -1,9 +1,8 @@
 import axios from 'axios';
-
+import { getCookie, logOutHelper } from '@/utils/helper';
 // Create axios instance with base configuration
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api',
-  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -14,7 +13,7 @@ axiosInstance.interceptors.request.use(
   (config) => {
     // Add auth token if available (only for requests that need it)
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('access_token');
+      const token = getCookie('access_token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -62,7 +61,7 @@ axiosInstance.interceptors.response.use(
         case 401:
           // Unauthorized - redirect to login
           if (typeof window !== 'undefined') {
-            localStorage.removeItem('access_token');
+            // logOutHelper();
             window.location.href = '/auth/login';
           }
           break;

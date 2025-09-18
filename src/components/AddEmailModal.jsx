@@ -19,7 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { emailAccountsService } from '@/services/api';
-import { useEmailAccounts } from '@/contexts/EmailAccountsContext';
+import { useEmailAccounts } from "@/hooks/useEmailAccounts";
 
 export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
   const { refreshEmailAccounts } = useEmailAccounts();

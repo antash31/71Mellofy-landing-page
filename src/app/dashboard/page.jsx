@@ -1,11 +1,12 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Bot, Plus, Mail, AlertTriangle, Loader2, RefreshCw, ArrowRight, CheckCircle, Users, Activity, BarChart3, Eye, MousePointer, Reply, Send } from "lucide-react";
+import { Bot, Plus, Mail, AlertTriangle, Loader2, RefreshCw, ArrowRight, CheckCircle, Users, BarChart3, Eye, MousePointer, Reply, Send } from "lucide-react";
 import CreateSDRModal from "@/components/CreateSDRModal";
-import { useEmailAccounts } from "@/contexts/EmailAccountsContext";
+import { useEmailAccounts } from "@/hooks/useEmailAccounts";
 import { campaignService } from "@/services/api";
+import { useSelector } from "react-redux";
 
 export default function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,29 +17,15 @@ export default function Page() {
   const [analyticsData, setAnalyticsData] = useState(null);
   const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
   const [analyticsError, setAnalyticsError] = useState(null);
-  const [isClient, setIsClient] = useState(false);
-  const { hasEmailAccounts, emailAccounts, isLoading, error, refreshEmailAccounts } = useEmailAccounts();
-  
-  // Ref to prevent double API calls in development (React Strict Mode)
-  const hasFetchedRef = useRef(false);
+  const { emailAccounts, isLoading, error } = useEmailAccounts();
 
-  // Handle hydration
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const hasEmailAccounts = useSelector((state) => state.auth.hasEmailAccounts);
+
 
   // Fetch campaign status on component mount
-  useEffect(() => {
-    if (!isClient) return; // Wait for hydration
-    
-    // Prevent double API calls in development (React Strict Mode)
-    if (hasFetchedRef.current) {
-      return;
-    }
-    
+  useEffect(() => {        
     const fetchCampaignStatus = async () => {
       try {
-        hasFetchedRef.current = true;
         setIsLoadingCampaign(true);
         setCampaignError(null);
         
@@ -60,7 +47,7 @@ export default function Page() {
     };
 
     fetchCampaignStatus();
-  }, [isClient]);
+  }, []);
 
   // Fetch analytics data
   const fetchAnalytics = async () => {
@@ -96,7 +83,7 @@ export default function Page() {
   const handleRefreshAccounts = async () => {
     try {
       setIsRefreshing(true);
-      await refreshEmailAccounts();
+      // await refreshEmailAccounts();
     } catch (err) {
       console.error('Failed to refresh email accounts:', err);
     } finally {
@@ -125,43 +112,25 @@ export default function Page() {
     }
   };
 
-  // Show loading during hydration
-  if (!isClient) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
-        <div className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-            <Loader2 className="w-8 h-8 text-primary animate-spin" />
-          </div>
-          <h1 className="text-3xl font-bold text-foreground">
-            AI SDR Dashboard
-          </h1>
-          <p className="text-muted-foreground max-w-md">
-            Loading...
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   // Show loading state while fetching email accounts or campaign status
-  if (isLoading || isLoadingCampaign) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
-        <div className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-            <Loader2 className="w-8 h-8 text-primary animate-spin" />
-          </div>
-          <h1 className="text-3xl font-bold text-foreground">
-            AI SDR Dashboard
-          </h1>
-          <p className="text-muted-foreground max-w-md">
-            Loading your email accounts...
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // if (isLoading || isLoadingCampaign) {
+  //   return (
+  //     <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
+  //       <div className="text-center space-y-4">
+  //         <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+  //           <Loader2 className="w-8 h-8 text-primary animate-spin" />
+  //         </div>
+  //         <h1 className="text-3xl font-bold text-foreground">
+  //           AI SDR Dashboard
+  //         </h1>
+  //         <p className="text-muted-foreground max-w-md">
+  //           Loading your email accounts...
+  //         </p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen bg-background">

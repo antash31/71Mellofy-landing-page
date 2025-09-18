@@ -4,84 +4,6 @@ import { supabase } from '@/utils/supabase';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
-// Authentication services
-export const authService = {
-  login: async (credentials) => {
-    try {
-      const response = await api.post('/auth/login', credentials);
-      const { token, user } = response.data;
-      
-      if (token) {
-        setAuthToken(token);
-      }
-      
-      return { token, user };
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  signup: async (userData) => {
-    try {
-      const response = await api.post('/auth/signup', userData);
-      const { token, user } = response.data;
-      
-      if (token) {
-        setAuthToken(token);
-      }
-      
-      return { token, user };
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  logout: async () => {
-    try {
-      await api.post('/auth/logout');
-      removeAuthToken();
-    } catch (error) {
-      // Even if logout fails on server, remove local token
-      removeAuthToken();
-      throw error;
-    }
-  },
-
-  refreshToken: async () => {
-    try {
-      const response = await api.post('/auth/refresh');
-      const { token } = response.data;
-      
-      if (token) {
-        setAuthToken(token);
-      }
-      
-      return token;
-    } catch (error) {
-      removeAuthToken();
-      throw error;
-    }
-  },
-};
-
-// User services
-export const userService = {
-  getProfile: async () => {
-    const response = await api.get('/user/profile');
-    return response.data;
-  },
-
-  updateProfile: async (userData) => {
-    const response = await api.put('/user/profile', userData);
-    return response.data;
-  },
-
-  deleteAccount: async () => {
-    const response = await api.delete('/user/account');
-    return response.data;
-  },
-};
-
 // Email accounts services
 export const emailAccountsService = {
   getAll: async () => {
@@ -90,13 +12,9 @@ export const emailAccountsService = {
   },
 
   listSmartleadAccounts: async () => {
-    // Use the specific Supabase endpoint for listing email accounts from Smartlead
-    const token = (await supabase.auth.getSession()).data.session.access_token;
-    console.log("Token:", token)
     const response = await api.post('https://yofoleesojtwibrcfddx.supabase.co/functions/v1/list-smartlead-email-accounts',{},
       {
         headers: {
-          'Authorization': token ? `Bearer ${token}` : '',
           'Content-Type': 'application/json',
         }
       }
@@ -125,92 +43,6 @@ export const emailAccountsService = {
     // Use the same endpoint as create for verification (since they seem to use the same endpoint)
     // The axios interceptor will automatically add the Authorization header
     const response = await api.post('https://yofoleesojtwibrcfddx.supabase.co/functions/v1/create-email-account', emailAccountData);
-    return response.data;
-  },
-};
-
-// Leads services
-export const leadsService = {
-  getAll: async (params = {}) => {
-    const response = await api.get('/leads', { params });
-    return response.data;
-  },
-
-  getById: async (id) => {
-    const response = await api.get(`/leads/${id}`);
-    return response.data;
-  },
-
-  create: async (leadData) => {
-    const response = await api.post('/leads', leadData);
-    return response.data;
-  },
-
-  update: async (id, leadData) => {
-    const response = await api.put(`/leads/${id}`, leadData);
-    return response.data;
-  },
-
-  delete: async (id) => {
-    const response = await api.delete(`/leads/${id}`);
-    return response.data;
-  },
-
-  bulkImport: async (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    const response = await api.post('/leads/bulk-import', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  },
-};
-
-// Contact/messaging services
-export const contactService = {
-  sendMessage: async (messageData) => {
-    const response = await api.post('/contact', messageData);
-    return response.data;
-  },
-
-  getMessages: async (params = {}) => {
-    const response = await api.get('/messages', { params });
-    return response.data;
-  },
-};
-
-// SDR Agent services
-export const sdrService = {
-  getAll: async () => {
-    const response = await api.get('/sdr-agents');
-    return response.data;
-  },
-
-  create: async (sdrData) => {
-    const response = await api.post('/sdr-agents', sdrData);
-    return response.data;
-  },
-
-  update: async (id, sdrData) => {
-    const response = await api.put(`/sdr-agents/${id}`, sdrData);
-    return response.data;
-  },
-
-  delete: async (id) => {
-    const response = await api.delete(`/sdr-agents/${id}`);
-    return response.data;
-  },
-
-  start: async (id) => {
-    const response = await api.post(`/sdr-agents/${id}/start`);
-    return response.data;
-  },
-
-  stop: async (id) => {
-    const response = await api.post(`/sdr-agents/${id}/stop`);
     return response.data;
   },
 };
@@ -348,72 +180,6 @@ export const campaignService = {
 
   getCampaignMailboxStatistics: async () => {
     const response = await api.get(supabaseUrl + '/functions/v1/Get-Campaign-Mailbox-Statistics');
-    return response.data;
-  },
-};
-
-export const clientService = {
-  createClient: async (clientData) => {
-    const response = await api.post('/clients', clientData);
-    return response.data;
-  },
-
-  updateClientDomain: async (clientId, domain) => {
-    const response = await api.put(`/clients/${clientId}`, { domain });
-    return response.data;
-  },
-
-  getAll: async () => {
-    const response = await api.get('/clients');
-    return response.data;
-  },
-
-  getById: async (id) => {
-    const response = await api.get(`/clients/${id}`);
-    return response.data;
-  },
-
-  delete: async (id) => {
-    const response = await api.delete(`/clients/${id}`);
-    return response.data;
-  }
-};
-
-// Analytics/Dashboard services
-export const analyticsService = {
-  getDashboardData: async () => {
-    const response = await api.get('/analytics/dashboard');
-    return response.data;
-  },
-
-  getEmailMetrics: async (params = {}) => {
-    const response = await api.get('/analytics/email-metrics', { params });
-    return response.data;
-  },
-
-  getLeadMetrics: async (params = {}) => {
-    const response = await api.get('/analytics/lead-metrics', { params });
-    return response.data;
-  },
-};
-
-// File upload service
-export const fileService = {
-  upload: async (file, onUploadProgress) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    const response = await api.post('/files/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      onUploadProgress,
-    });
-    return response.data;
-  },
-
-  delete: async (fileId) => {
-    const response = await api.delete(`/files/${fileId}`);
     return response.data;
   },
 };

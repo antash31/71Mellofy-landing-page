@@ -5,8 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Mail, CheckCircle, AlertCircle, Settings, Loader2, RefreshCw, Send, Eye, MousePointer, Reply, Ban, UserX, BarChart3 } from "lucide-react";
 import AddEmailModal from "@/components/AddEmailModal";
-import { useEmailAccounts } from "@/contexts/EmailAccountsContext";
 import { campaignService } from "@/services/api";
+import { checkEmailAccounts } from '@/store/slices/authSlice';
+import { useEmailAccounts } from '@/hooks/useEmailAccounts';
 
 const EmailAccountsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,8 +15,6 @@ const EmailAccountsPage = () => {
   const [mailboxStats, setMailboxStats] = useState([]);
   const [isLoadingStats, setIsLoadingStats] = useState(false);
   const [statsError, setStatsError] = useState(null);
-  const [isClient, setIsClient] = useState(false);
-  const hasFetchedStatsRef = useRef(false);
   
   const { 
     emailAccounts, 
@@ -25,6 +24,10 @@ const EmailAccountsPage = () => {
     isLoading, 
     error 
   } = useEmailAccounts();
+
+  useEffect(() => {
+    checkEmailAccounts();
+  }, [checkEmailAccounts]);
 
   const handleAddEmail = () => {
     setIsModalOpen(true);
@@ -61,20 +64,12 @@ const EmailAccountsPage = () => {
     }
   };
 
-  // Handle hydration
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
   // Fetch statistics when component mounts and email accounts are loaded
-  useEffect(() => {
-    if (!isClient) return; // Wait for hydration
-    
-    if (!isLoading && emailAccounts.length > 0 && !hasFetchedStatsRef.current) {
-      hasFetchedStatsRef.current = true;
+  useEffect(() => {    
+    if (!isLoading && emailAccounts.length > 0) {
       fetchMailboxStats();
     }
-  }, [isClient, isLoading, emailAccounts.length]);
+  }, [isLoading, emailAccounts.length]);
 
   const handleRefreshAccounts = async () => {
     try {
@@ -96,24 +91,6 @@ const EmailAccountsPage = () => {
     return mailboxStats.find(stat => stat.from_email === accountEmail);
   };
 
-  // Show loading during hydration
-  if (!isClient) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Email Accounts</h1>
-            <p className="text-muted-foreground">
-              Loading...
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center justify-center min-h-[200px]">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
