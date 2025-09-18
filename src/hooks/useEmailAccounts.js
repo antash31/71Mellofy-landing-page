@@ -1,21 +1,13 @@
-"use client";
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { emailAccountsService } from '@/services/api';
+import { emailAccountsService } from "@/services/api";
+import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 
-const EmailAccountsContext = createContext();
 
 export const useEmailAccounts = () => {
-  const context = useContext(EmailAccountsContext);
-  if (!context) {
-    throw new Error('useEmailAccounts must be used within an EmailAccountsProvider');
-  }
-  return context;
-};
-
-export const EmailAccountsProvider = ({ children }) => {
   const [emailAccounts, setEmailAccounts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const dispatch = useDispatch();
 
   // Fetch email accounts from API on component mount
   useEffect(() => {
@@ -24,21 +16,20 @@ export const EmailAccountsProvider = ({ children }) => {
         setIsLoading(true);
         setError(null);
         
+        // dispatch(checkEmailAccounts()); 
         const response = await emailAccountsService.listSmartleadAccounts();
+
+        console.log("response", response);
         
-        // Handle the API response structure: { success: true, data: {...} } or { success: true, data: [...] }
         let accounts = [];
-        if (response.success && response.data) {
-          // Check if data is an array or single object
-          if (Array.isArray(response.data)) {
-            accounts = response.data;
+        if (response.success && response.data.data) {
+          if (Array.isArray(response.data.data)) {
+            accounts = response.data.data;
           } else {
-            // Single email account object
-            accounts = [response.data];
+            accounts = [response.data.data];
           }
         }
         
-        // Transform the API response to match the expected format
         const transformedAccounts = accounts.map(account => ({
           id: account.id,
           email: account.from_email || account.email_address,
@@ -60,9 +51,7 @@ export const EmailAccountsProvider = ({ children }) => {
         
         setEmailAccounts(transformedAccounts);
       } catch (err) {
-        console.error('Error fetching email accounts:', err);
         setError(err.message || 'Failed to fetch email accounts');
-        // Keep existing accounts in case of error, don't clear them
       } finally {
         setIsLoading(false);
       }
@@ -71,7 +60,6 @@ export const EmailAccountsProvider = ({ children }) => {
     fetchEmailAccounts();
   }, []);
 
-  // Helper function to determine email provider
   const determineProvider = (smtpHostOrEmail) => {
     if (!smtpHostOrEmail) return 'Custom';
     
@@ -144,22 +132,26 @@ export const EmailAccountsProvider = ({ children }) => {
     }
   };
 
-  const hasEmailAccounts = emailAccounts.length > 0;
+  // const hasEmailAccounts = emailAccounts.length > 0;
 
   const value = {
+    emailAccounts,
+    // addEmailAccount,
+    // removeEmailAccount,
+    // updateEmailAccount,
+    // refreshEmailAccounts,
+    // hasEmailAccounts,
+    isLoading,
+    error,
+  };
+
+  return {
     emailAccounts,
     addEmailAccount,
     removeEmailAccount,
     updateEmailAccount,
     refreshEmailAccounts,
-    hasEmailAccounts,
     isLoading,
     error,
-  };
-
-  return (
-    <EmailAccountsContext.Provider value={value}>
-      {children}
-    </EmailAccountsContext.Provider>
-  );
-};
+  }
+}

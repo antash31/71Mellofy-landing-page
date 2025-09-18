@@ -4,6 +4,7 @@ import { useState } from "react";
 import { setToken } from "@/store/slices/authSlice";
 import { logIn } from "@/store/slices/authSlice";
 import { useDispatch } from "react-redux";
+import { setCookie } from "@/utils/helper";
 
 export const useAuth = () => {
     const [loading, setLoading] = useState(false)
@@ -27,6 +28,7 @@ export const useAuth = () => {
           if (data.session?.access_token) {
             dispatch(setToken(data.session.access_token));
             dispatch(logIn(data.user));
+            setCookie('access_token', data.session.access_token);
             localStorage.setItem('access_token', data.session.access_token);
           }
     
