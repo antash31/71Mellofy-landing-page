@@ -97,12 +97,12 @@ export const campaignService = {
   createCampaignTemplate: async (campaignData) => {
     try {
       // Step 1: Create the main campaign
-      console.log('Creating campaign with data:', { name: campaignData.campaignName });
+      ('Creating campaign with data:', { name: campaignData.campaignName });
       const campaignResult = await campaignService.createCampaign({ 
         name: campaignData.campaignName 
       });
       
-      console.log('Campaign created successfully:', campaignResult);
+      ('Campaign created successfully:', campaignResult);
 
       // Step 2: Execute all follow-up API calls in parallel
       const parallelCalls = [
@@ -128,16 +128,16 @@ export const campaignService = {
         })
       ];
 
-      console.log('Executing parallel API calls...');
+      ('Executing parallel API calls...');
       const parallelResults = await Promise.allSettled(parallelCalls);
 
       // Log results of parallel calls
       const [scheduleResult, settingsResult, sequenceResult, attachResult] = parallelResults;
       
-      console.log('Campaign schedule update:', scheduleResult);
-      console.log('Campaign settings update:', settingsResult);
-      console.log('Sequence creation:', sequenceResult);
-      console.log('Email account attachment:', attachResult);
+      ('Campaign schedule update:', scheduleResult);
+      ('Campaign settings update:', settingsResult);
+      ('Sequence creation:', sequenceResult);
+      ('Email account attachment:', attachResult);
 
       // Check if any parallel calls failed
       const failedCalls = parallelResults.filter(result => result.status === 'rejected');

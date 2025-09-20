@@ -10,7 +10,7 @@ export const useEmailAccounts = () => {
   const dispatch = useDispatch();
 
   // Fetch email accounts from API on component mount
-  useEffect(() => {
+
     const fetchEmailAccounts = async () => {
       try {
         setIsLoading(true);
@@ -19,14 +19,14 @@ export const useEmailAccounts = () => {
         // dispatch(checkEmailAccounts()); 
         const response = await emailAccountsService.listSmartleadAccounts();
 
-        console.log("response", response);
+        ("response-3", response);
         
         let accounts = [];
-        if (response.success && response.data.data) {
-          if (Array.isArray(response.data.data)) {
-            accounts = response.data.data;
+        if (response.success && response.data) {
+          if (Array.isArray(response.data)) {
+            accounts = response.data;
           } else {
-            accounts = [response.data.data];
+            accounts = [response.data];
           }
         }
         
@@ -57,8 +57,8 @@ export const useEmailAccounts = () => {
       }
     };
 
-    fetchEmailAccounts();
-  }, []);
+
+
 
   const determineProvider = (smtpHostOrEmail) => {
     if (!smtpHostOrEmail) return 'Custom';
@@ -146,6 +146,7 @@ export const useEmailAccounts = () => {
   };
 
   return {
+    fetchEmailAccounts,
     emailAccounts,
     addEmailAccount,
     removeEmailAccount,

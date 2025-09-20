@@ -118,7 +118,7 @@ export function SignupForm({
       }
 
       const result = await response.json()
-      console.log('Registration successful:', result)
+      ('Registration successful:', result)
 
       setSuccess(true)
       setError(null)

@@ -81,9 +81,9 @@ const handleFileUpload = async (file) => {
   try {
     const result = await uploadFile('/upload', file, (progressEvent) => {
       const progress = (progressEvent.loaded / progressEvent.total) * 100;
-      console.log(`Upload progress: ${progress}%`);
+      (`Upload progress: ${progress}%`);
     });
-    console.log('Upload successful:', result.data);
+    ('Upload successful:', result.data);
   } catch (error) {
     console.error('Upload failed:', error);
   }

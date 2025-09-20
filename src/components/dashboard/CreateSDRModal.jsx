@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { useEmailAccounts } from "@/hooks/useEmailAccounts";
 import { locationService, campaignService, clientService } from "@/services/api";
+import { useSelector } from "react-redux";
 
 export default function CreateSDRModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
@@ -26,7 +27,11 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   const [locationOptions, setLocationOptions] = useState([]);
   const [isLoadingLocations, setIsLoadingLocations] = useState(false);
   const [emailAccountOptions, setEmailAccountOptions] = useState([]);
-  const { emailAccounts, isLoading: isLoadingEmailAccounts } = useEmailAccounts();
+  const emailAccounts  = useSelector((state) => state.auth.emailAccounts) || [];
+  const isLoadingEmailAccounts = useSelector((state) => state.auth.isLoadingEmailAccounts);
+  ({isLoadingEmailAccounts,emailAccounts});
+
+  console.log({emailAccounts});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -63,7 +68,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
 
   // Transform email accounts to combobox options
   useEffect(() => {
-    const emailOptions = emailAccounts.map(account => ({
+    const emailOptions = emailAccounts?.map(account => ({
       value: account.id,
       label: `${account.email} (${account.provider})`,
       account: account
@@ -153,7 +158,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
         throw new Error("Selected email account not found");
       }
 
-      console.log("Creating SDR Agent with:", {
+      ("Creating SDR Agent with:", {
         domain: formData.domain,
         emailAccount: selectedEmailAccount.email,
         targetRegions: formData.targetRegions
@@ -169,8 +174,8 @@ export default function CreateSDRModal({ isOpen, onClose }) {
           status: 'active'
         };
         
-        // const clientResult = await clientService.createClient(clientData);
-        console.log("Client created successfully:", clientResult);
+        const clientResult = await clientService.createClient(clientData);
+        ("Client created successfully:", clientResult);
       } catch (clientError) {
         console.warn("Client creation failed, continuing with campaign creation:", clientError);
         // Continue even if client creation fails, as it might already exist
@@ -180,7 +185,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
       const campaignData = campaignService.buildCampaignData(formData, selectedEmailAccount);
       const campaignResult = await campaignService.createCampaignTemplate(campaignData);
       
-      console.log("Campaign template created successfully:", campaignResult);
+      ("Campaign template created successfully:", campaignResult);
       
       // Check for any failed parallel operations and show warnings
       const { parallelResults } = campaignResult;

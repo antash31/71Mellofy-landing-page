@@ -101,18 +101,18 @@ const Leads = () => {
 
   const fetchLeads = async (page = 1) => {
     try {
-      console.log('🔄 Starting fetchLeads...');
+      ('🔄 Starting fetchLeads...');
       setIsLoading(true);
       setError(null);
       
       const offset = (page - 1) * LEADS_PER_PAGE;
-      console.log(`📊 Fetching leads: page ${page}, offset ${offset}, limit ${LEADS_PER_PAGE}`);
+      (`📊 Fetching leads: page ${page}, offset ${offset}, limit ${LEADS_PER_PAGE}`);
             
       const apiPromise = campaignService.getCampaignLeadStatistics(LEADS_PER_PAGE, offset);
       
-      // console.log('⏳ Making API call...');
+      // ('⏳ Making API call...');
       // const response = await Promise.race([apiPromise, timeoutPromise]);
-      console.log('✅ Leads data received:', response);
+      ('✅ Leads data received:', response);
       
       if (!response) {
         throw new Error('No response received from API');
@@ -123,7 +123,7 @@ const Leads = () => {
       setTotalLeads(response.total || response.data?.length || 0);
       setCurrentPage(page);
       
-      console.log(`📈 Set leads: ${response.data?.length || 0} items, hasMore: ${response.hasMore}, total: ${response.total}`);
+      (`📈 Set leads: ${response.data?.length || 0} items, hasMore: ${response.hasMore}, total: ${response.total}`);
     } catch (err) {
       console.error('❌ Error fetching leads:', err);
       console.error('❌ Error details:', {
@@ -134,35 +134,35 @@ const Leads = () => {
       });
       setError(err.message || 'Failed to fetch leads data');
     } finally {
-      console.log('🏁 fetchLeads completed');
+      ('🏁 fetchLeads completed');
       setIsLoading(false);
     }
   };
 
 
   useEffect(() => {   
-    console.log('🚀 Leads useEffect triggered');
-    console.log('🔍 hasFetchedRef.current:', hasFetchedRef.current);
+    ('🚀 Leads useEffect triggered');
+    ('🔍 hasFetchedRef.current:', hasFetchedRef.current);
     
     // Check authentication status
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('access_token');
-      console.log('🔑 Access token exists:', !!token);
-      console.log('🔑 Token preview:', token ? token.substring(0, 20) + '...' : 'null');
+      ('🔑 Access token exists:', !!token);
+      ('🔑 Token preview:', token ? token.substring(0, 20) + '...' : 'null');
     }
     
     // Prevent double API calls in development (React Strict Mode)
     if (hasFetchedRef.current) {
-      console.log('⏭️ Skipping fetch - already fetched');
+      ('⏭️ Skipping fetch - already fetched');
       return;
     }
     
-    console.log('✨ Setting hasFetchedRef to true and calling fetchLeads');
+    ('✨ Setting hasFetchedRef to true and calling fetchLeads');
     hasFetchedRef.current = true;
     
     // Set a fallback timeout to prevent infinite loading
     const fallbackTimeout = setTimeout(() => {
-      console.log('⚠️ Fallback timeout triggered - forcing error state');
+      ('⚠️ Fallback timeout triggered - forcing error state');
       setIsLoading(false);
       setError('Request is taking too long. Please check your connection and try again.');
     }, 15000);
@@ -248,18 +248,18 @@ const Leads = () => {
           </Button>
           <Button 
             onClick={async () => {
-              console.log('🧪 Manual test API call');
+              ('🧪 Manual test API call');
               try {
-                console.log('🔗 Testing direct API call...');
+                ('🔗 Testing direct API call...');
                 const response = await fetch('https://yofoleesojtwibrcfddx.supabase.co/functions/v1/Get-Campaign-Lead-Statistics?limit=10&offset=0', {
                   headers: {
                     'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
                     'Content-Type': 'application/json'
                   }
                 });
-                console.log('📡 Direct API response status:', response.status);
+                ('📡 Direct API response status:', response.status);
                 const data = await response.json();
-                console.log('📊 Direct API response data:', data);
+                ('📊 Direct API response data:', data);
               } catch (err) {
                 console.error('❌ Direct API test failed:', err);
               }

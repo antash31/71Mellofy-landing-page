@@ -40,16 +40,16 @@ export function NavUser() {
 
   const handleLogout = async () => {
     try {
-      console.log('NavUser: handleLogout called');
+      ('NavUser: handleLogout called');
       setIsLoggingOut(true)
-      console.log('NavUser: calling logout function from context...');
+      ('NavUser: calling logout function from context...');
       await logout()
-      console.log('NavUser: logout function completed');
+      ('NavUser: logout function completed');
     } catch (error) {
       console.error('NavUser: Logout failed:', error)
     } finally {
       setIsLoggingOut(false)
-      console.log('NavUser: handleLogout finished');
+      ('NavUser: handleLogout finished');
     }
   }
 

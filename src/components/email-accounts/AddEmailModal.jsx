@@ -109,7 +109,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
 
       // Make API call to create email account using axios
       const result = await emailAccountsService.create(apiPayload);
-      console.log("Email account created successfully:", result);
+      ("Email account created successfully:", result);
       
       // Refresh the email accounts context to get the latest data
       try {
@@ -191,7 +191,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
 
       // Use axios to verify email account
       const result = await emailAccountsService.verify(apiPayload);
-      console.log("Email account verified successfully:", result);
+      ("Email account verified successfully:", result);
       toast.success("Email account verified successfully! Connection is working.");
       
     } catch (error) {

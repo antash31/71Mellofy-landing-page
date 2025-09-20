@@ -11,8 +11,11 @@ const initialState = {
   clientDetails: null,
   hasEmailAccounts: false,
   isLoading: false,
+  isLoadingEmailAccounts: false,
   emailAccountsChecked: false,
   error: null,
+  errorEmailAccounts: null,
+  emailAccounts:[]
 }
 
 export const checkEmailAccounts = createAsyncThunk(
@@ -21,7 +24,13 @@ export const checkEmailAccounts = createAsyncThunk(
     try {
       const baseUrl = supabaseUrl + '/functions/v1/list-smartlead-email-accounts';
       const response = await api.get(baseUrl);
-      return response.data;
+      console.log({response})
+      // Handle both single object and array responses
+      const data = response.data.data;
+      if(response.data.message=="No email found"){
+        return [];
+      }
+      return Array.isArray(data) ? data : [data];
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to check email accounts');
     }
@@ -66,15 +75,22 @@ export const authSlice = createSlice({
     builder
       .addCase(checkEmailAccounts.pending, (state) => {
         state.isLoading = true;
+        state.isLoadingEmailAccounts = true;
+        state.errorEmailAccounts = null;
       })
       .addCase(checkEmailAccounts.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.hasEmailAccounts = true;
+        state.isLoadingEmailAccounts = false;
+        state.hasEmailAccounts = action.payload && action.payload.length > 0;
         state.emailAccountsChecked = true;
+        state.emailAccounts = action.payload || [];
+        state.errorEmailAccounts = null;
       })
       .addCase(checkEmailAccounts.rejected, (state, action) => {
         state.isLoading = false;
+        state.isLoadingEmailAccounts = false;
         state.emailAccountsChecked = true;
+        state.errorEmailAccounts = action.payload || 'Failed to fetch email accounts';
       });
   },
 })

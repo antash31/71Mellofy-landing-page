@@ -1,5 +1,3 @@
-import { store } from "@/store";
-
 export const setCookie = (name, value, days) => {
   const date = new Date();
   date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -26,8 +24,8 @@ export const getCookie = (name) => {
   return null;
 }
 
-export const logOutHelper = () => {
+export const logOutHelper = (dispatch, logOutAction) => {
   localStorage.removeItem('access_token');
   deleteCookie('access_token');
-  store.dispatch(logOut());
+  dispatch(logOutAction());
 }
