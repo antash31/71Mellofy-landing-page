@@ -12,6 +12,7 @@ import {
     Send,
     Settings2,
     SquareTerminal,
+    User,
   } from "lucide-react"
 
  export const ROUTES = {
