@@ -108,7 +108,7 @@ export const campaignService = {
       const parallelCalls = [
         // Update campaign schedule
         campaignService.updateCampaignSchedule({
-          timezone: "America/Los_Angeles",
+          timezone: "Asia/Kolkata",
           days_of_the_week: [1, 2, 3, 4, 5], 
           start_hour: "09:00",
           end_hour: "17:00",
