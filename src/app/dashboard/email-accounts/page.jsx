@@ -10,6 +10,7 @@ import LoadingState from '@/components/email-accounts/LoadingState';
 import ErrorState from '@/components/email-accounts/ErrorState';
 import EmptyState from '@/components/email-accounts/EmptyState';
 import EmailAccountCard from '@/components/email-accounts/EmailAccountCard';
+import { toast } from 'sonner';
 
 const EmailAccountsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,9 +36,10 @@ const EmailAccountsPage = () => {
       setIsLoadingStats(true);
       setStatsError(null);
       const response = await campaignService.getCampaignMailboxStatistics();
-      setMailboxStats(response.data || []);
+      setMailboxStats(response.mailbox_statistics.data || []);
     } catch (err) {
       setStatsError(err.message || 'Failed to fetch mailbox statistics');
+      toast.error(err.message || 'Failed to fetch mailbox statistics');
     } finally {
       setIsLoadingStats(false);
     }
@@ -53,7 +55,7 @@ const EmailAccountsPage = () => {
       await refreshEmailAccounts();
       if (emailAccounts.length > 0) await fetchMailboxStats();
     } catch (err) {
-      console.error('Failed to refresh email accounts:', err);
+      toast.error(err.message || 'Failed to refresh email accounts');
     } finally {
       setIsRefreshing(false);
     }
