@@ -126,7 +126,10 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => router.push('/dashboard/account')}
+              className="cursor-pointer"
+            >
               <BadgeCheck />
               Account
             </DropdownMenuItem>
