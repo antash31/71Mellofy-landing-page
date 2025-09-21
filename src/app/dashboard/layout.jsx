@@ -7,15 +7,16 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { UserProvider } from "@/contexts/UserContext"
 import { useDispatch } from "react-redux";
 import { checkEmailAccounts } from "@/store/slices/authSlice";
+import { getCurrentUser } from "@/store/slices/authSlice";
 import { useEffect } from "react";
 function DashboardContent({ children }) {
   const dispatch = useDispatch();
 
   useEffect(()=>{
     dispatch(checkEmailAccounts());
+    dispatch(getCurrentUser());
   },[])
 
   return (
@@ -40,10 +41,8 @@ function DashboardContent({ children }) {
 
 export default function Layout({ children }) {
   return (
-    <UserProvider>
-      <DashboardContent>
-        {children}
-      </DashboardContent>
-    </UserProvider>
+    <DashboardContent>
+      {children}
+    </DashboardContent>
   );
 }

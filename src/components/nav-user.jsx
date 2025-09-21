@@ -2,11 +2,8 @@
 
 import {
   BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
+  ChevronsUpDown,  
   LogOut,
-  Sparkles,
   Loader2,
 } from "lucide-react"
 
@@ -18,7 +15,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -30,30 +26,52 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useUser } from "@/contexts/UserContext"
 import { useState } from "react"
+import { logOut, logoutUser } from "@/store/slices/authSlice"
+import { useDispatch, useSelector } from "react-redux"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
-  const { user, logout, isLoading } = useUser()
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const dispatch = useDispatch()
+  const router = useRouter()
+  
+  const user = useSelector((state) => state.auth.user)
+  const isLoading = useSelector((state) => state.auth.isLoadingUser)
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
     try {
-      ('NavUser: handleLogout called');
-      setIsLoggingOut(true)
-      ('NavUser: calling logout function from context...');
-      await logout()
-      ('NavUser: logout function completed');
+      setIsLoggingOut(true);
+      dispatch(logOut()); 
+      await dispatch(logoutUser()).unwrap(); 
+      router.push('/auth/login');
+      toast.success("Logout successful")
     } catch (error) {
-      console.error('NavUser: Logout failed:', error)
+      router.push('/auth/login');
+      toast.error("Logout failed")
     } finally {
-      setIsLoggingOut(false)
-      ('NavUser: handleLogout finished');
+      setIsLoggingOut(false);
     }
   }
 
-  // Show loading state if no user data or still loading
+  const getUserInitials = (user) => {
+    if (!user) return 'U';
+    if (user.user_metadata?.full_name) {
+      return user.user_metadata.full_name
+        .split(' ')
+        .map(name => name[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+    }
+    if (user.email) {
+      return user.email.slice(0, 2).toUpperCase();
+    }
+    return 'U';
+  };
+
   if (isLoading || !user) {
     return (
       <SidebarMenu>
@@ -79,11 +97,13 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">{user.initials}</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{getUserInitials(user)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-semibold">
+                  {user?.user_metadata?.full_name || user?.email || 'User'}
+                </span>
+                <span className="truncate text-xs">{user?.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -106,27 +126,10 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
+            <DropdownMenuItem>
+              <BadgeCheck />
+              Account
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem 
               onClick={handleLogout}
