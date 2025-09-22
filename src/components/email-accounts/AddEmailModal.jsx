@@ -20,10 +20,15 @@ import {
 } from "@/components/ui/tooltip";
 import { emailAccountsService } from '@/services/api';
 import { useEmailAccounts } from "@/hooks/useEmailAccounts";
+import { checkEmailAccounts } from "@/store/slices/authSlice";
+import { useDispatch } from "react-redux";
 
 export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
   const { refreshEmailAccounts } = useEmailAccounts();
   const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    designation: "",
     fromName: "",
     fromEmail: "",
     userName: "",
@@ -45,6 +50,8 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
   const [isVerifying, setIsVerifying] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const dispatch = useDispatch();
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -61,6 +68,9 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
   const validateForm = () => {
     const newErrors = {};
     
+    if (!formData.firstName.trim()) newErrors.firstName = "First Name is required";
+    if (!formData.lastName.trim()) newErrors.lastName = "Last Name is required";
+    if (!formData.designation.trim()) newErrors.designation = "Designation is required";
     if (!formData.fromName.trim()) newErrors.fromName = "From Name is required";
     if (!formData.fromEmail.trim()) newErrors.fromEmail = "From Email is required";
     if (!formData.userName.trim()) newErrors.userName = "User Name is required";
@@ -88,6 +98,9 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
       // Prepare the API payload
       const apiPayload = {
         id: null,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        designation: formData.designation,  
         from_name: formData.fromName,
         from_email: formData.fromEmail,
         user_name: formData.userName,
@@ -132,6 +145,9 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
       
       // Reset form and close modal
       setFormData({
+        firstName: "",
+        lastName: "",
+        designation: "",
         fromName: "",
         fromEmail: "",
         userName: "",
@@ -151,6 +167,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
       onClose();
       
       toast.success("Email account added and verified successfully!");
+      dispatch(checkEmailAccounts());
       
     } catch (error) {
       console.error("Error adding email account:", error);
@@ -170,6 +187,9 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
       // Same API call but just for verification
       const apiPayload = {
         id: null,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        designation: formData.designation,
         from_name: formData.fromName,
         from_email: formData.fromEmail,
         user_name: formData.userName,
@@ -220,6 +240,96 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-6 mt-6">
+            {/* Personal Information */}
+            <div>
+              <h3 className="text-lg font-medium text-card-foreground mb-2">
+                Personal Information
+              </h3>
+              <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-lg p-4 mb-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-foreground mb-1">Email Personalization</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      This information will be used to personalize your outbound emails and represent your professional identity to recipients.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* First Name */}
+                <div className="space-y-2">
+                  <Label htmlFor="firstName" className="text-foreground font-medium">
+                    First Name *
+                  </Label>
+                  <Input
+                    id="firstName"
+                    name="firstName"
+                    type="text"
+                    placeholder="e.g. John"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    className={`${errors.firstName ? 'border-destructive' : 'border-input'} focus:border-primary bg-background text-foreground`}
+                    required
+                  />
+                  {errors.firstName && (
+                    <p className="text-destructive text-sm flex items-center gap-1">
+                      <span>!</span> {errors.firstName}
+                    </p>
+                  )}
+                </div>
+
+                {/* Last Name */}
+                <div className="space-y-2">
+                  <Label htmlFor="lastName" className="text-foreground font-medium">
+                    Last Name *
+                  </Label>
+                  <Input
+                    id="lastName"
+                    name="lastName"
+                    type="text"
+                    placeholder="e.g. Doe"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    className={`${errors.lastName ? 'border-destructive' : 'border-input'} focus:border-primary bg-background text-foreground`}
+                    required
+                  />
+                  {errors.lastName && (
+                    <p className="text-destructive text-sm flex items-center gap-1">
+                      <span>!</span> {errors.lastName}
+                    </p>
+                  )}
+                </div>
+
+                {/* Designation */}
+                <div className="space-y-2">
+                  <Label htmlFor="designation" className="text-foreground font-medium">
+                    Designation *
+                  </Label>
+                  <Input
+                    id="designation"
+                    name="designation"
+                    type="text"
+                    placeholder="e.g. Sales Manager"
+                    value={formData.designation}
+                    onChange={handleInputChange}
+                    className={`${errors.designation ? 'border-destructive' : 'border-input'} focus:border-primary bg-background text-foreground`}
+                    required
+                  />
+                  {errors.designation && (
+                    <p className="text-destructive text-sm flex items-center gap-1">
+                      <span>!</span> {errors.designation}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
             {/* SMTP Settings */}
             <div>
               <h3 className="text-lg font-medium text-card-foreground mb-4">
