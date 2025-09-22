@@ -22,12 +22,7 @@ axiosInstance.interceptors.request.use(
 
     // Log request in development
     if (process.env.NODE_ENV === 'development') {
-      ('🚀 Request:', {
-        method: config.method?.toUpperCase(),
-        url: config.url,
-        hasAuth: !!config.headers.Authorization,
-        data: config.data,
-      });
+
     }
 
     return config;
@@ -43,7 +38,7 @@ axiosInstance.interceptors.response.use(
   (response) => {
     // Log response in development
     if (process.env.NODE_ENV === 'development') {
-      ('✅ Response:', {
+      console.log('✅ Response:', {
         status: response.status,
         url: response.config.url,
         data: response.data,

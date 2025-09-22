@@ -1,7 +1,9 @@
-
 "use client";
 import React, { useState } from "react"
-import { useRouter } from "next/navigation"
+import { supabase } from '@/utils/supabase'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import { registrationService } from '@/services/api'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -93,32 +95,19 @@ export function SignupForm({
     }
 
     try {
-      // Call the PostRegistrations API
-      const response = await fetch('https://yofoleesojtwibrcfddx.supabase.co/functions/v1/PostRegistrations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvZm9sZWVzb2p0d2licmNmZGR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NzUwMTYsImV4cCI6MjA2ODI1MTAxNn0.XMKrB0qx0oGzijMeJUegdmYcAB336rkrAiO2mR0cFrA'
-        },
-        body: JSON.stringify({
-          first_name: formData.first_name,
-          last_name: formData.last_name,
-          email: formData.email,
-          password: formData.password,
-          phone_number: formData.phone_no,
-          company_name: formData.company_name,
-          referral_source: formData.referral_source,
-          role: formData.role
-        })
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.message || `Registration failed with status: ${response.status}`)
-      }
-
-      const result = await response.json()
-      ('Registration successful:', result)
+      // Use the registration service with axios
+      const result = await registrationService.register({
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email,
+        password: formData.password,
+        phone_number: formData.phone_no,
+        company_name: formData.company_name,
+        referral_source: formData.referral_source,
+        role: formData.role
+      });
+      
+      console.log('Registration successful:', result)
 
       setSuccess(true)
       setError(null)
@@ -138,7 +127,7 @@ export function SignupForm({
       // Redirect to success page after a short delay
       setTimeout(() => {
         router.push('/auth/signup/success')
-      }, 1000)
+      }, 500)
       
     } catch (error) {
       console.error('Registration error:', error)
