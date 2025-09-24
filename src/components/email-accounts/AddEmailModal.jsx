@@ -95,7 +95,8 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
     setIsLoading(true);
 
     try {
-        const apiPayload = {
+      // Prepare the API payload
+      const apiPayload = {
         id: null,
         first_name: formData.firstName,
         last_name: formData.lastName,
@@ -119,14 +120,18 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
         client_id: null
       };
 
+      // Make API call to create email account using axios
       const result = await emailAccountsService.create(apiPayload);
+      ("Email account created successfully:", result);
       
+      // Refresh the email accounts context to get the latest data
       try {
         await refreshEmailAccounts();
       } catch (refreshError) {
         console.warn("Failed to refresh email accounts:", refreshError);
       }
       
+      // Call the callback to update parent component
       if (onEmailAdded) {
         onEmailAdded({
           id: result.id || Date.now().toString(),
@@ -138,6 +143,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
         });
       }
       
+      // Reset form and close modal
       setFormData({
         firstName: "",
         lastName: "",
@@ -164,6 +170,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
       dispatch(checkEmailAccounts());
       
     } catch (error) {
+      console.error("Error adding email account:", error);
       const errorMessage = error.response?.data?.message || error.message || 'Unknown error occurred';
       toast.error(`Error adding email account: ${errorMessage}`);
     } finally {
@@ -177,6 +184,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
     setIsVerifying(true);
 
     try {
+      // Same API call but just for verification
       const apiPayload = {
         id: null,
         first_name: formData.firstName,
@@ -201,13 +209,14 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
         client_id: null
       };
 
+      // Use axios to verify email account
       const result = await emailAccountsService.verify(apiPayload);
       ("Email account verified successfully:", result);
       toast.success("Email account verified successfully! Connection is working.");
       
     } catch (error) {
       console.error("Error verifying email account:", error);
-      const errorMessage = error.response?.data?.details?.message || error.message || 'Verification failed';
+      const errorMessage = error.response?.data?.message || error.message || 'Verification failed';
       toast.error(`Verification failed: ${errorMessage}`);
     } finally {
       setIsVerifying(false);
@@ -618,7 +627,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
               >
                 Cancel
               </Button>
-              {/* <Button
+              <Button
                 type="button"
                 className="bg-secondary hover:bg-secondary/90 text-secondary-foreground"
                 disabled={isLoading || isVerifying}
@@ -632,7 +641,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
                 ) : (
                   "Verify Email Account"
                 )}
-              </Button> */}
+              </Button>
               <Button
                 type="submit"
                 className="bg-primary hover:bg-primary/90 text-primary-foreground px-8"

@@ -47,6 +47,19 @@ export const emailAccountsService = {
   },
 };
 
+// Registration service
+export const registrationService = {
+  register: async (userData) => {
+    const response = await api.post('https://yofoleesojtwibrcfddx.supabase.co/functions/v1/PostRegistrations', userData, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlvZm9sZWVzb2p0d2licmNmZGR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NzUwMTYsImV4cCI6MjA2ODI1MTAxNn0.XMKrB0qx0oGzijMeJUegdmYcAB336rkrAiO2mR0cFrA'
+      }
+    });
+    return response.data;
+  },
+};
+
 export const campaignService = {
 
   // Create a campaign functions (Only for create campaign)

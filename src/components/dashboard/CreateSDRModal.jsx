@@ -31,6 +31,8 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   const isLoadingEmailAccounts = useSelector((state) => state.auth.isLoadingEmailAccounts);
   ({isLoadingEmailAccounts,emailAccounts});
 
+  console.log({emailAccounts});
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -67,7 +69,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   // Transform email accounts to combobox options
   useEffect(() => {
     const emailOptions = emailAccounts?.map(account => ({
-      value: account.email, // Use email as value instead of ID
+      value: account.id,
       label: `${account.email} (${account.provider})`,
       account: account
     }));
