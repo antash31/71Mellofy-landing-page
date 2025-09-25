@@ -8,7 +8,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { useDispatch } from "react-redux";
-import { checkEmailAccounts } from "@/store/slices/authSlice";
+import { checkCampaign, checkEmailAccounts } from "@/store/slices/authSlice";
 import { getCurrentUser } from "@/store/slices/authSlice";
 import { useEffect } from "react";
 function DashboardContent({ children }) {
@@ -17,6 +17,7 @@ function DashboardContent({ children }) {
   useEffect(()=>{
     dispatch(checkEmailAccounts());
     dispatch(getCurrentUser());
+    dispatch(checkCampaign());
   },[])
 
   return (

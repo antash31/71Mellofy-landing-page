@@ -40,7 +40,6 @@ export function SignupForm({
     first_name: "",
     last_name: "",
     email: "",
-    password: "",
     phone_no: "",
     company_name: "",
     referral_source: "",
@@ -100,7 +99,6 @@ export function SignupForm({
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email,
-        password: formData.password,
         phone_number: formData.phone_no,
         company_name: formData.company_name,
         referral_source: formData.referral_source,
@@ -209,7 +207,7 @@ export function SignupForm({
             We require a company email address for verification purposes.
           </p>
         </div>
-        <div className="grid gap-2">
+        {/* <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
           <Input 
             id="password" 
@@ -221,7 +219,7 @@ export function SignupForm({
             required 
             className="bg-accent"
           />
-        </div>
+        </div> */}
         <div className="grid gap-2">
           <Label htmlFor="phone_no">Phone Number</Label>
           <Input 

@@ -23,6 +23,7 @@ const EmailAccountsPage = () => {
   const emailAccounts = useSelector((state) => state.auth.emailAccounts);
   const isLoading = useSelector((state) => state.auth.isLoadingEmailAccounts);
   const error = useSelector((state) => state.auth.errorEmailAccounts);
+  const isCampaignPresent = useSelector((state) => state.auth.doesCampaignExist);
 
   const handleAddEmail = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
@@ -46,7 +47,7 @@ const EmailAccountsPage = () => {
   };
 
   useEffect(() => {
-    if (!isLoading && emailAccounts.length > 0) fetchMailboxStats();
+    if (!isLoading && emailAccounts.length > 0 && isCampaignPresent) fetchMailboxStats();
   }, [isLoading, emailAccounts.length]);
 
   const handleRefreshAccounts = async () => {

@@ -29,10 +29,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   const [emailAccountOptions, setEmailAccountOptions] = useState([]);
   const emailAccounts  = useSelector((state) => state.auth.emailAccounts) || [];
   const isLoadingEmailAccounts = useSelector((state) => state.auth.isLoadingEmailAccounts);
-  ({isLoadingEmailAccounts,emailAccounts});
-
-  console.log({emailAccounts});
-
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -184,9 +181,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
       // Step 2: Create campaign template with orchestrated API calls
       const campaignData = campaignService.buildCampaignData(formData, selectedEmailAccount);
       const campaignResult = await campaignService.createCampaignTemplate(campaignData);
-      
-      ("Campaign template created successfully:", campaignResult);
-      
+            
       // Check for any failed parallel operations and show warnings
       const { parallelResults } = campaignResult;
       const failedOperations = [];

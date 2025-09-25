@@ -9,17 +9,24 @@ import LeadsTable from '@/components/leads/LeadsTable';
 import Pagination from '@/components/Pagination';
 import LoadingState from '@/components/leads/LoadingState';
 import ErrorState from '@/components/leads/ErrorState';
-
+import { useSelector } from 'react-redux';
+import OnboardingCard from '@/components/dashboard/OnboardingCard';
+import ReadyCard from '@/components/dashboard/ReadyCard';
+import { useRouter } from 'next/navigation';
 const LEADS_PER_PAGE = 10;
-
+const INTIAL_PAGE = 1;
 const LeadsPage = () => {
   const [leads, setLeads] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [totalLeads, setTotalLeads] = useState(0);
   const hasFetchedRef = useRef(false);
+  const isCampaignPresent = useSelector((state) => state.auth.doesCampaignExist);
+  const hasEmailAccounts = useSelector((state) => state.auth.hasEmailAccounts);
+  const router = useRouter();
+  
 
   const fetchLeads = async (page = 1) => {
     try {
@@ -27,13 +34,11 @@ const LeadsPage = () => {
       setError(null);
       const offset = (page - 1) * LEADS_PER_PAGE;
       const response = await campaignService.getCampaignLeadStatistics(LEADS_PER_PAGE, offset);
-      console.log({key:response.lead_statistics});
       setLeads(response.lead_statistics.data || []);
       setHasMore(response.hasMore || false);
       setTotalLeads(response.total || response.lead_statistics?.data?.length || 0);
       setCurrentPage(page);
     } catch (err) {
-      console.error('Error fetching leads:', err);
       setError(err.message || 'Failed to fetch leads data');
     } finally {
       setIsLoading(false);
@@ -41,9 +46,11 @@ const LeadsPage = () => {
   };
 
   useEffect(() => {
+    if(isCampaignPresent){
     if (hasFetchedRef.current) return;
     hasFetchedRef.current = true;
-    fetchLeads(1);
+    fetchLeads(INTIAL_PAGE);
+  }
   }, []);
 
   const handlePageChange = (newPage) => {
@@ -55,6 +62,14 @@ const LeadsPage = () => {
   const handleRefresh = () => {
     fetchLeads(currentPage);
   };
+
+  if(!isCampaignPresent && !hasEmailAccounts){
+    return <OnboardingCard/>
+  }
+
+  if(hasEmailAccounts && !isCampaignPresent){
+     return <ReadyCard onCreateSDR={()=>router.push('/dashboard')}/>
+  }
 
   if (isLoading && leads.length === 0) {
     return <LoadingState />;

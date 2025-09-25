@@ -18,7 +18,9 @@ const initialState = {
   error: null,
   errorEmailAccounts: null,
   emailAccounts:[],
-  // User authentication state
+  doesCampaignExist: false,
+  isLoadingCampaign: false,
+  campaignError: null,
   user: null,
   isAuthenticated: false,
   isLoadingUser: true,
@@ -31,8 +33,7 @@ export const checkEmailAccounts = createAsyncThunk(
     try {
       const baseUrl = supabaseUrl + '/functions/v1/list-smartlead-email-accounts';
       const response = await api.get(baseUrl);
-      console.log({response})
-      // Handle both single object and array responses
+
       const data = response.data.data;
       if(response.data.message=="No email found"){
         return [];
@@ -40,6 +41,18 @@ export const checkEmailAccounts = createAsyncThunk(
       return Array.isArray(data) ? data : [data];
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to check email accounts');
+    }
+  }
+);
+
+export const checkCampaign = createAsyncThunk(
+  'auth/checkCampaign',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get(supabaseUrl + '/functions/v1/GET-Campaign-Check');
+      return response.data.exists;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to check campaign');
     }
   }
 );
@@ -155,6 +168,20 @@ export const authSlice = createSlice({
         state.isLoadingEmailAccounts = false;
         state.emailAccountsChecked = true;
         state.errorEmailAccounts = action.payload || 'Failed to fetch email accounts';
+      })
+      // checkCampaign
+      .addCase(checkCampaign.pending, (state) => {
+        state.isLoadingCampaign = true;
+        state.campaignError = null;
+      })
+      .addCase(checkCampaign.fulfilled, (state, action) => {
+        state.isLoadingCampaign = false;
+        state.campaignData = action.payload;
+        state.campaignError = null;
+      })
+      .addCase(checkCampaign.rejected, (state, action) => {
+        state.isLoadingCampaign = false;
+        state.campaignError = action.payload || 'Failed to check campaign';
       })
       // getCurrentUser
       .addCase(getCurrentUser.pending, (state) => {

@@ -11,12 +11,14 @@ import ErrorState from "@/components/dashboard/ErrorState";
 import CampaignError from "@/components/dashboard/CampaignError";
 import OnboardingSection from "@/components/dashboard/OnboardingSelection";
 import AnalyticsSection from "@/components/dashboard/AnalyticsSection";
+import { toast } from "sonner";
+import OnboardingCard from "@/components/dashboard/OnboardingCard";
 
 export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [campaignStatus, setCampaignStatus] = useState(null);
-  const [isLoadingCampaign, setIsLoadingCampaign] = useState(true);
+  const [isLoadingCampaign, setIsLoadingCampaign] = useState(false);
   const [campaignError, setCampaignError] = useState(null);
   const [analyticsData, setAnalyticsData] = useState(null);
   const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
@@ -25,23 +27,28 @@ export default function DashboardPage() {
   const isLoading = useSelector((state) => state.auth.isLoading);
   const error = useSelector((state) => state.auth.error);
   const hasEmailAccounts = useSelector((state) => state.auth.hasEmailAccounts);
+  const isCampaignPresent = useSelector((state) => state.auth.doesCampaignExist);
 
-  const fetchCampaignStatus = async () => {
-    try {
-      setIsLoadingCampaign(true);
-      setCampaignError(null);
-      const response = await campaignService.getCampaignStatus();
-      setCampaignStatus(response);
-      if (response?.exists) {
-        fetchAnalytics();
-      }
-    } catch (err) {
-      console.error('Error fetching campaign status:', err);
-      setCampaignError(err.message || 'Failed to check campaign status');
-    } finally {
-      setIsLoadingCampaign(false);
-    }
-  };
+  // const fetchCampaignStatus = async () => {
+  //   try {
+  //     setIsLoadingCampaign(true);
+  //     setCampaignError(null);
+  //     const response = await campaignService.getCampaignStatus();
+  //     setCampaignStatus(response);
+  //     if (response?.exists) {
+  //       fetchAnalytics();
+  //     }
+  //   } catch (err) {
+  //     console.error('Error fetching campaign status:', err);
+  //     if(err.response.data.message=="No active campaign found for this client" && err.status==404){
+  //       setIsCampaignPresent(false);
+  //     }
+  //     toast.error(err.response.data.message);
+  //     setCampaignError(err.message || 'Failed to check campaign status');
+  //   } finally {
+  //     setIsLoadingCampaign(false);
+  //   }
+  // };
 
   const fetchAnalytics = async () => {
     try {
@@ -58,7 +65,9 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    fetchCampaignStatus();
+    if(isCampaignPresent){
+    fetchAnalytics();
+    }
   }, []);
 
   const handleCreateSDR = () => {
@@ -68,7 +77,7 @@ export default function DashboardPage() {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    fetchCampaignStatus();
+    fetchAnalytics();
   };
 
   const handleRefreshAccounts = async () => {
@@ -88,6 +97,10 @@ export default function DashboardPage() {
 
   if (isLoading || isLoadingCampaign) {
     return <LoadingState />;
+  }
+
+  if(isCampaignPresent){
+    return <OnboardingCard/>
   }
 
   if (error) {
