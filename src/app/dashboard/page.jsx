@@ -65,13 +65,14 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
+    console.log({isCampaignPresent})
     if(isCampaignPresent){
     fetchAnalytics();
     }
-  }, []);
+  }, [isCampaignPresent]);
 
   const handleCreateSDR = () => {
-    if (!hasEmailAccounts || (campaignStatus?.exists)) return;
+    if (!hasEmailAccounts || (isCampaignPresent)) return;
     setIsModalOpen(true);
   };
 
@@ -99,9 +100,9 @@ export default function DashboardPage() {
     return <LoadingState />;
   }
 
-  if(isCampaignPresent){
-    return <OnboardingCard/>
-  }
+  // if(!isCampaignPresent){
+  //   return <OnboardingCard/>
+  // }
 
   if (error) {
     return (
@@ -118,7 +119,7 @@ export default function DashboardPage() {
   let mainContent;
   if (!hasEmailAccounts) {
     mainContent = <OnboardingSection />;
-  } else if (!campaignStatus?.exists) {
+  } else if (!isCampaignPresent) {
     mainContent = (
       <div className="text-center space-y-8">
         <ReadyCard onCreateSDR={handleCreateSDR} />
@@ -136,7 +137,7 @@ export default function DashboardPage() {
       </div>
     );
   }
-
+console.log({mainContent});
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">

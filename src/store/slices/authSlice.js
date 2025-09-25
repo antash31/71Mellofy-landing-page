@@ -176,7 +176,7 @@ export const authSlice = createSlice({
       })
       .addCase(checkCampaign.fulfilled, (state, action) => {
         state.isLoadingCampaign = false;
-        state.campaignData = action.payload;
+        state.doesCampaignExist = action.payload;
         state.campaignError = null;
       })
       .addCase(checkCampaign.rejected, (state, action) => {

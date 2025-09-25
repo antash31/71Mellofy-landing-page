@@ -22,6 +22,8 @@ export function AppSidebar({
   const hasEmailAccounts = useSelector((state) => state.auth.hasEmailAccounts);
   const doesCampaignExist = useSelector((state) => state.auth.doesCampaignExist);
 
+  console.log({doesCampaignExist});
+
   // Filter projects based on conditions
   const filteredProjects = data.projects.filter((project) => {
     // Always show Dashboard
