@@ -22,7 +22,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
     domain: "",
     emailAccount: "",
     targetRegions: [],
-    calendlyLink: "",
+    meetingLink: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [locationOptions, setLocationOptions] = useState([]);
@@ -138,6 +138,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
 
   // Handle email account selection
   const handleEmailAccountChange = (selectedAccount) => {
+    console.log({selectedAccount})
     setFormData(prev => ({
       ...prev,
       emailAccount: selectedAccount
@@ -166,16 +167,14 @@ export default function CreateSDRModal({ isOpen, onClose }) {
         };
         
         const clientResult = await clientService.createClient(clientData);
-        ("Client created successfully:", clientResult);
+
       } catch (clientError) {
         console.warn("Client creation failed, continuing with campaign creation:", clientError);
       }
 
-      // Step 2: Create campaign template with orchestrated API calls
       const campaignData = campaignService.buildCampaignData(formData, selectedEmailAccount);
       const campaignResult = await campaignService.createCampaignTemplate(campaignData);
             
-      // Check for any failed parallel operations and show warnings
       const { parallelResults } = campaignResult;
       const failedOperations = [];
       
@@ -192,11 +191,9 @@ export default function CreateSDRModal({ isOpen, onClose }) {
         failedOperations.push('Email attachment');
       }
       
-      // Reset form and close modal
       setFormData({ domain: "", emailAccount: "" });
       onClose();
       
-      // Success message with warnings if any operations failed
       if (failedOperations.length > 0) {
         toast.success(`SDR Agent created for ${formData.domain}`, {
           description: `Campaign created successfully. Warning: ${failedOperations.join(', ')} failed but can be configured later.`
@@ -304,22 +301,22 @@ export default function CreateSDRModal({ isOpen, onClose }) {
             </p>
           </div>
 
-          {/* Calendly Link Field */}
+          {/* Meeting Link Field */}
           <div className="space-y-2">
-            <Label htmlFor="calendlyLink" className="text-white font-medium">
-              Calendly Link (Optional)
+            <Label htmlFor="meetingLink" className="text-white font-medium">
+              Meeting Link (Optional)
             </Label>
             <Input
-              id="calendlyLink"
-              name="calendlyLink"
+              id="meetingLink"
+              name="meetingLink"
               type="url"
               placeholder="e.g., https://calendly.com/yourname/meeting"
-              value={formData.calendlyLink}
+              value={formData.meetingLink}
               onChange={handleInputChange}
               className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-white/50"
             />
             <p className="text-xs text-white/60">
-              Add your Calendly link to include meeting scheduling in outreach emails
+              Add your meeting scheduling link to include in outreach emails
             </p>
           </div>
 

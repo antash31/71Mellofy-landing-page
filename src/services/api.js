@@ -102,24 +102,18 @@ export const campaignService = {
       domain: formData.domain,
       emailAccount: selectedEmailAccount,
       targetRegions: formData.targetRegions,
+      meetingLink: formData.meetingLink || "",
       createdAt: new Date().toISOString()
     };
   },
 
-  // Main orchestration function for creating complete campaign template
   createCampaignTemplate: async (campaignData) => {
     try {
-      // Step 1: Create the main campaign
-      ('Creating campaign with data:', { name: campaignData.campaignName });
       const campaignResult = await campaignService.createCampaign({ 
         name: campaignData.campaignName 
       });
       
-      ('Campaign created successfully:', campaignResult);
-
-      // Step 2: Execute all follow-up API calls in parallel
       const parallelCalls = [
-        // Update campaign schedule
         campaignService.updateCampaignSchedule({
           timezone: "Asia/Kolkata",
           days_of_the_week: [1, 2, 3, 4, 5], 
@@ -129,34 +123,22 @@ export const campaignService = {
           max_new_leads_per_day: 25
         }),
 
-        // Update campaign settings (empty body as requested)
         campaignService.updateCampaignSettings({}),
 
-        // Create sequence (no body needed)
         campaignService.createSequence(),
 
-        // Attach email account to campaign
         campaignService.attachEmailAccountToCampaign({
-          domain: campaignData.domain
+          domain: campaignData.domain,
+          meetingLink: campaignData.meetingLink
         })
       ];
-
-      ('Executing parallel API calls...');
       const parallelResults = await Promise.allSettled(parallelCalls);
 
-      // Log results of parallel calls
       const [scheduleResult, settingsResult, sequenceResult, attachResult] = parallelResults;
       
-      ('Campaign schedule update:', scheduleResult);
-      ('Campaign settings update:', settingsResult);
-      ('Sequence creation:', sequenceResult);
-      ('Email account attachment:', attachResult);
-
-      // Check if any parallel calls failed
       const failedCalls = parallelResults.filter(result => result.status === 'rejected');
       if (failedCalls.length > 0) {
         console.warn(`${failedCalls.length} parallel API calls failed:`, failedCalls);
-        // Continue execution but log warnings
       }
 
       return {
