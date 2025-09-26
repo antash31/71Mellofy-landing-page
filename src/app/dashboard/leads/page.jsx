@@ -24,7 +24,10 @@ const LeadsPage = () => {
   const [totalLeads, setTotalLeads] = useState(0);
   const hasFetchedRef = useRef(false);
   const isCampaignPresent = useSelector((state) => state.auth.doesCampaignExist);
+  const isLoadingEmailAccounts = useSelector((state) => state.auth.isLoadingEmailAccounts);
+  const errorEmailAccounts = useSelector((state) => state.auth.errorEmailAccounts);
   const hasEmailAccounts = useSelector((state) => state.auth.hasEmailAccounts);
+  const isLoadingCampaign = useSelector((state) => state.auth.isLoadingCampaign);
   const router = useRouter();
   
 
@@ -63,17 +66,19 @@ const LeadsPage = () => {
     fetchLeads(currentPage);
   };
 
-  if(!isCampaignPresent && !hasEmailAccounts){
+  if (isLoading || isLoadingEmailAccounts || isLoadingCampaign) {
+    return <LoadingState />;
+  }
+
+  if(!isCampaignPresent && !hasEmailAccounts && !isLoading){
     return <OnboardingCard/>
   }
 
-  if(hasEmailAccounts && !isCampaignPresent){
+  if(hasEmailAccounts && !isCampaignPresent && !isLoading){
      return <ReadyCard onCreateSDR={()=>router.push('/dashboard')}/>
   }
 
-  if (isLoading && leads.length === 0) {
-    return <LoadingState />;
-  }
+
 
   if (error) {
     return <ErrorState error={error} onRefresh={handleRefresh} />;
