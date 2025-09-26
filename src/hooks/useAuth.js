@@ -1,7 +1,7 @@
 import { supabase } from "@/utils/supabase"
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { setToken } from "@/store/slices/authSlice";
+import { getUserProfile, setToken } from "@/store/slices/authSlice";
 import { logIn } from "@/store/slices/authSlice";
 import { useDispatch } from "react-redux";
 import { setCookie } from "@/utils/helper";

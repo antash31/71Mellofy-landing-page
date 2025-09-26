@@ -25,6 +25,8 @@ const EmailAccountsPage = () => {
   const error = useSelector((state) => state.auth.errorEmailAccounts);
   const isCampaignPresent = useSelector((state) => state.auth.doesCampaignExist);
 
+  
+
   const handleAddEmail = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
   const handleEmailAdded = (newEmail) => addEmailAccount(newEmail);

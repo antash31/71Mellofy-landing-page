@@ -25,6 +25,7 @@ export default function DashboardPage() {
   const error = useSelector((state) => state.auth.error);
   const hasEmailAccounts = useSelector((state) => state.auth.hasEmailAccounts);
   const isCampaignPresent = useSelector((state) => state.auth.doesCampaignExist);
+  const state = useSelector((state) => state.auth)
 
   // const fetchCampaignStatus = async () => {
   //   try {
@@ -62,7 +63,6 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    console.log({isCampaignPresent})
     if(isCampaignPresent){
     fetchAnalytics();
     }

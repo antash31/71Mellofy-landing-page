@@ -21,7 +21,6 @@ const initialState = {
   doesCampaignExist: false,
   isLoadingCampaign: false,
   campaignError: null,
-  user: null,
   isAuthenticated: false,
   isLoadingUser: true,
   userError: null,
@@ -53,6 +52,20 @@ export const checkCampaign = createAsyncThunk(
       return response.data.exists;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to check campaign');
+    }
+  }
+);
+
+export const getUserProfile = createAsyncThunk(
+  'auth/getUserProfile',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.post(supabaseUrl + '/functions/v1/Me',{});
+      
+      return response.data.profile;
+      
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to get user profile');
     }
   }
 );
@@ -182,6 +195,20 @@ export const authSlice = createSlice({
       .addCase(checkCampaign.rejected, (state, action) => {
         state.isLoadingCampaign = false;
         state.campaignError = action.payload || 'Failed to check campaign';
+      })
+      // getUserProfile
+      .addCase(getUserProfile.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getUserProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.userDetails = action.payload;
+        state.error = null;
+      })
+      .addCase(getUserProfile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || 'Failed to get user profile';
       })
       // getCurrentUser
       .addCase(getCurrentUser.pending, (state) => {

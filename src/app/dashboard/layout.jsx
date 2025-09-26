@@ -8,17 +8,23 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { useDispatch } from "react-redux";
-import { checkCampaign, checkEmailAccounts } from "@/store/slices/authSlice";
+import { checkCampaign, checkEmailAccounts, getUserProfile } from "@/store/slices/authSlice";
 import { getCurrentUser } from "@/store/slices/authSlice";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 function DashboardContent({ children }) {
   const dispatch = useDispatch();
+  const userDetails = useSelector((state) => state.auth.userDetails);
 
+console.log({key:userDetails})
   useEffect(()=>{
     dispatch(checkEmailAccounts());
     dispatch(getCurrentUser());
     dispatch(checkCampaign());
-  },[])
+    if(!userDetails){
+      dispatch(getUserProfile());
+    }
+  },[userDetails]);
 
   return (
       <SidebarProvider>

@@ -32,7 +32,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
-export function NavUser() {
+export function NavUser({userDetails}) {
   const { isMobile } = useSidebar()
   const dispatch = useDispatch()
   const router = useRouter()
@@ -101,9 +101,9 @@ export function NavUser() {
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {user?.user_metadata?.full_name || user?.email || 'User'}
+                  {userDetails?.first_name? userDetails?.first_name: "User" + ' ' + userDetails?.last_name?userDetails?.last_name: ""}
                 </span>
-                <span className="truncate text-xs">{user?.email}</span>
+                <span className="truncate text-xs">{userDetails?.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
