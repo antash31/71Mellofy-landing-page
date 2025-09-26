@@ -21,7 +21,8 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
     domain: "",
     emailAccount: "",
-    targetRegions: [], 
+    targetRegions: [],
+    calendlyLink: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [locationOptions, setLocationOptions] = useState([]);
@@ -39,34 +40,34 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   };
 
   // Load initial location data and email accounts
-  useEffect(() => {
-    const loadInitialLocations = async () => {
-      try {
-        setIsLoadingLocations(true);
-        const countries = await locationService.getAllCountries();
-        const formattedOptions = countries.map(country => ({
-          value: `country:${country.code}`,
-          label: `${country.flag} ${country.name}`,
-          type: 'country',
-          country: country
-        }));
-        setLocationOptions(formattedOptions);
-      } catch (error) {
-        console.error('Error loading countries:', error);
-      } finally {
-        setIsLoadingLocations(false);
-      }
-    };
+  // useEffect(() => {
+  //   const loadInitialLocations = async () => {
+  //     try {
+  //       setIsLoadingLocations(true);
+  //       const countries = await locationService.getAllCountries();
+  //       const formattedOptions = countries.map(country => ({
+  //         value: `country:${country.code}`,
+  //         label: `${country.flag} ${country.name}`,
+  //         type: 'country',
+  //         country: country
+  //       }));
+  //       setLocationOptions(formattedOptions);
+  //     } catch (error) {
+  //       console.error('Error loading countries:', error);
+  //     } finally {
+  //       setIsLoadingLocations(false);
+  //     }
+  //   };
 
-    if (isOpen) {
-      loadInitialLocations();
-    }
-  }, [isOpen]);
+  //   if (isOpen) {
+  //     loadInitialLocations();
+  //   }
+  // }, [isOpen]);
 
   // Transform email accounts to combobox options
   useEffect(() => {
     const emailOptions = emailAccounts?.map(account => ({
-      value: account.email_address,
+      value: account.id,
       label: `${account.email_address}`,
       account: account
     }));
@@ -74,66 +75,66 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   }, [emailAccounts]);
 
   // Handle location search
-  const handleLocationSearch = useCallback(async (query) => {
-    if (!query || query.length < 2) {
-      // Reset to countries only
-      try {
-        const countries = await locationService.getAllCountries();
-        const formattedOptions = countries.map(country => ({
-          value: `country:${country.code}`,
-          label: `${country.flag} ${country.name}`,
-          type: 'country',
-          country: country
-        }));
-        setLocationOptions(formattedOptions);
-      } catch (error) {
-        console.error('Error loading countries:', error);
-      }
-      return;
-    }
+  // const handleLocationSearch = useCallback(async (query) => {
+  //   if (!query || query.length < 2) {
+  //     // Reset to countries only
+  //     try {
+  //       const countries = await locationService.getAllCountries();
+  //       const formattedOptions = countries.map(country => ({
+  //         value: `country:${country.code}`,
+  //         label: `${country.flag} ${country.name}`,
+  //         type: 'country',
+  //         country: country
+  //       }));
+  //       setLocationOptions(formattedOptions);
+  //     } catch (error) {
+  //       console.error('Error loading countries:', error);
+  //     }
+  //     return;
+  //   }
 
-    try {
-      setIsLoadingLocations(true);
-      const results = await locationService.searchLocations(query);
+  //   try {
+  //     setIsLoadingLocations(true);
+  //     const results = await locationService.searchLocations(query);
       
-      const formattedOptions = results.map(location => {
-        if (location.type === 'country') {
-          return {
-            value: `country:${location.code}`,
-            label: `${location.flag} ${location.name}`,
-            type: 'country',
-            country: location
-          };
-        } else {
-          // State/province
-          const countryFlag = location.countryCode === 'US' ? '🇺🇸' : 
-                            location.countryCode === 'CA' ? '🇨🇦' : 
-                            location.countryCode === 'GB' ? '🇬🇧' : 
-                            location.countryCode === 'AU' ? '🇦🇺' : '🌍';
-          return {
-            value: `state:${location.countryCode}:${location.code}`,
-            label: `${countryFlag} ${location.name}, ${location.countryCode}`,
-            type: 'state',
-            state: location
-          };
-        }
-      });
+  //     const formattedOptions = results.map(location => {
+  //       if (location.type === 'country') {
+  //         return {
+  //           value: `country:${location.code}`,
+  //           label: `${location.flag} ${location.name}`,
+  //           type: 'country',
+  //           country: location
+  //         };
+  //       } else {
+  //         // State/province
+  //         const countryFlag = location.countryCode === 'US' ? '🇺🇸' : 
+  //                           location.countryCode === 'CA' ? '🇨🇦' : 
+  //                           location.countryCode === 'GB' ? '🇬🇧' : 
+  //                           location.countryCode === 'AU' ? '🇦🇺' : '🌍';
+  //         return {
+  //           value: `state:${location.countryCode}:${location.code}`,
+  //           label: `${countryFlag} ${location.name}, ${location.countryCode}`,
+  //           type: 'state',
+  //           state: location
+  //         };
+  //       }
+  //     });
       
-      setLocationOptions(formattedOptions);
-    } catch (error) {
-      console.error('Error searching locations:', error);
-    } finally {
-      setIsLoadingLocations(false);
-    }
-  }, []);
+  //     setLocationOptions(formattedOptions);
+  //   } catch (error) {
+  //     console.error('Error searching locations:', error);
+  //   } finally {
+  //     setIsLoadingLocations(false);
+  //   }
+  // }, []);
 
-  // Handle region selection
-  const handleRegionChange = (selectedRegions) => {
-    setFormData(prev => ({
-      ...prev,
-      targetRegions: selectedRegions
-    }));
-  };
+  // // Handle region selection
+  // const handleRegionChange = (selectedRegions) => {
+  //   setFormData(prev => ({
+  //     ...prev,
+  //     targetRegions: selectedRegions
+  //   }));
+  // };
 
   // Handle email account selection
   const handleEmailAccountChange = (selectedAccount) => {
@@ -154,13 +155,6 @@ export default function CreateSDRModal({ isOpen, onClose }) {
       if (!selectedEmailAccount) {
         throw new Error("Selected email account not found");
       }
-
-      ("Creating SDR Agent with:", {
-        domain: formData.domain,
-        emailAccount: selectedEmailAccount.email,
-        targetRegions: formData.targetRegions
-      });
-
       // Step 1: Create client domain entry
       try {
         const clientData = {
@@ -175,7 +169,6 @@ export default function CreateSDRModal({ isOpen, onClose }) {
         ("Client created successfully:", clientResult);
       } catch (clientError) {
         console.warn("Client creation failed, continuing with campaign creation:", clientError);
-        // Continue even if client creation fails, as it might already exist
       }
 
       // Step 2: Create campaign template with orchestrated API calls
@@ -200,7 +193,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
       }
       
       // Reset form and close modal
-      setFormData({ domain: "", emailAccount: "", targetRegions: [] });
+      setFormData({ domain: "", emailAccount: "" });
       onClose();
       
       // Success message with warnings if any operations failed
@@ -231,7 +224,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
     }
   };
 
-  const isFormValid = formData.domain && formData.emailAccount && formData.targetRegions.length > 0;
+  const isFormValid = formData.domain && formData.emailAccount;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -307,7 +300,26 @@ export default function CreateSDRModal({ isOpen, onClose }) {
               }}
             />
             <p className="text-xs text-white/60">
-              Choose which email account the SDR will use for outreach
+              Select the email account that will be used for sending outreach emails. Make sure it's verified and has sufficient daily limits.
+            </p>
+          </div>
+
+          {/* Calendly Link Field */}
+          <div className="space-y-2">
+            <Label htmlFor="calendlyLink" className="text-white font-medium">
+              Calendly Link (Optional)
+            </Label>
+            <Input
+              id="calendlyLink"
+              name="calendlyLink"
+              type="url"
+              placeholder="e.g., https://calendly.com/yourname/meeting"
+              value={formData.calendlyLink}
+              onChange={handleInputChange}
+              className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-white/50"
+            />
+            <p className="text-xs text-white/60">
+              Add your Calendly link to include meeting scheduling in outreach emails
             </p>
           </div>
 
