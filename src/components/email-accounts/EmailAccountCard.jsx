@@ -82,11 +82,11 @@ const EmailAccountCard = ({ account, stats, isLoadingStats, statsError, onDelete
           <p className="text-xs text-muted-foreground mt-1">Statistics will appear once this email account is used in campaigns</p>
         </div>
       )}
-      <div className="mt-4 pt-4 border-t border-border/30">
+      {/* <div className="mt-4 pt-4 border-t border-border/30">
         <div className="text-xs text-muted-foreground">
           SMTP: {account.smtpHost}:{account.smtpPort} ({account.smtpPortType})
         </div>
-      </div>
+      </div> */}
     </CardContent>
   </Card>
 }

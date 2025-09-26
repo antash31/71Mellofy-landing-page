@@ -92,13 +92,6 @@ const EmailAccountsPage = () => {
               onDelete={handleDeleteEmail} 
             />
           ))}
-          <button
-            onClick={handleAddEmail}
-            className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 hover:bg-primary/5 transition-colors"
-          >
-            <Plus className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-            <span className="text-muted-foreground">Add Another Email Account</span>
-          </button>
         </div>
       )}
       <AddEmailModal 

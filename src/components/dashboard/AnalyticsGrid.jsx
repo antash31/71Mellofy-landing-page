@@ -4,7 +4,7 @@ import { Send, Eye, MousePointer, Reply } from "lucide-react";
 const AnalyticCard = ({ icon: Icon, title, value, description }) => (
   <div className="bg-card rounded-2xl p-8 border border-border/50 shadow-xl hover:shadow-2xl transition-all duration-300 group">
     <div className="flex items-center justify-between mb-6">
-      <div className="w-14 h-14 bg-gradient-to-br from-primary/15 to-primary/5 rounded-xl flex items-center justify-center shadow-lg border border-primary/10 group-hover:scale-110 transition-transform duration-200">
+      <div className="w-14 h-14 bg-gradient-to-br from-primary/15 to-primary/5 rounded-xl flex items-center justify-center shadow-lg border border-primary/10 transition-transform duration-200">
         <Icon className="w-7 h-7 text-primary drop-shadow-sm" />
       </div>
       <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{title}</span>
