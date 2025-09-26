@@ -36,7 +36,7 @@ const EmailAccountCard = ({ account, stats, isLoadingStats, statsError, onDelete
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <Button variant="outline" size="sm">
             <Settings className="w-4 h-4" />
           </Button>
@@ -48,7 +48,7 @@ const EmailAccountCard = ({ account, stats, isLoadingStats, statsError, onDelete
           >
             Delete
           </Button>
-        </div>
+        </div> */}
       </div>
     </CardHeader>
     <CardContent>

@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useEmailAccounts } from "@/hooks/useEmailAccounts";
 import { campaignService } from "@/services/api";
 import { useSelector } from "react-redux";
 import CreateSDRModal from "@/components/dashboard/CreateSDRModal";
@@ -11,8 +10,6 @@ import ErrorState from "@/components/dashboard/ErrorState";
 import CampaignError from "@/components/dashboard/CampaignError";
 import OnboardingSection from "@/components/dashboard/OnboardingSelection";
 import AnalyticsSection from "@/components/dashboard/AnalyticsSection";
-import { toast } from "sonner";
-import OnboardingCard from "@/components/dashboard/OnboardingCard";
 
 export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);

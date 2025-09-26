@@ -18,10 +18,10 @@ const PageHeader = ({ onAddEmail, onRefresh, isRefreshing, isLoading }) => (
         {isRefreshing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
         Refresh
       </Button>
-      <Button onClick={onAddEmail} className="flex items-center gap-2">
-        <Plus className="w-4 h-4" />
+      {/* <Button onClick={onAddEmail} className="flex items-center gap-2">
+      <Plus className="w-4 h-4" />
         Add Email
-      </Button>
+      </Button> */}
     </div>
   </div>
 );

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { toast } from 'sonner';
-import { X, MapPin, Mail } from "lucide-react";
+import { X, MapPin, Mail, MailCheckIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -66,8 +66,8 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   // Transform email accounts to combobox options
   useEffect(() => {
     const emailOptions = emailAccounts?.map(account => ({
-      value: account.id,
-      label: `${account.email} (${account.provider})`,
+      value: account.email_address,
+      label: `${account.email_address}`,
       account: account
     }));
     setEmailAccountOptions(emailOptions);
@@ -285,10 +285,10 @@ export default function CreateSDRModal({ isOpen, onClose }) {
               renderOption={(option) => (
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Mail className="w-4 h-4 text-primary" />
+                    <MailCheckIcon className="w-4 h-4 text-primary" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-medium">{option.account?.email}</span>
+                    <span className="font-medium">{option.account?.email_address}</span>
                     <span className="text-xs text-muted-foreground">
                       {option.account?.provider} • {option.account?.messagePerDay} msgs/day
                     </span>
@@ -311,7 +311,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
             </p>
           </div>
 
-          {/* Target Regions Selection */}
+          {/* Target Regions Selection
           <div className="space-y-2">
             <Label className="text-white font-medium flex items-center gap-2">
               <MapPin className="w-4 h-4" />
@@ -348,7 +348,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
             <p className="text-xs text-white/60">
               Select the countries and states you want to target for lead generation. You can search and select multiple regions.
             </p>
-          </div>
+          </div> */}
 
           {/* Action Buttons */}
           <div className="flex gap-3 pt-4">

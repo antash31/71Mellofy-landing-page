@@ -26,12 +26,6 @@ const AnalyticsHeader = ({ analyticsData }) => {
             View Leads
           </Button>
         </Link>
-        <Link href="/dashboard/leads/Agent">
-          <Button variant="outline" size="lg" className="flex items-center gap-3 px-6 py-3 rounded-xl border-2 hover:bg-accent/50 transition-all duration-200 font-semibold">
-            <Bot className="w-5 h-5" />
-            Manage Agent
-          </Button>
-        </Link>
       </div>
     </div>
   </div>
