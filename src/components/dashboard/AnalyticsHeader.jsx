@@ -27,7 +27,7 @@ const AnalyticsHeader = ({ analyticsData, onTakeAction }) => {
             View Leads
           </Button>
         </Link>
-        {analyticsData?.data?.status === CAMPAIGN_STATUS.DRAFTED || analyticsData?.data?.status === CAMPAIGN_STATUS.PAUSED && <Button size="lg" className="flex items-center gap-3 px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-semibold" onClick={() => onTakeAction(CAMPAIGN_ACTIONS.START)}>
+        {(analyticsData?.data?.status === CAMPAIGN_STATUS.DRAFTED || analyticsData?.data?.status === CAMPAIGN_STATUS.PAUSED) && <Button size="lg" className="flex items-center gap-3 px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-semibold" onClick={() => onTakeAction(CAMPAIGN_ACTIONS.START)}>
           <Play className="w-5 h-5" />
           Start Campaign
         </Button>}
