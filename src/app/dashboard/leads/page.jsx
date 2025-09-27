@@ -29,6 +29,8 @@ const LeadsPage = () => {
   const hasEmailAccounts = useSelector((state) => state.auth.hasEmailAccounts);
   const isLoadingCampaign = useSelector((state) => state.auth.isLoadingCampaign);
   const router = useRouter();
+
+  console.log({isCampaignPresent});
   
 
   const fetchLeads = async (page = 1) => {
@@ -54,7 +56,7 @@ const LeadsPage = () => {
     hasFetchedRef.current = true;
     fetchLeads(INTIAL_PAGE);
   }
-  }, []);
+  }, [isCampaignPresent]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && (hasMore || newPage < currentPage)) {

@@ -55,7 +55,7 @@ export default function SignupSuccessPage() {
           <div className="flex justify-center">
             <Button asChild size="lg" className="w-full sm:w-auto">
               <Link href="/" className="flex items-center gap-2">
-                Back to Home
+                Discover more 
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>

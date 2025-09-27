@@ -43,7 +43,7 @@ export function SignupForm({
     phone_no: "",
     company_name: "",
     referral_source: "",
-    role: "user" // default role
+    role: "admin" 
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -104,9 +104,7 @@ export function SignupForm({
         referral_source: formData.referral_source,
         role: formData.role
       });
-      
-      console.log('Registration successful:', result)
-
+    
       setSuccess(true)
       setError(null)
       
@@ -122,15 +120,16 @@ export function SignupForm({
         role: "user"
       })
       
-      // Redirect to success page after a short delay
+      toast.success("Sign up successful!",{position:'top-center',theme:'light'});
+
       setTimeout(() => {
         router.push('/auth/signup/success')
       }, 500)
       
     } catch (error) {
-      console.error('Registration error:', error)
-      setError(error.message || 'Registration failed. Please try again.')
+      setError(error.response.data.message);
       setSuccess(false)
+      toast.error(error.response.data.message,{position:'top-center',theme:'light'});
     } finally {
       setLoading(false)
     }

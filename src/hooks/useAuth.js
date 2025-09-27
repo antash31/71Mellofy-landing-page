@@ -5,6 +5,7 @@ import { getUserProfile, setToken } from "@/store/slices/authSlice";
 import { logIn } from "@/store/slices/authSlice";
 import { useDispatch } from "react-redux";
 import { setCookie } from "@/utils/helper";
+import { toast } from "sonner";
 
 export const useAuth = () => {
     const [loading, setLoading] = useState(false)
@@ -36,7 +37,8 @@ export const useAuth = () => {
           setSuccess(true)
           setError(null);
         } catch (error) {
-          setError(error.message)
+          setError(error.message);
+          toast.error(error.message,{position:'top-center',theme:'dark'});
         } finally {
           setLoading(false)
         }
