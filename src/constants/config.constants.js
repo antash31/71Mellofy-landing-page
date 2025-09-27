@@ -1,0 +1,13 @@
+export const CAMPAIGN_ACTIONS = {
+    START: 'START',
+    PAUSED: 'PAUSED',
+    STOPPED: 'STOPPED'
+}
+
+export const CAMPAIGN_STATUS = {
+    ACTIVE: 'ACTIVE',
+    PAUSED: 'PAUSED',
+    STOPPED: 'STOPPED',
+    DRAFTED: 'DRAFTED',
+    COMPLETED: 'COMPLETED'
+}

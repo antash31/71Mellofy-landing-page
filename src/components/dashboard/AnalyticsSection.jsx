@@ -6,7 +6,7 @@ import LeadStatistics from './LeadStatistics';
 import LoadingState from './LoadingState';
 import ErrorState from './ErrorState';
 
-const AnalyticsSection = ({ analyticsData, isLoadingAnalytics, analyticsError, onRetryAnalytics }) => {
+const AnalyticsSection = ({ analyticsData, isLoadingAnalytics, analyticsError, onRetryAnalytics, onTakeAction }) => {
   if (isLoadingAnalytics) {
     return <LoadingState />;
   }
@@ -21,7 +21,7 @@ const AnalyticsSection = ({ analyticsData, isLoadingAnalytics, analyticsError, o
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-10">
-      <AnalyticsHeader analyticsData={analyticsData} />
+      <AnalyticsHeader analyticsData={analyticsData} onTakeAction={onTakeAction} />
       <AnalyticsGrid analyticsData={analyticsData} />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <CampaignDetails analyticsData={analyticsData} />

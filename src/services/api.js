@@ -177,6 +177,11 @@ export const campaignService = {
     const response = await api.get(supabaseUrl + '/functions/v1/Get-Campaign-Mailbox-Statistics');
     return response.data;
   },
+
+  takeActionOnCampaign: async (action) => {
+    const response = await api.post(supabaseUrl + '/functions/v1/POST-CAMPAIGN-STATUS-UPDATE', { action });
+    return response.data;
+  }
 };
 
 // Location services for countries and states

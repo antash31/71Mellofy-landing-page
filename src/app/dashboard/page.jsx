@@ -5,11 +5,12 @@ import { useSelector } from "react-redux";
 import CreateSDRModal from "@/components/dashboard/CreateSDRModal";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import ReadyCard from "@/components/dashboard/ReadyCard";
-import LoadingState from "@/components/dashboard/LoadingState"; 
+import LoadingState from "@/components/dashboard/LoadingState";
 import ErrorState from "@/components/dashboard/ErrorState";
 import CampaignError from "@/components/dashboard/CampaignError";
 import OnboardingSection from "@/components/dashboard/OnboardingSelection";
 import AnalyticsSection from "@/components/dashboard/AnalyticsSection";
+import { toast } from "sonner";
 
 export default function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,6 +49,15 @@ export default function DashboardPage() {
   //   }
   // };
 
+  const takeActionOnCampaign = async (action) => {
+    try {
+      const response = await campaignService.takeActionOnCampaign(action);
+      toast.success(response.message);
+    } catch (err) {
+      toast.error(err.response.data.message);
+    }
+  };
+
   const fetchAnalytics = async () => {
     try {
       setIsLoadingAnalytics(true);
@@ -63,8 +73,8 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
-    if(isCampaignPresent){
-    fetchAnalytics();
+    if (isCampaignPresent) {
+      fetchAnalytics();
     }
   }, [isCampaignPresent]);
 
@@ -125,11 +135,12 @@ export default function DashboardPage() {
   } else {
     mainContent = (
       <div className="text-center space-y-8">
-        <AnalyticsSection 
-          analyticsData={analyticsData} 
-          isLoadingAnalytics={isLoadingAnalytics} 
-          analyticsError={analyticsError} 
-          onRetryAnalytics={fetchAnalytics} 
+        <AnalyticsSection
+          analyticsData={analyticsData}
+          isLoadingAnalytics={isLoadingAnalytics}
+          analyticsError={analyticsError}
+          onRetryAnalytics={fetchAnalytics}
+          onTakeAction={takeActionOnCampaign}
         />
       </div>
     );
@@ -140,15 +151,15 @@ export default function DashboardPage() {
         <DashboardHeader />
         {mainContent}
         {!error && !isLoading && campaignError && (
-          <CampaignError 
-            campaignError={campaignError} 
-            onRefresh={handleRefreshCampaignStatus} 
-            isLoadingCampaign={isLoadingCampaign} 
+          <CampaignError
+            campaignError={campaignError}
+            onRefresh={handleRefreshCampaignStatus}
+            isLoadingCampaign={isLoadingCampaign}
           />
         )}
-        <CreateSDRModal 
-          isOpen={isModalOpen} 
-          onClose={handleCloseModal} 
+        <CreateSDRModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
         />
       </div>
     </div>

@@ -1,10 +1,11 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { BarChart3, Users, Bot } from "lucide-react";
+import { BarChart3, Users, Bot, Play, Pause, StopCircle } from "lucide-react";
+import { CAMPAIGN_ACTIONS, CAMPAIGN_STATUS } from "@/constants/config.constants";
 
-const AnalyticsHeader = ({ analyticsData }) => {
- return <div className="bg-card rounded-3xl shadow-2xl p-8 border border-border/50 backdrop-blur-sm">
+const AnalyticsHeader = ({ analyticsData, onTakeAction }) => {
+  return <div className="bg-card rounded-3xl shadow-2xl p-8 border border-border/50 backdrop-blur-sm">
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
       <div className="flex items-center gap-6">
         <div className="w-16 h-16 bg-gradient-to-br from-primary/15 to-primary/5 rounded-2xl flex items-center justify-center shadow-lg border border-primary/10">
@@ -26,6 +27,18 @@ const AnalyticsHeader = ({ analyticsData }) => {
             View Leads
           </Button>
         </Link>
+        {analyticsData?.data?.status === CAMPAIGN_STATUS.DRAFTED || analyticsData?.data?.status === CAMPAIGN_STATUS.PAUSED && <Button size="lg" className="flex items-center gap-3 px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-semibold" onClick={() => onTakeAction(CAMPAIGN_ACTIONS.START)}>
+          <Play className="w-5 h-5" />
+          Start Campaign
+        </Button>}
+        {analyticsData?.data?.status === CAMPAIGN_STATUS.ACTIVE && <Button size="lg" className="flex items-center gap-3 px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-semibold" onClick={() => onTakeAction(CAMPAIGN_ACTIONS.PAUSED)}>
+          <Pause className="w-5 h-5" />
+          Pause Campaign
+        </Button>}
+        {analyticsData?.data?.status === CAMPAIGN_STATUS.ACTIVE && <Button size="lg" className="flex items-center gap-3 px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-semibold" onClick={() => onTakeAction(CAMPAIGN_ACTIONS.STOPPED)}>
+          <StopCircle className="w-5 h-5" />
+          Stop Campaign
+        </Button>}
       </div>
     </div>
   </div>
