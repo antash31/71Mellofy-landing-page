@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import { AuthRedirect } from "@/components/AuthRedirect";
 
 // Simple error boundary for auth pages
 class AuthErrorBoundary extends React.Component {
@@ -40,8 +41,10 @@ class AuthErrorBoundary extends React.Component {
 
 export default function AuthLayout({ children }) {
   return (
-    <AuthErrorBoundary>
-      {children}
-    </AuthErrorBoundary>
+    <AuthRedirect>
+      <AuthErrorBoundary>
+        {children}
+      </AuthErrorBoundary>
+    </AuthRedirect>
   );
 }

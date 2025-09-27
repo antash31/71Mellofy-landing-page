@@ -7,6 +7,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { ProtectedRoute } from "@/components/ProtectedRoute"
 import { useDispatch } from "react-redux";
 import { checkCampaign, checkEmailAccounts, getUserProfile } from "@/store/slices/authSlice";
 import { getCurrentUser } from "@/store/slices/authSlice";
@@ -48,8 +49,10 @@ console.log({key:userDetails})
 
 export default function Layout({ children }) {
   return (
-    <DashboardContent>
-      {children}
-    </DashboardContent>
+    <ProtectedRoute>
+      <DashboardContent>
+        {children}
+      </DashboardContent>
+    </ProtectedRoute>
   );
 }

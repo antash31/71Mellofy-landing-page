@@ -92,14 +92,22 @@ export const logoutUser = createAsyncThunk(
       const { error } = await supabase.auth.signOut({ scope: 'global' });
       if (error) throw error;
       
-      // Clear localStorage
+      // Clear all storage
       if (typeof window !== 'undefined') {
+        // Clear localStorage
+        localStorage.removeItem('access_token');
         localStorage.removeItem('supabase.auth.token');
         Object.keys(localStorage).forEach(key => {
           if (key.includes('supabase') || key.includes('sb-')) {
             localStorage.removeItem(key);
           }
         });
+        
+        // Clear sessionStorage
+        sessionStorage.clear();
+        
+        // Clear cookies
+        deleteCookie('access_token');
       }
       
       return null;

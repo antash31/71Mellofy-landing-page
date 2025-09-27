@@ -1,8 +1,11 @@
-export const setCookie = (name, value, days) => {
+export const setCookie = (name, value, days = 7) => {
   const date = new Date();
   date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
   const expires = "expires=" + date.toUTCString();
-  document.cookie = name + "=" + value + ";" + expires + ";path=/";
+  
+  // Add security flags
+  const isSecure = typeof window !== 'undefined' && window.location.protocol === 'https:';
+  document.cookie = `${name}=${value};${expires};path=/;SameSite=Strict${isSecure ? ';Secure' : ''}`;
 }
 
 export const deleteCookie = (name) => {
@@ -25,7 +28,20 @@ export const getCookie = (name) => {
 }
 
 export const logOutHelper = (dispatch, logOutAction) => {
-  localStorage.removeItem('access_token');
+  // Clear cookie
   deleteCookie('access_token');
+  
+  // Clear localStorage
+  localStorage.removeItem('access_token');
+  Object.keys(localStorage).forEach(key => {
+    if (key.includes('supabase') || key.includes('sb-')) {
+      localStorage.removeItem(key);
+    }
+  });
+  
+  // Clear sessionStorage
+  sessionStorage.clear();
+  
+  // Clear Redux state
   dispatch(logOutAction());
 }
