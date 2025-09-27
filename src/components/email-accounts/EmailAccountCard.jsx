@@ -7,7 +7,6 @@ import StatsGrid from './StatsGrid';
 import PerformanceMetrics from './PerformanceMetrics';
 
 const EmailAccountCard = ({ account, stats, isLoadingStats, statsError, onDelete }) => {
-  console.log({account})
   return <Card className="border-border/50">
     <CardHeader className="pb-4">
       <div className="flex items-center justify-between">

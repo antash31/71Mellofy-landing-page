@@ -72,7 +72,7 @@ export function NavUser({userDetails}) {
     return 'U';
   };
 
-  if (isLoading || !user) {
+  if (isLoading) {
     return (
       <SidebarMenu>
         <SidebarMenuItem>

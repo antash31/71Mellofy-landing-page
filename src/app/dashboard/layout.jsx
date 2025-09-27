@@ -17,7 +17,7 @@ function DashboardContent({ children }) {
   const dispatch = useDispatch();
   const userDetails = useSelector((state) => state.auth.userDetails);
 
-console.log({key:userDetails})
+
   useEffect(()=>{
     dispatch(checkEmailAccounts());
     dispatch(getCurrentUser());

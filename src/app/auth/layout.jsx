@@ -41,10 +41,8 @@ class AuthErrorBoundary extends React.Component {
 
 export default function AuthLayout({ children }) {
   return (
-    <AuthRedirect>
       <AuthErrorBoundary>
         {children}
       </AuthErrorBoundary>
-    </AuthRedirect>
   );
 }

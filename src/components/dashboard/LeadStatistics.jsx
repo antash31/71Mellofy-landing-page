@@ -1,7 +1,6 @@
 import React from 'react';
 
 const LeadStatistics = ({ analyticsData }) => {
-  console.log({ analyticsData });
   return <div className="bg-card rounded-2xl p-8 border border-border/50 shadow-xl">
     <h3 className="text-2xl font-bold text-card-foreground mb-6 tracking-tight">
       Lead Statistics

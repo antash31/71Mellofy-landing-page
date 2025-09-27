@@ -20,13 +20,13 @@ import { useSelector } from "react-redux";
 export default function CreateSDRModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
     domain: "",
-    emailAccount: "",
+    emailAccount: {id:"",email_address:""},
     targetRegions: [],
     meetingLink: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [locationOptions, setLocationOptions] = useState([]);
-  const [isLoadingLocations, setIsLoadingLocations] = useState(false);
+  // const [locationOptions, setLocationOptions] = useState([]);
+  // const [isLoadingLocations, setIsLoadingLocations] = useState(false);
   const [emailAccountOptions, setEmailAccountOptions] = useState([]);
   const emailAccounts  = useSelector((state) => state.auth.emailAccounts) || [];
   const isLoadingEmailAccounts = useSelector((state) => state.auth.isLoadingEmailAccounts);
@@ -67,7 +67,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   // Transform email accounts to combobox options
   useEffect(() => {
     const emailOptions = emailAccounts?.map(account => ({
-      value: account.id,
+      value: account.email_address,
       label: `${account.email_address}`,
       account: account
     }));
@@ -138,10 +138,9 @@ export default function CreateSDRModal({ isOpen, onClose }) {
 
   // Handle email account selection
   const handleEmailAccountChange = (selectedAccount) => {
-    console.log({selectedAccount})
     setFormData(prev => ({
       ...prev,
-      emailAccount: selectedAccount
+      emailAccount: {email_address:selectedAccount}
     }));
   };
 
@@ -150,13 +149,11 @@ export default function CreateSDRModal({ isOpen, onClose }) {
     setIsLoading(true);
 
     try {
-      // Get the selected email account information
-      const selectedEmailAccount = emailAccounts.find(account => account.id === formData.emailAccount);
+      const selectedEmailAccount = emailAccounts.find(account => account.email_address === formData.emailAccount.email_address);
       
       if (!selectedEmailAccount) {
         throw new Error("Selected email account not found");
       }
-      // Step 1: Create client domain entry
       try {
         const clientData = {
           domain: formData.domain,
@@ -167,6 +164,8 @@ export default function CreateSDRModal({ isOpen, onClose }) {
         };
         
         const clientResult = await clientService.createClient(clientData);
+
+        window.location.reload();
 
       } catch (clientError) {
         console.warn("Client creation failed, continuing with campaign creation:", clientError);
@@ -205,9 +204,6 @@ export default function CreateSDRModal({ isOpen, onClose }) {
       }
       
     } catch (error) {
-      console.error("Error creating SDR agent:", error);
-      
-      // Extract meaningful error message
       let errorMessage = "Error creating SDR agent. Please try again.";
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
@@ -221,7 +217,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
     }
   };
 
-  const isFormValid = formData.domain && formData.emailAccount;
+  const isFormValid = formData.domain && formData.emailAccount.email_address;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -264,7 +260,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
             </Label>
             <Combobox
               options={emailAccountOptions}
-              value={formData.emailAccount}
+              value={formData.emailAccount.email_address}
               onValueChange={handleEmailAccountChange}
               placeholder="Select an email account..."
               searchPlaceholder="Search email accounts..."

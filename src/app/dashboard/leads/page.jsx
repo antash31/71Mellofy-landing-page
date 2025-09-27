@@ -30,9 +30,6 @@ const LeadsPage = () => {
   const isLoadingCampaign = useSelector((state) => state.auth.isLoadingCampaign);
   const router = useRouter();
 
-  console.log({isCampaignPresent});
-  
-
   const fetchLeads = async (page = 1) => {
     try {
       setIsLoading(true);
@@ -76,9 +73,9 @@ const LeadsPage = () => {
     return <OnboardingCard/>
   }
 
-  if(hasEmailAccounts && !isCampaignPresent && !isLoading){
-     return <ReadyCard onCreateSDR={()=>router.push('/dashboard')}/>
-  }
+  // if(hasEmailAccounts && !isCampaignPresent && !isLoading){
+  //    return <ReadyCard onCreateSDR={()=>router.push('/dashboard')}/>
+  // }
 
 
 

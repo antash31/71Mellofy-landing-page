@@ -19,12 +19,6 @@ axiosInstance.interceptors.request.use(
       }
       // Don't reject requests without tokens - let individual endpoints handle auth
     }
-
-    // Log request in development
-    if (process.env.NODE_ENV === 'development') {
-
-    }
-
     return config;
   },
   (error) => {
@@ -36,15 +30,6 @@ axiosInstance.interceptors.request.use(
 // Response interceptor
 axiosInstance.interceptors.response.use(
   (response) => {
-    // Log response in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('✅ Response:', {
-        status: response.status,
-        url: response.config.url,
-        data: response.data,
-      });
-    }
-
     return response;
   },
   (error) => {

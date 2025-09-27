@@ -25,12 +25,10 @@ export default function RootLayout({ children }) {
         className={`${inter.variable} ${playfair.variable} ${montserrat.variable} ${roboto.variable} ${poppins.variable} ${oswald.variable} font-sans antialiased min-h-screen bg-black relative`}
       >
         <ReduxProvider>
-          <AuthProvider>
             <div className="relative z-1">
               {children}
             </div>
             <Toaster richColors closeButton />
-          </AuthProvider>
         </ReduxProvider>
       </body>
       <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />

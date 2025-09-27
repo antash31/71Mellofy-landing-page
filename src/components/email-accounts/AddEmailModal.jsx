@@ -122,7 +122,6 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
 
       // Make API call to create email account using axios
       const result = await emailAccountsService.create(apiPayload);
-      ("Email account created successfully:", result);
       
       // Refresh the email accounts context to get the latest data
       try {
@@ -166,60 +165,14 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
       setErrors({});
       onClose();
       
-      toast.success("Email account added and verified successfully!");
+      toast.success("Email account added and verified successfully!",{position:'top-center'});
       dispatch(checkEmailAccounts());
       
     } catch (error) {
-      console.error("Error adding email account:", error);
-      const errorMessage = error.response?.data?.message || error.message || 'Unknown error occurred';
-      toast.error(`Error adding email account: ${errorMessage}`);
+      const errorMessage = error.response?.data?.error;
+      toast.error(errorMessage,{position:'top-center'});
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleVerifyEmail = async () => {
-    if (!validateForm()) return;
-    
-    setIsVerifying(true);
-
-    try {
-      // Same API call but just for verification
-      const apiPayload = {
-        id: null,
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        designation: formData.designation,
-        from_name: formData.fromName,
-        from_email: formData.fromEmail,
-        user_name: formData.userName,
-        password: formData.password,
-        smtp_host: formData.smtpHost,
-        smtp_port: parseInt(formData.smtpPort),
-        imap_host: formData.useDifferentIMAP ? formData.imapHost : formData.smtpHost.replace('smtp', 'imap'),
-        imap_port: parseInt(formData.useDifferentIMAP ? formData.imapPort : '993'),
-        max_email_per_day: parseInt(formData.messagesPerDay),
-        custom_tracking_url: "",
-        bcc: "",
-        signature: "",
-        warmup_enabled: false,
-        total_warmup_per_day: null,
-        daily_rampup: null,
-        reply_rate_percentage: null,
-        client_id: null
-      };
-
-      // Use axios to verify email account
-      const result = await emailAccountsService.verify(apiPayload);
-      ("Email account verified successfully:", result);
-      toast.success("Email account verified successfully! Connection is working.");
-      
-    } catch (error) {
-      console.error("Error verifying email account:", error);
-      const errorMessage = error.response?.data?.message || error.message || 'Verification failed';
-      toast.error(`Verification failed: ${errorMessage}`);
-    } finally {
-      setIsVerifying(false);
     }
   };
 
@@ -628,23 +581,8 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
                 Cancel
               </Button>
               <Button
-                type="button"
-                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground"
-                disabled={isLoading || isVerifying}
-                onClick={handleVerifyEmail}
-              >
-                {isVerifying ? (
-                  <div className="flex items-center gap-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-secondary-foreground"></div>
-                    Verifying...
-                  </div>
-                ) : (
-                  "Verify Email Account"
-                )}
-              </Button>
-              <Button
                 type="submit"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 flex-1"
                 disabled={isLoading || isVerifying}
               >
                 {isLoading ? (
@@ -653,7 +591,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
                     Saving...
                   </div>
                 ) : (
-                  "Save"
+                  "Verify and Save"
                 )}
               </Button>
             </div>

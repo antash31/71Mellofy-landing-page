@@ -11,9 +11,9 @@ export function AuthRedirect({ children }) {
 
   useEffect(() => {
     // If user is authenticated and not loading, redirect to dashboard
-    if (!isLoadingUser && (isAuthenticated || userLoggedIn)) {
-      router.push('/dashboard');
-    }
+    // if (!isLoadingUser && (isAuthenticated || userLoggedIn)) {
+    //   router.push('/dashboard');
+    // }
   }, [isAuthenticated, userLoggedIn, isLoadingUser, router]);
 
 //   if (isLoadingUser) {
