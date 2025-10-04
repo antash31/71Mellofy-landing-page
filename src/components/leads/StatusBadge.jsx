@@ -17,7 +17,7 @@ const StatusBadge = ({ status }) => {
   return (
     <Badge className={`flex items-center gap-1.5 px-3 py-1 font-medium ${config.className}`}>
       <IconComponent className="w-3 h-3" />
-      {status.replace('_', ' ')}
+      {status?.replace('_', ' ') || 'COMPLETED'}
     </Badge>
   );
 };
