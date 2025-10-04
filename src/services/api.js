@@ -2,7 +2,7 @@
 import { api, setAuthToken, removeAuthToken } from '@/lib/axios';
 import { supabase } from '@/utils/supabase';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseUrl = process.env.SUPABASE_URL;
 
 // Email accounts services
 export const emailAccountsService = {

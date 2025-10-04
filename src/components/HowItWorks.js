@@ -3,34 +3,35 @@ import { motion } from "framer-motion";
 import Aurora from "./Aurora";
 import WorkflowDiagram from "./WorkflowDiagram";
 import Script from 'next/script';
+import { WEBSITE_CONFIG } from "@/constants/website.constants";
 
 const steps = [
   {
     number: "01",
-    title: "Connect Your Data",
+    title: WEBSITE_CONFIG.SECTION_3.Cards[0].title,
     description:
-      "Integrate with your CRM and existing tools to sync your customer data and preferences.",
+      WEBSITE_CONFIG.SECTION_3.Cards[0].description,
     icon: "/file.svg",
   },
   {
     number: "02",
-    title: "Define Your ICP",
+    title: WEBSITE_CONFIG.SECTION_3.Cards[1].title,
     description:
-      "Our AI learns your Ideal Customer Profile and builds targeted prospect lists.",
+      WEBSITE_CONFIG.SECTION_3.Cards[1].description,
     icon: "/globe.svg",
   },
   {
     number: "03",
-    title: "Customize Campaigns",
+    title: WEBSITE_CONFIG.SECTION_3.Cards[2].title,
     description:
-      "Set up personalized outreach sequences with custom messaging and timing.",
+      WEBSITE_CONFIG.SECTION_3.Cards[2].description,
     icon: "/window.svg",
   },
   {
     number: "04",
-    title: "Auto-pilot Mode",
+    title: WEBSITE_CONFIG.SECTION_3.Cards[3].title,
     description:
-      "Let AI handle prospecting, outreach, and follow-ups while you focus on closing deals.",
+      WEBSITE_CONFIG.SECTION_3.Cards[3].description,
     icon: "/next.svg",
   },
 ];
@@ -76,7 +77,7 @@ export default function HowItWorks() {
             </span>
           </div>
           <h2 className="font-inter text-5xl md:text-7xl font-bold tracking-tight text-white mb-4">
-            How It Works
+            {WEBSITE_CONFIG.SECTION_3.heading_1}
           </h2>
           <div className="w-16 h-px bg-white/20 mx-auto mb-10"></div>
           <p className="body-light text-lg md:text-xl text-white/60 max-w-2xl mx-auto tracking-wide leading-relaxed">

@@ -9,16 +9,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { User, Mail, Phone, MapPin, Calendar, Shield, Save, Edit3, Camera } from "lucide-react";
+import { User, Mail, Phone, MapPin, Calendar, Shield, Save, Edit3, Camera, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { setUser } from "@/store/slices/authSlice";
+import { supabase } from '@/utils/supabase';
 
 const AccountPage = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -44,6 +45,21 @@ const AccountPage = () => {
       });
     }
   }, [user]);
+
+  const handleIntegrateCRM = async () => {
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      alert('Please log in first');
+      return;
+    }
+  
+    const state = encodeURIComponent(JSON.stringify({ userId: user.id }));
+    const authorizeUrl = `https://login.salesforce.com/services/oauth2/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_CRM_SALESFORCE_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_SALESFORCE_CALL_BACK)}&scope=api%20refresh_token&state=${state}`;
+    
+    window.location.href = authorizeUrl;
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -71,7 +87,7 @@ const AccountPage = () => {
           job_title: formData.jobTitle,
         }
       };
-      
+
       dispatch(setUser(updatedUser));
       setIsEditing(false);
       toast.success("Profile updated successfully!");
@@ -128,14 +144,14 @@ const AccountPage = () => {
         <div className="flex items-center gap-2">
           {isEditing ? (
             <>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setIsEditing(false)}
                 disabled={isSaving}
               >
                 Cancel
               </Button>
-              <Button 
+              <Button
                 onClick={handleSave}
                 disabled={isSaving}
                 className="flex items-center gap-2"
@@ -145,13 +161,22 @@ const AccountPage = () => {
               </Button>
             </>
           ) : (
-            <Button 
-              onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2"
-            >
-              <Edit3 className="w-4 h-4" />
-              Edit Profile
-            </Button>
+            <>
+              <Button
+                onClick={() => setIsEditing(true)}
+                className="flex items-center gap-2"
+              >
+                <Edit3 className="w-4 h-4" />
+                Edit Profile
+              </Button>
+              <Button
+                onClick={handleIntegrateCRM}
+                className="flex items-center gap-2"
+              >
+                Integrate CRM
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </>
           )}
         </div>
       </div>

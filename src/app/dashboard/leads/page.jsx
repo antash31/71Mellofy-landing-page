@@ -36,9 +36,9 @@ const LeadsPage = () => {
       setError(null);
       const offset = (page - 1) * LEADS_PER_PAGE;
       const response = await campaignService.getCampaignLeadStatistics(LEADS_PER_PAGE, offset);
-      setLeads(response.lead_statistics.data || []);
+      setLeads(response.statistics.data || []);
       setHasMore(response.hasMore || false);
-      setTotalLeads(response.total || response.lead_statistics?.data?.length || 0);
+      setTotalLeads(response.total || response.statistics?.data?.length || 0);
       setCurrentPage(page);
     } catch (err) {
       setError(err.message || 'Failed to fetch leads data');
@@ -48,11 +48,11 @@ const LeadsPage = () => {
   };
 
   useEffect(() => {
-    if(isCampaignPresent){
-    if (hasFetchedRef.current) return;
-    hasFetchedRef.current = true;
-    fetchLeads(INTIAL_PAGE);
-  }
+    if (isCampaignPresent) {
+      if (hasFetchedRef.current) return;
+      hasFetchedRef.current = true;
+      fetchLeads(INTIAL_PAGE);
+    }
   }, [isCampaignPresent]);
 
   const handlePageChange = (newPage) => {
@@ -69,8 +69,8 @@ const LeadsPage = () => {
     return <LoadingState />;
   }
 
-  if(!isCampaignPresent && !hasEmailAccounts && !isLoading){
-    return <OnboardingCard/>
+  if (!isCampaignPresent && !hasEmailAccounts && !isLoading) {
+    return <OnboardingCard />
   }
 
   // if(hasEmailAccounts && !isCampaignPresent && !isLoading){
@@ -90,13 +90,13 @@ const LeadsPage = () => {
   return (
     <div className="space-y-8">
       <LeadsHeader onRefresh={handleRefresh} isLoading={isLoading} />
-      <StatsCards 
-        totalLeads={totalLeads} 
-        currentPage={currentPage} 
-        totalPages={totalPages} 
-        startIndex={startIndex} 
-        endIndex={endIndex} 
-        hasMore={hasMore} 
+      <StatsCards
+        totalLeads={totalLeads}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        startIndex={startIndex}
+        endIndex={endIndex}
+        hasMore={hasMore}
       />
       <Card className="border-border/50">
         <CardHeader>
@@ -115,14 +115,14 @@ const LeadsPage = () => {
         </CardContent>
       </Card>
       {leads.length > 0 && (
-        <Pagination 
-          currentPage={currentPage} 
-          totalPages={totalPages} 
-          hasMore={hasMore} 
-          onPageChange={handlePageChange} 
-          isLoading={isLoading} 
-          totalLeads={totalLeads} 
-          LEADS_PER_PAGE={LEADS_PER_PAGE} 
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          hasMore={hasMore}
+          onPageChange={handlePageChange}
+          isLoading={isLoading}
+          totalLeads={totalLeads}
+          LEADS_PER_PAGE={LEADS_PER_PAGE}
         />
       )}
     </div>

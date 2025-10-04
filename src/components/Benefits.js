@@ -1,29 +1,30 @@
 "use client";
 import { motion } from "framer-motion";
-import Aurora from "./Aurora";
+import { WEBSITE_CONFIG } from "@/constants/website.constants";
 
-const stats = [
-  {
-    value: "17%",
-    label: "Avg. Response Rate",
-    description: "Up from 5% with our 3-agent AI system for 3× engagement",
-  },
-  {
-    value: "90%",
-    label: "Cost Savings",
-    description: "Replace a $60k SDR with a $6k AI platform",
-  },
-  {
-    value: "5x",
-    label: "More Meetings",
-    description: "20 qualified leads daily vs 4 using traditional methods",
-  },
-  {
-    value: "43%",
-    label: "Better Lead Qualification",
-    description: "AI scoring analyzes 50+ intent signals in real-time",
-  },
-];
+const stats = WEBSITE_CONFIG.SECTION_4;
+// [
+//   {
+//     value: "17%",
+//     label: "Avg. Response Rate",
+//     description: "Up from 5% with our 3-agent AI system for 3× engagement",
+//   },
+//   {
+//     value: "90%",
+//     label: "Cost Savings",
+//     description: "Replace a $60k SDR with a $6k AI platform",
+//   },
+//   {
+//     value: "5x",
+//     label: "More Meetings",
+//     description: "20 qualified leads daily vs 4 using traditional methods",
+//   },
+//   {
+//     value: "43%",
+//     label: "Better Lead Qualification",
+//     description: "AI scoring analyzes 50+ intent signals in real-time",
+//   },
+// ];
 
 const benefits = [
   "Scale your outreach without scaling your team",
