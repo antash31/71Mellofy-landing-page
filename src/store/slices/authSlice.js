@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { api } from '@/lib/axios'
 import { supabase } from '@/utils/supabase';
 
-const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const initialState = {
   userLoggedIn: false,
   userDetails: null,
