@@ -16,8 +16,8 @@ export async function GET(request) {
     const params = new URLSearchParams({
       grant_type: 'authorization_code',
       code,
-      client_id: process.env.NEXT_PUBLIC_CRM_SALESFORCE_CLIENT_ID, 
-      client_secret: process.env.NEXT_PUBLIC_CRM_SALESFORCE_CLIENT_SECRET,
+      client_id: process.env.CRM_SALESFORCE_CLIENT_ID, 
+      client_secret: process.env.CRM_SALESFORCE_CLIENT_SECRET,
       redirect_uri: process.env.NEXT_PUBLIC_SALESFORCE_CALL_BACK,
     });
   

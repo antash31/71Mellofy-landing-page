@@ -4,33 +4,23 @@ import { useState } from "react";
 import Image from "next/image";
 import Aurora from "./Aurora";
 import TiltedCard from "./TiltedCard";
+import { WEBSITE_CONFIG } from "@/constants/website.constants";
 
 const features = [
   {
-    title: "AI Automated ICP Finder",
+    title: WEBSITE_CONFIG.SECTION_2.Cards[0].title,
     headline: "Quality Over Quantity: AI That Builds The Best ICP and Finds Your Perfect Prospects",
-    description:
-      "Our AI analyzes 200+ data points to identify high-intent leads, so you spend time on prospects who are ready to buy, not tire-kickers.",
-    metric: "77% increase in ROI",
-    metricLabel: "Average ROI increase with AI lead scoring",
+    description: WEBSITE_CONFIG.SECTION_2.Cards[0].description,
     icon: "/globe.svg",
   },
   {
-    title: "Context-Aware Email Generator",
-    headline: "Personalization That Actually Converts",
-    description:
-      "Goes beyond {{FirstName}} - our AI crafts emails based on recent company news, job changes, and behavioral triggers for 3x higher response rates.",
-    metric: "3x higher",
-    metricLabel: "Response rate with contextual personalization",
+    title: WEBSITE_CONFIG.SECTION_2.Cards[1].title,
+    description: WEBSITE_CONFIG.SECTION_2.Cards[1].description,
     icon: "/file.svg",
   },
   {
-    title: "Response Intelligence Agent",
-    headline: "Never Miss a Sales Opportunity Again",
-    description:
-      "AI handles objections, qualification questions, and follow-ups instantly, ensuring every lead stays warm while you focus on closing.",
-    metric: "24/7",
-    metricLabel: "Intelligent response management",
+    title: WEBSITE_CONFIG.SECTION_2.Cards[2].title,
+    description: WEBSITE_CONFIG.SECTION_2.Cards[2].description,
     icon: "/window.svg",
   },
 ];
@@ -59,12 +49,11 @@ export default function Features() {
             </span>
           </div>
           <h2 className="text-5xl md:text-7xl font-poppins font-semibold tracking-tight text-white mb-4">
-            Supercharge Your Sales
+            {WEBSITE_CONFIG.SECTION_2.heading_1}
           </h2>
           <div className="w-16 h-px bg-white/20 mx-auto mb-10"></div>
-          <p className="text-lg text-white/60 max-w-2xl mx-auto font-inter tracking-normal leading-relaxed">
-            Leverage cutting-edge AI technology to automate and optimize every
-            step of your sales development process.
+          <p className="text-lg text-white/60 max-w-3xl mx-auto font-inter tracking-normal leading-relaxed">
+            {WEBSITE_CONFIG.SECTION_2.description}
           </p>
         </motion.div>
 
@@ -114,9 +103,9 @@ export default function Features() {
                       <h3 className="text-xl font-semibold text-white mb-2">
                         {feature.title}
                       </h3>
-                      <h4 className="text-lg font-medium text-white/90 mb-3">
+                      {/* <h4 className="text-lg font-medium text-white/90 mb-3">
                         {feature.headline}
-                      </h4>
+                      </h4> */}
                       <p className="text-white/70 mb-6 flex-grow">
                         {feature.description}
                       </p>

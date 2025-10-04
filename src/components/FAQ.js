@@ -2,33 +2,35 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import Aurora from "./Aurora";
+import { WEBSITE_CONFIG } from "@/constants/website.constants";
 
-const faqs = [
-  {
-    question: "How does the AI SDR actually work?",
-    answer: "Our AI SDR uses advanced machine learning to analyze your ideal customer profile, find matching prospects, and engage them with personalized messages. It learns from successful interactions to continuously improve its approach, handling everything from initial outreach to meeting scheduling."
-  },
-  {
-    question: "Will prospects know they're talking to an AI?",
-    answer: "Our AI is designed to be transparent while maintaining natural, professional communication. While it can identify itself as an AI assistant if required, its communications are so well-crafted that prospects often engage just as they would with a human SDR."
-  },
-  {
-    question: "How long does it take to get started?",
-    answer: "Most teams are up and running within 24-48 hours. The setup process includes connecting your CRM, defining your ideal customer profile, and customizing your outreach preferences. Our team provides full support throughout the implementation."
-  },
-  {
-    question: "What CRM systems do you integrate with?",
-    answer: "We integrate with all major CRM platforms including Salesforce, HubSpot, Pipedrive, and more. Our flexible API also allows for custom integrations with other systems if needed."
-  },
-  {
-    question: "How do you ensure data privacy and security?",
-    answer: "We maintain the highest standards of data security with SOC 2 Type II compliance, end-to-end encryption, and regular security audits. Your data is stored in secure, encrypted databases with strict access controls."
-  },
-  {
-    question: "Can I customize the AI's outreach strategy?",
-    answer: "Absolutely! You can customize everything from the tone of voice to outreach cadence, preferred channels, and response handling. The AI adapts to your brand voice and sales methodology."
-  }
-];
+const faqs = WEBSITE_CONFIG.SECTION_5;
+// [
+//   {
+//     question: "How does the AI SDR actually work?",
+//     answer: "Our AI SDR uses advanced machine learning to analyze your ideal customer profile, find matching prospects, and engage them with personalized messages. It learns from successful interactions to continuously improve its approach, handling everything from initial outreach to meeting scheduling."
+//   },
+//   {
+//     question: "Will prospects know they're talking to an AI?",
+//     answer: "Our AI is designed to be transparent while maintaining natural, professional communication. While it can identify itself as an AI assistant if required, its communications are so well-crafted that prospects often engage just as they would with a human SDR."
+//   },
+//   {
+//     question: "How long does it take to get started?",
+//     answer: "Most teams are up and running within 24-48 hours. The setup process includes connecting your CRM, defining your ideal customer profile, and customizing your outreach preferences. Our team provides full support throughout the implementation."
+//   },
+//   {
+//     question: "What CRM systems do you integrate with?",
+//     answer: "We integrate with all major CRM platforms including Salesforce, HubSpot, Pipedrive, and more. Our flexible API also allows for custom integrations with other systems if needed."
+//   },
+//   {
+//     question: "How do you ensure data privacy and security?",
+//     answer: "We maintain the highest standards of data security with SOC 2 Type II compliance, end-to-end encryption, and regular security audits. Your data is stored in secure, encrypted databases with strict access controls."
+//   },
+//   {
+//     question: "Can I customize the AI's outreach strategy?",
+//     answer: "Absolutely! You can customize everything from the tone of voice to outreach cadence, preferred channels, and response handling. The AI adapts to your brand voice and sales methodology."
+//   }
+// ];
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(null);
