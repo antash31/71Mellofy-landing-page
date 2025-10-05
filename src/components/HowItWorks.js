@@ -32,7 +32,7 @@ const steps = [
     title: WEBSITE_CONFIG.SECTION_3.Cards[3].title,
     description:
       WEBSITE_CONFIG.SECTION_3.Cards[3].description,
-    icon: "/next.svg",
+    icon: "/autopilot.svg",
   },
 ];
 

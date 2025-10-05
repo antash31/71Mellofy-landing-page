@@ -5,15 +5,17 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuth } from "@/hooks/useAuth"
+import { Eye, EyeOff } from "lucide-react"
 
 export function LoginForm({
   className,
   ...props
 }) {
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")  
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const { loading, error, success, handleEmailLogin } = useAuth();
-  
+
   return (
     <div className={cn("flex flex-col gap-6 font-poppins", className)} {...props}>
       <div className="flex flex-col gap-2">
@@ -38,13 +40,13 @@ export function LoginForm({
       <form onSubmit={(e) => handleEmailLogin(e, email, password)} className="grid gap-6">
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
-          <Input 
-            id="email" 
-            type="email" 
-            placeholder="m@example.com" 
+          <Input
+            id="email"
+            type="email"
+            placeholder="m@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required 
+            required
             className="bg-accent"
           />
         </div>
@@ -55,14 +57,30 @@ export function LoginForm({
               Forgot your password?
             </a>
           </div>
-          <Input 
-            id="password" 
-            type="password" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required 
-            className="bg-accent"
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="bg-accent pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+              <span className="sr-only">
+                {showPassword ? "Hide password" : "Show password"}
+              </span>
+            </button>
+          </div>
         </div>
         <Button type="submit" className="w-full text-md bg-primary text-primary-foreground font-poppins" disabled={loading}>
           {loading ? "Signing in..." : "Login"}
