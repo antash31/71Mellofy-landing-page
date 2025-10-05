@@ -18,11 +18,8 @@ export default function Hero() {
       </div>
 
       <div className="relative z-[20] max-w-4xl mx-auto flex flex-col items-center">
-        <div className="mb-2 text-xs font-sans tracking-ultra text-white/80 uppercase">
-          Introducing
-        </div>
 
-        <div className="flex justify-center w-full">
+        <div className="flex justify-center w-full mt-20">
           <BlurText
             text={WEBSITE_CONFIG.SECTION_1.heading_1}
             animateBy="words"

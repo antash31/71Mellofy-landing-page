@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
-import { User2, Home, Mail } from "lucide-react";
+import { User2, Home, Mail, Layout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Logo from "./Logo";
 
 // Navigation visibility flags
-const SHOW_PRICING = true;
+const SHOW_PRICING = false;
 const SHOW_LOGIN = true;
 
 export default function Header() {
@@ -30,6 +30,13 @@ export default function Header() {
           >
             <Home size={16} />
             <span>Home</span>
+          </Link>
+          <Link
+            href="/#why-choose-ai-sdrs"
+            className="flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors duration-200"
+          >
+            <Layout size={16} />
+            <span>Features</span>
           </Link>
           {SHOW_PRICING && (
             <Link

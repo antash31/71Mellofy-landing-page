@@ -81,7 +81,7 @@ export default function ComingSoon() {
           transition={{ duration: 0.5, delay: 0.5 }}
           className="mt-20 text-center"
         >
-          <Link href="/auth/signup">
+          <Link href="https://calendly.com/ceo-71mellofy/30min">
             <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg px-8 py-4 rounded-full hover:from-blue-500 hover:to-purple-500 transition-all duration-300 transform hover:scale-105">
               Request a Demo
             </button>

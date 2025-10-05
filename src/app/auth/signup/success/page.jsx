@@ -69,7 +69,7 @@ export default function SignupSuccessPage() {
                 href="mailto:info@71mellofy.com" 
                 className="text-primary hover:underline font-medium"
               >
-                info@71mellofy.com
+                ceo@71mellofy.com
               </a>
             </p>
           </div>

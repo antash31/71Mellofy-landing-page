@@ -27,7 +27,7 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="relative py-14 px-6 bg-black overflow-hidden">
+    <section id="why-choose-ai-sdrs" className="relative py-14 px-6 bg-black overflow-hidden">
       <div className="absolute inset-0 opacity-30">
         <Aurora
           colorStops={["#000000", "#1a1a1a", "#000000"]}
