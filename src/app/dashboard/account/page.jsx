@@ -47,17 +47,17 @@ const AccountPage = () => {
   }, [user]);
 
   const handleIntegrateCRM = async () => {
-    
+
     const { data: { user } } = await supabase.auth.getUser();
-    
+
     if (!user) {
       alert('Please log in first');
       return;
     }
-  
+
     const state = encodeURIComponent(JSON.stringify({ userId: user.id }));
     const authorizeUrl = `https://login.salesforce.com/services/oauth2/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_CRM_SALESFORCE_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_SALESFORCE_CALL_BACK)}&scope=api%20refresh_token&state=${state}`;
-    
+
     window.location.href = authorizeUrl;
   }
 
@@ -169,13 +169,13 @@ const AccountPage = () => {
                 <Edit3 className="w-4 h-4" />
                 Edit Profile
               </Button>
-              <Button
+              {false && <Button
                 onClick={handleIntegrateCRM}
                 className="flex items-center gap-2"
               >
                 Integrate CRM
                 <ArrowRight className="w-4 h-4" />
-              </Button>
+              </Button>}
             </>
           )}
         </div>
