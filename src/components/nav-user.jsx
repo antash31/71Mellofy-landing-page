@@ -2,7 +2,7 @@
 
 import {
   BadgeCheck,
-  ChevronsUpDown,  
+  ChevronsUpDown,
   LogOut,
   Loader2,
 } from "lucide-react"
@@ -10,7 +10,6 @@ import {
 import {
   Avatar,
   AvatarFallback,
-  AvatarImage,
 } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -32,11 +31,11 @@ import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
-export function NavUser({userDetails}) {
+export function NavUser({ userDetails }) {
   const { isMobile } = useSidebar()
   const dispatch = useDispatch()
   const router = useRouter()
-  
+
   const user = useSelector((state) => state.auth.user)
   const isLoading = useSelector((state) => state.auth.isLoadingUser)
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -44,8 +43,8 @@ export function NavUser({userDetails}) {
   const handleLogout = async () => {
     try {
       setIsLoggingOut(true);
-      dispatch(logOut()); 
-      await dispatch(logoutUser()).unwrap(); 
+      dispatch(logOut());
+      await dispatch(logoutUser()).unwrap();
       router.push('/auth/login');
       toast.success("Logout successful")
     } catch (error) {
@@ -96,12 +95,11 @@ export function NavUser({userDetails}) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">{getUserInitials(user)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {userDetails?.first_name? userDetails?.first_name: "User" + ' ' + userDetails?.last_name?userDetails?.last_name: ""}
+                  {userDetails?.first_name ? userDetails?.first_name : "User" + ' ' + userDetails?.last_name ? userDetails?.last_name : ""}
                 </span>
                 <span className="truncate text-xs">{userDetails?.email}</span>
               </div>
@@ -116,17 +114,16 @@ export function NavUser({userDetails}) {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">{user.initials}</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">{getUserInitials(user)}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  {/* <span className="truncate font-semibold">{user.name}</span> */}
+                  {/* <span className="truncate text-xs">{user.email}</span> */}
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               onClick={() => router.push('/dashboard/account')}
               className="cursor-pointer"
             >
@@ -134,7 +131,7 @@ export function NavUser({userDetails}) {
               Account
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               onClick={handleLogout}
               disabled={isLoggingOut}
               className="text-destructive focus:text-destructive cursor-pointer"
