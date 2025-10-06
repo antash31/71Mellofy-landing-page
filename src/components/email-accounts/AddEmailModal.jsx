@@ -44,7 +44,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
     imapPort: "993",
     imapSecurity: "SSL",
   });
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -58,7 +58,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
@@ -67,7 +67,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.firstName.trim()) newErrors.firstName = "First Name is required";
     if (!formData.lastName.trim()) newErrors.lastName = "Last Name is required";
     if (!formData.designation.trim()) newErrors.designation = "Designation is required";
@@ -76,22 +76,22 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
     if (!formData.userName.trim()) newErrors.userName = "User Name is required";
     if (!formData.password.trim()) newErrors.password = "Password is required";
     if (!formData.smtpHost.trim()) newErrors.smtpHost = "SMTP Host is required";
-    
+
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (formData.fromEmail && !emailRegex.test(formData.fromEmail)) {
       newErrors.fromEmail = "Please enter a valid email address";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsLoading(true);
 
     try {
@@ -100,7 +100,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
         id: null,
         first_name: formData.firstName,
         last_name: formData.lastName,
-        designation: formData.designation,  
+        designation: formData.designation,
         from_name: formData.fromName,
         from_email: formData.fromEmail,
         user_name: formData.userName,
@@ -122,26 +122,26 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
 
       // Make API call to create email account using axios
       const result = await emailAccountsService.create(apiPayload);
-      
+
       // Refresh the email accounts context to get the latest data
       try {
         await refreshEmailAccounts();
       } catch (refreshError) {
         console.warn("Failed to refresh email accounts:", refreshError);
       }
-      
+
       // Call the callback to update parent component
       if (onEmailAdded) {
         onEmailAdded({
           id: result.id || Date.now().toString(),
           email: formData.fromEmail,
           fromName: formData.fromName,
-          provider: formData.smtpHost.includes('gmail') ? 'Gmail' : 
-                   formData.smtpHost.includes('outlook') ? 'Outlook' : 'Custom',
+          provider: formData.smtpHost.includes('gmail') ? 'Gmail' :
+            formData.smtpHost.includes('outlook') ? 'Outlook' : 'Custom',
           isVerified: true
         });
       }
-      
+
       // Reset form and close modal
       setFormData({
         firstName: "",
@@ -164,13 +164,13 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
       });
       setErrors({});
       onClose();
-      
-      toast.success("Email account added and verified successfully!",{position:'top-center'});
+
+      toast.success("Email account added and verified successfully!", { position: 'top-center' });
       dispatch(checkEmailAccounts());
-      
+
     } catch (error) {
-      const errorMessage = error.response?.data?.error;
-      toast.error(errorMessage,{position:'top-center'});
+      const errorMessage = error.response?.data?.details?.message;
+      toast.error(errorMessage, { position: 'top-center' });
     } finally {
       setIsLoading(false);
     }
@@ -213,7 +213,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
                   </div>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* First Name */}
                 <div className="space-y-2">
@@ -288,7 +288,7 @@ export default function AddEmailModal({ isOpen, onClose, onEmailAdded }) {
               <h3 className="text-lg font-medium text-card-foreground mb-4">
                 SMTP Settings (sending emails)
               </h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* From Name */}
                 <div className="space-y-2">
