@@ -28,7 +28,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   // const [locationOptions, setLocationOptions] = useState([]);
   // const [isLoadingLocations, setIsLoadingLocations] = useState(false);
   const [emailAccountOptions, setEmailAccountOptions] = useState([]);
-  const emailAccounts  = useSelector((state) => state.auth.emailAccounts) || [];
+  const emailAccounts = useSelector((state) => state.auth.emailAccounts) || [];
   const isLoadingEmailAccounts = useSelector((state) => state.auth.isLoadingEmailAccounts);
   
   const handleInputChange = (e) => {
@@ -140,7 +140,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   const handleEmailAccountChange = (selectedAccount) => {
     setFormData(prev => ({
       ...prev,
-      emailAccount: {email_address:selectedAccount}
+      emailAccount: { email_address: selectedAccount }
     }));
   };
 
@@ -164,9 +164,6 @@ export default function CreateSDRModal({ isOpen, onClose }) {
         };
         
         const clientResult = await clientService.createClient(clientData);
-
-        window.location.reload();
-
       } catch (clientError) {
         console.warn("Client creation failed, continuing with campaign creation:", clientError);
       }
@@ -214,6 +211,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
       toast.error(`Failed to create SDR Agent`, { description: errorMessage });
     } finally {
       setIsLoading(false);
+      window.location.reload();
     }
   };
 
