@@ -16,27 +16,66 @@ import {
 import { useEmailAccounts } from "@/hooks/useEmailAccounts";
 import { locationService, campaignService, clientService } from "@/services/api";
 import { useSelector } from "react-redux";
+import ConfirmSDRModal from "./ConfirmSDRModal";
 
 export default function CreateSDRModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
     domain: "",
-    emailAccount: {id:"",email_address:""},
+    emailAccount: { id: "", email_address: "" },
     targetRegions: [],
     meetingLink: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [domainError, setDomainError] = useState("");
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   // const [locationOptions, setLocationOptions] = useState([]);
   // const [isLoadingLocations, setIsLoadingLocations] = useState(false);
   const [emailAccountOptions, setEmailAccountOptions] = useState([]);
   const emailAccounts = useSelector((state) => state.auth.emailAccounts) || [];
   const isLoadingEmailAccounts = useSelector((state) => state.auth.isLoadingEmailAccounts);
-  
+
+  const validateDomain = (url) => {
+    try {
+      // Remove protocol if exists and clean up the URL
+      let domain = url.trim().toLowerCase();
+      if (domain.startsWith('http://')) domain = domain.slice(7);
+      if (domain.startsWith('https://')) domain = domain.slice(8);
+      if (domain.startsWith('www.')) domain = domain.slice(4);
+
+      // Remove path and query parameters
+      domain = domain.split('/')[0];
+
+      // Basic domain validation regex
+      const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/;
+
+      if (!domainRegex.test(domain)) {
+        return { isValid: false, error: "Please enter a valid domain (e.g., example.com)" };
+      }
+
+      return { isValid: true, domain };
+    } catch (error) {
+      return { isValid: false, error: "Invalid URL format" };
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+
+    if (name === 'domain') {
+      const { isValid, error, domain } = validateDomain(value);
+      setDomainError(isValid ? "" : error);
+
+      // Still update the form value to show user input
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   // Load initial location data and email accounts
@@ -96,7 +135,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   //   try {
   //     setIsLoadingLocations(true);
   //     const results = await locationService.searchLocations(query);
-      
+
   //     const formattedOptions = results.map(location => {
   //       if (location.type === 'country') {
   //         return {
@@ -119,7 +158,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   //         };
   //       }
   //     });
-      
+
   //     setLocationOptions(formattedOptions);
   //   } catch (error) {
   //     console.error('Error searching locations:', error);
@@ -144,13 +183,18 @@ export default function CreateSDRModal({ isOpen, onClose }) {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmCreate = async () => {
     setIsLoading(true);
+    setShowConfirmModal(false);
 
     try {
       const selectedEmailAccount = emailAccounts.find(account => account.email_address === formData.emailAccount.email_address);
-      
+
       if (!selectedEmailAccount) {
         throw new Error("Selected email account not found");
       }
@@ -162,7 +206,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
           created_at: new Date().toISOString(),
           status: 'active'
         };
-        
+
         const clientResult = await clientService.createClient(clientData);
       } catch (clientError) {
         console.warn("Client creation failed, continuing with campaign creation:", clientError);
@@ -170,10 +214,10 @@ export default function CreateSDRModal({ isOpen, onClose }) {
 
       const campaignData = campaignService.buildCampaignData(formData, selectedEmailAccount);
       const campaignResult = await campaignService.createCampaignTemplate(campaignData);
-            
+
       const { parallelResults } = campaignResult;
       const failedOperations = [];
-      
+
       if (parallelResults.schedule.status === 'rejected') {
         failedOperations.push('Schedule update');
       }
@@ -186,10 +230,10 @@ export default function CreateSDRModal({ isOpen, onClose }) {
       if (parallelResults.attachment.status === 'rejected') {
         failedOperations.push('Email attachment');
       }
-      
+
       setFormData({ domain: "", emailAccount: "" });
       onClose();
-      
+
       if (failedOperations.length > 0) {
         toast.success(`SDR Agent created for ${formData.domain}`, {
           description: `Campaign created successfully. Warning: ${failedOperations.join(', ')} failed but can be configured later.`
@@ -199,7 +243,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
           description: `Campaign: ${campaignData.campaignName} • Email: ${selectedEmailAccount.email} • Regions: ${formData.targetRegions.length}`
         });
       }
-      
+
     } catch (error) {
       let errorMessage = "Error creating SDR agent. Please try again.";
       if (error.response?.data?.message) {
@@ -207,7 +251,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
+
       toast.error(`Failed to create SDR Agent`, { description: errorMessage });
     } finally {
       setIsLoading(false);
@@ -215,7 +259,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
     }
   };
 
-  const isFormValid = formData.domain && formData.emailAccount.email_address;
+  const isFormValid = formData.domain && formData.emailAccount.email_address && !domainError;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -233,21 +277,33 @@ export default function CreateSDRModal({ isOpen, onClose }) {
           {/* Domain Field */}
           <div className="space-y-2">
             <Label htmlFor="domain" className="text-white font-medium">
-              Target Domain
+              Target Link (The website link of the company you want to find ICP for)
             </Label>
-            <Input
-              id="domain"
-              name="domain"
-              type="text"
-              placeholder="e.g., techstartup.com"
-              value={formData.domain}
-              onChange={handleInputChange}
-              className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-white/50"
-              required
-            />
-            <p className="text-xs text-white/60">
-              Enter the domain of companies you want to target for outreach
+            <div className="relative">
+              <Input
+                id="domain"
+                name="domain"
+                type="text"
+                placeholder="e.g., techstartup.com"
+                value={formData.domain}
+                onChange={handleInputChange}
+                className={`bg-white/10 text-white placeholder:text-white/50 focus:border-white/50 ${domainError
+                  ? 'border-red-500 focus:border-red-500'
+                  : formData.domain
+                    ? 'border-green-500 focus:border-green-500'
+                    : 'border-white/30'
+                  }`}
+                required
+              />
+            </div>
+            <p className="text-xs text-white/60 mt-2">
+              Enter the domain or website link of the company you want to target for outreach
             </p>
+            {domainError && (
+              <p className=" -bottom-6 left-0 text-xs text-red-500">
+                {domainError}
+              </p>
+            )}
           </div>
 
           {/* Email Account Selection */}
@@ -381,6 +437,15 @@ export default function CreateSDRModal({ isOpen, onClose }) {
           </div>
         </form>
       </DialogContent>
+
+      <ConfirmSDRModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={handleConfirmCreate}
+        formData={formData}
+        selectedEmailAccount={emailAccounts.find(account => account.email_address === formData.emailAccount.email_address)}
+        isLoading={isLoading}
+      />
     </Dialog>
   );
 }

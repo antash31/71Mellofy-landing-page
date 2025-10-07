@@ -169,7 +169,7 @@ const AccountPage = () => {
                 <Edit3 className="w-4 h-4" />
                 Edit Profile
               </Button>
-              {false && <Button
+              {<Button
                 onClick={handleIntegrateCRM}
                 className="flex items-center gap-2"
               >
