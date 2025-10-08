@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { BarChart3, Users, Bot, Play, Pause, StopCircle } from "lucide-react";
+import { BarChart3, Users, Bot, Play, Pause, StopCircle, Settings } from "lucide-react";
 import { CAMPAIGN_ACTIONS, CAMPAIGN_STATUS } from "@/constants/config.constants";
 
 const AnalyticsHeader = ({ analyticsData, onTakeAction }) => {
@@ -21,6 +21,12 @@ const AnalyticsHeader = ({ analyticsData, onTakeAction }) => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+            <Link href="/dashboard/settings" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-semibold" variant="outline">
+                <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="sm:inline">Settings</span>
+              </Button>
+            </Link>
             <Link href="/dashboard/leads" className="w-full sm:w-auto">
               <Button size="lg" className="w-full sm:w-auto flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-semibold">
                 <Users className="w-4 h-4 sm:w-5 sm:h-5" />
