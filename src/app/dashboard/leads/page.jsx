@@ -38,7 +38,7 @@ const LeadsPage = () => {
       const response = await campaignService.getCampaignLeadStatistics(LEADS_PER_PAGE, offset);
       setLeads(response.statistics.data || []);
       setHasMore(response.hasMore || false);
-      setTotalLeads(response.total || response.statistics?.data?.length || 0);
+      setTotalLeads(response.statistics.total_stats || response.statistics?.data?.length || 0);
       setCurrentPage(page);
     } catch (err) {
       setError(err.message || 'Failed to fetch leads data');
@@ -56,7 +56,8 @@ const LeadsPage = () => {
   }, [isCampaignPresent]);
 
   const handlePageChange = (newPage) => {
-    if (newPage >= 1 && (hasMore || newPage < currentPage)) {
+    const totalPages = Math.ceil(totalLeads / LEADS_PER_PAGE);
+    if (newPage >= 1 && newPage <= totalPages) {
       fetchLeads(newPage);
     }
   };
