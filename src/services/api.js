@@ -80,6 +80,25 @@ export const campaignService = {
     return response.data;
   },
 
+  updateCsvUpload: async (csvFile, additionalData = {}) => {
+    const formData = new FormData();
+    
+    // Add the file
+    formData.append('file', csvFile);
+    
+    // Add additional data as JSON string
+    if (Object.keys(additionalData).length > 0) {
+      formData.append('metadata', JSON.stringify(additionalData));
+    }
+    
+    const response = await api.post('https://n8n.srv975331.hstgr.cloud/webhook/upload-client-list', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  },
+
   //To create the sequence and adding it to the campaign. 
   createSequence: async () => {
     const response = await api.post(supabaseUrl + '/functions/v1/POST-Save-Campaign-Sequence-Edge-Function');
@@ -112,6 +131,8 @@ export const campaignService = {
       const campaignResult = await campaignService.createCampaign({ 
         name: campaignData.campaignName 
       });
+
+
       
       const parallelCalls = [
         campaignService.updateCampaignSchedule({
@@ -395,3 +416,4 @@ export const locationService = {
     }
   }
 };
+

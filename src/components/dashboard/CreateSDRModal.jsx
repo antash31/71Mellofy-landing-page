@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { toast } from 'sonner';
-import { X, MapPin, Mail, MailCheckIcon } from "lucide-react";
+import { X, MapPin, Mail, MailCheckIcon, Upload, FileSpreadsheet, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +28,8 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   const [isLoading, setIsLoading] = useState(false);
   const [domainError, setDomainError] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [csvFile, setCsvFile] = useState(null);
+  const [fileUploadStatus, setFileUploadStatus] = useState('idle'); // 'idle', 'uploading', 'success', 'error'
   // const [locationOptions, setLocationOptions] = useState([]);
   // const [isLoadingLocations, setIsLoadingLocations] = useState(false);
   const [emailAccountOptions, setEmailAccountOptions] = useState([]);
@@ -183,6 +185,30 @@ export default function CreateSDRModal({ isOpen, onClose }) {
     }));
   };
 
+  // Handle CSV file upload
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      // Validate file type (CSV only)
+      const allowedTypes = ['text/csv', 'application/vnd.ms-excel'];
+      const isCSV = allowedTypes.includes(selectedFile.type) || selectedFile.name.endsWith('.csv');
+      
+      if (isCSV) {
+        setCsvFile(selectedFile);
+        setFileUploadStatus('idle');
+      } else {
+        toast.error('Invalid file type', {
+          description: 'Please upload a CSV file (.csv)'
+        });
+      }
+    }
+  };
+
+  const removeFile = () => {
+    setCsvFile(null);
+    setFileUploadStatus('idle');
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setShowConfirmModal(true);
@@ -198,6 +224,30 @@ export default function CreateSDRModal({ isOpen, onClose }) {
       if (!selectedEmailAccount) {
         throw new Error("Selected email account not found");
       }
+
+      // Upload CSV file if one is selected
+      let uploadedData = null;
+      if (csvFile) {
+        setFileUploadStatus('uploading');
+        
+        try {
+          const metadata = {
+            domain: formData.domain,
+            emailAccount: selectedEmailAccount.email_address,
+            uploadedAt: new Date().toISOString()
+          };
+          
+          uploadedData = await campaignService.updateCsvUpload(csvFile, metadata);
+          setFileUploadStatus('success');
+          console.log('CSV upload successful:', uploadedData);
+        } catch (uploadError) {
+          setFileUploadStatus('error');
+          console.error('CSV upload failed:', uploadError);
+          toast.error('File upload failed', {
+            description: 'Continuing with campaign creation, but client data from CSV was not uploaded.'
+          });
+        }
+      }
       try {
         const clientData = {
           domain: formData.domain,
@@ -209,10 +259,10 @@ export default function CreateSDRModal({ isOpen, onClose }) {
 
         const clientResult = await clientService.createClient(clientData);
 
-        window.location.reload();
+        console.log({clientResult})
 
       } catch (clientError) {
-        console.warn("Client creation failed, continuing with campaign creation:", clientError);
+        console.error("Client creation failed, continuing with campaign creation:", clientError);
       }
 
       const campaignData = campaignService.buildCampaignData(formData, selectedEmailAccount);
@@ -235,6 +285,8 @@ export default function CreateSDRModal({ isOpen, onClose }) {
       }
 
       setFormData({ domain: "", emailAccount: "" });
+      setCsvFile(null);
+      setFileUploadStatus('idle');
       onClose();
 
       if (failedOperations.length > 0) {
@@ -258,6 +310,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
       toast.error(`Failed to create SDR Agent`, { description: errorMessage });
     } finally {
       setIsLoading(false);
+      // window.location.reload();
     }
   };
 
@@ -265,12 +318,12 @@ export default function CreateSDRModal({ isOpen, onClose }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-black/95 backdrop-blur-xl border border-white/20 text-white">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-card border text-card-foreground">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-white">
+          <DialogTitle className="text-2xl font-bold">
             Create SDR Agent
           </DialogTitle>
-          <DialogDescription className="text-white/70">
+          <DialogDescription>
             Set up your AI-powered Sales Development Representative to automate your outreach campaigns.
           </DialogDescription>
         </DialogHeader>
@@ -278,7 +331,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
         <form onSubmit={handleSubmit} className="space-y-6 mt-6">
           {/* Domain Field */}
           <div className="space-y-2">
-            <Label htmlFor="domain" className="text-white font-medium">
+            <Label htmlFor="domain" className="font-medium">
               Target Link (The website link of the company you want to find ICP for)
             </Label>
             <div className="relative">
@@ -289,16 +342,16 @@ export default function CreateSDRModal({ isOpen, onClose }) {
                 placeholder="e.g., techstartup.com"
                 value={formData.domain}
                 onChange={handleInputChange}
-                className={`bg-white/10 text-white placeholder:text-white/50 focus:border-white/50 ${domainError
+                className={`${domainError
                   ? 'border-red-500 focus:border-red-500'
                   : formData.domain
                     ? 'border-green-500 focus:border-green-500'
-                    : 'border-white/30'
+                    : ''
                   }`}
                 required
               />
             </div>
-            <p className="text-xs text-white/60 mt-2">
+            <p className="text-xs text-muted-foreground mt-2">
               Enter the domain or website link of the company you want to target for outreach
             </p>
             {domainError && (
@@ -310,7 +363,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
 
           {/* Email Account Selection */}
           <div className="space-y-2">
-            <Label className="text-white font-medium flex items-center gap-2">
+            <Label className="font-medium flex items-center gap-2">
               <Mail className="w-4 h-4" />
               Email Account
             </Label>
@@ -323,7 +376,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
               emptyText={isLoadingEmailAccounts ? "Loading email accounts..." : "No email accounts found."}
               loading={isLoadingEmailAccounts}
               multiple={false}
-              className="w-full [&>button]:bg-white/10 [&>button]:border-white/30 [&>button]:text-white [&>button:hover]:bg-white/20 [&>button]:focus:border-white/50"
+              className="w-full"
               renderOption={(option) => (
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
@@ -348,14 +401,80 @@ export default function CreateSDRModal({ isOpen, onClose }) {
                 return option ? option.account?.email : values;
               }}
             />
-            <p className="text-xs text-white/60">
+            <p className="text-xs text-muted-foreground">
               Select the email account that will be used for sending outreach emails. Make sure it's verified and has sufficient daily limits.
+            </p>
+          </div>
+
+          {/* CSV File Upload */}
+          <div className="space-y-2">
+            <Label className="font-medium flex items-center gap-2">
+              <FileSpreadsheet className="w-4 h-4" />
+              Client Data Upload (Optional)
+            </Label>
+            <div className="space-y-3">
+              {!csvFile ? (
+                <div className="relative">
+                  <input
+                    type="file"
+                    id="csv-upload"
+                    accept=".csv"
+                    onChange={handleFileChange}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  />
+                  <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-muted-foreground transition-colors cursor-pointer">
+                    <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-foreground font-medium mb-1">Click to upload client data</p>
+                    <p className="text-xs text-muted-foreground">CSV file only</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-muted/50 border border-border rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
+                        <FileSpreadsheet className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-foreground font-medium text-sm">{csvFile.name}</p>
+                        <p className="text-muted-foreground text-xs">
+                          {(csvFile.size / 1024).toFixed(1)} KB
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {fileUploadStatus === 'success' && (
+                        <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      )}
+                      {fileUploadStatus === 'error' && (
+                        <AlertCircle className="w-5 h-5 text-red-500" />
+                      )}
+                      {fileUploadStatus === 'uploading' && (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                      )}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={removeFile}
+                        className="p-1 h-auto"
+                        disabled={fileUploadStatus === 'uploading'}
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Upload a CSV file with your client list. The data will be processed and used for targeted outreach.
             </p>
           </div>
 
           {/* Meeting Link Field */}
           <div className="space-y-2">
-            <Label htmlFor="meetingLink" className="text-white font-medium">
+            <Label htmlFor="meetingLink" className="font-medium">
               Meeting Link (Optional)
             </Label>
             <Input
@@ -365,9 +484,8 @@ export default function CreateSDRModal({ isOpen, onClose }) {
               placeholder="e.g., https://calendly.com/yourname/meeting"
               value={formData.meetingLink}
               onChange={handleInputChange}
-              className="bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-white/50"
             />
-            <p className="text-xs text-white/60">
+            <p className="text-xs text-muted-foreground">
               Add your meeting scheduling link to include in outreach emails
             </p>
           </div>
@@ -417,7 +535,7 @@ export default function CreateSDRModal({ isOpen, onClose }) {
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1 bg-transparent border-white/30 text-white hover:bg-white/10"
+              className="flex-1"
               disabled={isLoading}
             >
               Cancel
