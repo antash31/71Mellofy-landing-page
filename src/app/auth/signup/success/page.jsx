@@ -1,8 +1,9 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { CheckCircle, Clock1, ArrowRight, Users } from "lucide-react";
+import { CheckCircle, ArrowRight, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/Logo";
 
 export default function SignupSuccessPage() {
   return (
@@ -10,11 +11,8 @@ export default function SignupSuccessPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex justify-center mb-8">
-          <Link href="/" className="flex items-center gap-2 font-medium text-foreground hover:text-primary transition-colors">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <Clock1 className="size-5" />
-            </div>
-            <span className="text-xl font-semibold">71Mellofy</span>
+          <Link href="/">
+            <Logo />
           </Link>
         </div>
 
