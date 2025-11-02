@@ -10,6 +10,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import {
   Popover,
@@ -153,30 +154,32 @@ const Combobox = React.forwardRef(({
             <CommandEmpty>
               {loading ? "Loading..." : emptyText}
             </CommandEmpty>
-            <CommandGroup className="max-h-[200px] overflow-y-auto">
-              {options.map((option) => {
-                const isSelected = selectedValues.includes(option.value);
-                
-                return (
-                  <CommandItem
-                    key={option.value}
-                    value={option.value}
-                    onSelect={() => handleSelect(option.value)}
-                    className="cursor-pointer"
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        isSelected ? "opacity-100" : "opacity-0"
+            <CommandList className="max-h-[400px]">
+              <CommandGroup>
+                {options.map((option) => {
+                  const isSelected = selectedValues.includes(option.value);
+                  
+                  return (
+                    <CommandItem
+                      key={option.value}
+                      value={option.value}
+                      onSelect={() => handleSelect(option.value)}
+                      className="cursor-pointer"
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          isSelected ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      {renderOption ? renderOption(option) : (
+                        <span>{option.label}</span>
                       )}
-                    />
-                    {renderOption ? renderOption(option) : (
-                      <span>{option.label}</span>
-                    )}
-                  </CommandItem>
-                );
-              })}
-            </CommandGroup>
+                    </CommandItem>
+                  );
+                })}
+              </CommandGroup>
+            </CommandList>
           </Command>
         </PopoverContent>
       </Popover>

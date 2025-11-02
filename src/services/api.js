@@ -112,16 +112,29 @@ export const campaignService = {
   },
 
   // Helper function to build campaign data from form inputs
-  buildCampaignData: (formData, selectedEmailAccount) => {
+  buildCampaignData: (formData, selectedEmailAccount, csvFileData = null, countryNames = [], stateNames = []) => {
     const timestamp = Date.now();
     const campaignName = `Campaign_${formData.domain}_${timestamp}`;
     
     return {
       campaignName,
       domain: formData.domain,
-      emailAccount: selectedEmailAccount,
-      targetRegions: formData.targetRegions,
       meetingLink: formData.meetingLink || "",
+      emailAccount: {
+        email: selectedEmailAccount.email_address,
+        id: selectedEmailAccount.id,
+        provider: selectedEmailAccount.provider,
+        isVerified: selectedEmailAccount.isVerified,
+        messagePerDay: selectedEmailAccount.messagePerDay
+      },
+      csvFile: csvFileData ? {
+        fileName: csvFileData.name,
+        fileSize: csvFileData.size,
+        uploadedAt: new Date().toISOString()
+      } : null,
+      selectedCountries: countryNames,
+      selectedStates: stateNames,
+      targetRegions: formData.targetRegions || [],
       createdAt: new Date().toISOString()
     };
   },
@@ -129,7 +142,15 @@ export const campaignService = {
   createCampaignTemplate: async (campaignData) => {
     try {
       const campaignResult = await campaignService.createCampaign({ 
-        name: campaignData.campaignName 
+        name: campaignData.campaignName,
+        domain: campaignData.domain,
+        meetingLink: campaignData.meetingLink,
+        emailAccount: campaignData.emailAccount,
+        csvFile: campaignData.csvFile,
+        selectedCountries: campaignData.selectedCountries,
+        selectedStates: campaignData.selectedStates,
+        targetRegions: campaignData.targetRegions,
+        createdAt: campaignData.createdAt
       });
 
 
@@ -150,7 +171,12 @@ export const campaignService = {
 
         campaignService.attachEmailAccountToCampaign({
           domain: campaignData.domain,
-          meetingLink: campaignData.meetingLink
+          meetingLink: campaignData.meetingLink,
+          emailAccount: campaignData.emailAccount,
+          csvFile: campaignData.csvFile,
+          selectedCountries: campaignData.selectedCountries,
+          selectedStates: campaignData.selectedStates,
+          targetRegions: campaignData.targetRegions
         })
       ];
       const parallelResults = await Promise.allSettled(parallelCalls);
@@ -366,6 +392,44 @@ export const locationService = {
         { code: 'ST', name: 'Saxony-Anhalt', countryCode: 'DE', type: 'state' },
         { code: 'SH', name: 'Schleswig-Holstein', countryCode: 'DE', type: 'state' },
         { code: 'TH', name: 'Thuringia', countryCode: 'DE', type: 'state' },
+      ],
+      'IN': [
+        { code: 'AP', name: 'Andhra Pradesh', countryCode: 'IN', type: 'state' },
+        { code: 'AR', name: 'Arunachal Pradesh', countryCode: 'IN', type: 'state' },
+        { code: 'AS', name: 'Assam', countryCode: 'IN', type: 'state' },
+        { code: 'BR', name: 'Bihar', countryCode: 'IN', type: 'state' },
+        { code: 'CT', name: 'Chhattisgarh', countryCode: 'IN', type: 'state' },
+        { code: 'GA', name: 'Goa', countryCode: 'IN', type: 'state' },
+        { code: 'GJ', name: 'Gujarat', countryCode: 'IN', type: 'state' },
+        { code: 'HR', name: 'Haryana', countryCode: 'IN', type: 'state' },
+        { code: 'HP', name: 'Himachal Pradesh', countryCode: 'IN', type: 'state' },
+        { code: 'JH', name: 'Jharkhand', countryCode: 'IN', type: 'state' },
+        { code: 'KA', name: 'Karnataka', countryCode: 'IN', type: 'state' },
+        { code: 'KL', name: 'Kerala', countryCode: 'IN', type: 'state' },
+        { code: 'MP', name: 'Madhya Pradesh', countryCode: 'IN', type: 'state' },
+        { code: 'MH', name: 'Maharashtra', countryCode: 'IN', type: 'state' },
+        { code: 'MN', name: 'Manipur', countryCode: 'IN', type: 'state' },
+        { code: 'ML', name: 'Meghalaya', countryCode: 'IN', type: 'state' },
+        { code: 'MZ', name: 'Mizoram', countryCode: 'IN', type: 'state' },
+        { code: 'NL', name: 'Nagaland', countryCode: 'IN', type: 'state' },
+        { code: 'OR', name: 'Odisha', countryCode: 'IN', type: 'state' },
+        { code: 'PB', name: 'Punjab', countryCode: 'IN', type: 'state' },
+        { code: 'RJ', name: 'Rajasthan', countryCode: 'IN', type: 'state' },
+        { code: 'SK', name: 'Sikkim', countryCode: 'IN', type: 'state' },
+        { code: 'TN', name: 'Tamil Nadu', countryCode: 'IN', type: 'state' },
+        { code: 'TG', name: 'Telangana', countryCode: 'IN', type: 'state' },
+        { code: 'TR', name: 'Tripura', countryCode: 'IN', type: 'state' },
+        { code: 'UP', name: 'Uttar Pradesh', countryCode: 'IN', type: 'state' },
+        { code: 'UT', name: 'Uttarakhand', countryCode: 'IN', type: 'state' },
+        { code: 'WB', name: 'West Bengal', countryCode: 'IN', type: 'state' },
+        { code: 'AN', name: 'Andaman and Nicobar Islands', countryCode: 'IN', type: 'state' },
+        { code: 'CH', name: 'Chandigarh', countryCode: 'IN', type: 'state' },
+        { code: 'DN', name: 'Dadra and Nagar Haveli and Daman and Diu', countryCode: 'IN', type: 'state' },
+        { code: 'DL', name: 'Delhi', countryCode: 'IN', type: 'state' },
+        { code: 'JK', name: 'Jammu and Kashmir', countryCode: 'IN', type: 'state' },
+        { code: 'LA', name: 'Ladakh', countryCode: 'IN', type: 'state' },
+        { code: 'LD', name: 'Lakshadweep', countryCode: 'IN', type: 'state' },
+        { code: 'PY', name: 'Puducherry', countryCode: 'IN', type: 'state' },
       ]
     };
 

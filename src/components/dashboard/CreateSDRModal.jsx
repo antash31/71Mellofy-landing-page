@@ -22,6 +22,8 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
     domain: "",
     emailAccount: { id: "", email_address: "" },
+    selectedCountries: [],
+    selectedStates: [],
     targetRegions: [],
     meetingLink: "",
   });
@@ -30,8 +32,10 @@ export default function CreateSDRModal({ isOpen, onClose }) {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [csvFile, setCsvFile] = useState(null);
   const [fileUploadStatus, setFileUploadStatus] = useState('idle'); // 'idle', 'uploading', 'success', 'error'
-  // const [locationOptions, setLocationOptions] = useState([]);
-  // const [isLoadingLocations, setIsLoadingLocations] = useState(false);
+  const [countryOptions, setCountryOptions] = useState([]);
+  const [stateOptions, setStateOptions] = useState([]);
+  const [isLoadingCountries, setIsLoadingCountries] = useState(false);
+  const [isLoadingStates, setIsLoadingStates] = useState(false);
   const [emailAccountOptions, setEmailAccountOptions] = useState([]);
   const emailAccounts = useSelector((state) => state.auth.emailAccounts) || [];
   const isLoadingEmailAccounts = useSelector((state) => state.auth.isLoadingEmailAccounts);
@@ -80,30 +84,30 @@ export default function CreateSDRModal({ isOpen, onClose }) {
     }
   };
 
-  // Load initial location data and email accounts
-  // useEffect(() => {
-  //   const loadInitialLocations = async () => {
-  //     try {
-  //       setIsLoadingLocations(true);
-  //       const countries = await locationService.getAllCountries();
-  //       const formattedOptions = countries.map(country => ({
-  //         value: `country:${country.code}`,
-  //         label: `${country.flag} ${country.name}`,
-  //         type: 'country',
-  //         country: country
-  //       }));
-  //       setLocationOptions(formattedOptions);
-  //     } catch (error) {
-  //       console.error('Error loading countries:', error);
-  //     } finally {
-  //       setIsLoadingLocations(false);
-  //     }
-  //   };
+  // Load initial countries
+  useEffect(() => {
+    const loadCountries = async () => {
+      try {
+        setIsLoadingCountries(true);
+        const countries = await locationService.getAllCountries();
+        const formattedOptions = countries.map(country => ({
+          value: country.code,
+          label: `${country.flag} ${country.name}`,
+          type: 'country',
+          country: country
+        }));
+        setCountryOptions(formattedOptions);
+      } catch (error) {
+        console.error('Error loading countries:', error);
+      } finally {
+        setIsLoadingCountries(false);
+      }
+    };
 
-  //   if (isOpen) {
-  //     loadInitialLocations();
-  //   }
-  // }, [isOpen]);
+    if (isOpen) {
+      loadCountries();
+    }
+  }, [isOpen]);
 
   // Transform email accounts to combobox options
   useEffect(() => {
@@ -115,67 +119,197 @@ export default function CreateSDRModal({ isOpen, onClose }) {
     setEmailAccountOptions(emailOptions);
   }, [emailAccounts]);
 
-  // Handle location search
-  // const handleLocationSearch = useCallback(async (query) => {
-  //   if (!query || query.length < 2) {
-  //     // Reset to countries only
-  //     try {
-  //       const countries = await locationService.getAllCountries();
-  //       const formattedOptions = countries.map(country => ({
-  //         value: `country:${country.code}`,
-  //         label: `${country.flag} ${country.name}`,
-  //         type: 'country',
-  //         country: country
-  //       }));
-  //       setLocationOptions(formattedOptions);
-  //     } catch (error) {
-  //       console.error('Error loading countries:', error);
-  //     }
-  //     return;
-  //   }
+  // Load states based on selected countries
+  useEffect(() => {
+    const loadStates = async () => {
+      if (formData.selectedCountries.length === 0) {
+        setStateOptions([]);
+        setFormData(prev => ({ ...prev, selectedStates: [] }));
+        return;
+      }
 
-  //   try {
-  //     setIsLoadingLocations(true);
-  //     const results = await locationService.searchLocations(query);
+      try {
+        setIsLoadingStates(true);
+        const allStates = [];
 
-  //     const formattedOptions = results.map(location => {
-  //       if (location.type === 'country') {
-  //         return {
-  //           value: `country:${location.code}`,
-  //           label: `${location.flag} ${location.name}`,
-  //           type: 'country',
-  //           country: location
-  //         };
-  //       } else {
-  //         // State/province
-  //         const countryFlag = location.countryCode === 'US' ? '🇺🇸' : 
-  //                           location.countryCode === 'CA' ? '🇨🇦' : 
-  //                           location.countryCode === 'GB' ? '🇬🇧' : 
-  //                           location.countryCode === 'AU' ? '🇦🇺' : '🌍';
-  //         return {
-  //           value: `state:${location.countryCode}:${location.code}`,
-  //           label: `${countryFlag} ${location.name}, ${location.countryCode}`,
-  //           type: 'state',
-  //           state: location
-  //         };
-  //       }
-  //     });
+        // Load states for each selected country
+        for (const countryCode of formData.selectedCountries) {
+          const states = await locationService.getCountryStates(countryCode);
+          const countryData = countryOptions.find(opt => opt.value === countryCode);
+          const countryFlag = countryData?.country?.flag || '🌍';
+          const countryName = countryData?.country?.name || countryCode;
+          
+          const formattedStates = states.map(state => ({
+            value: `${state.countryCode}:${state.code}`,
+            label: `${countryFlag} ${state.name}, ${countryName}`,
+            type: 'state',
+            countryCode: state.countryCode,
+            countryName: countryName,
+            state: state
+          }));
+          
+          allStates.push(...formattedStates);
+        }
 
-  //     setLocationOptions(formattedOptions);
-  //   } catch (error) {
-  //     console.error('Error searching locations:', error);
-  //   } finally {
-  //     setIsLoadingLocations(false);
-  //   }
-  // }, []);
+        setStateOptions(allStates);
+      } catch (error) {
+        console.error('Error loading states:', error);
+      } finally {
+        setIsLoadingStates(false);
+      }
+    };
 
-  // // Handle region selection
-  // const handleRegionChange = (selectedRegions) => {
-  //   setFormData(prev => ({
-  //     ...prev,
-  //     targetRegions: selectedRegions
-  //   }));
-  // };
+    loadStates();
+  }, [formData.selectedCountries, countryOptions]);
+
+  // Handle country search
+  const handleCountrySearch = useCallback(async (query) => {
+    if (!query || query.length < 2) {
+      // Reset to all countries
+      try {
+        const countries = await locationService.getAllCountries();
+        const formattedOptions = countries.map(country => ({
+          value: country.code,
+          label: `${country.flag} ${country.name}`,
+          type: 'country',
+          country: country
+        }));
+        setCountryOptions(formattedOptions);
+      } catch (error) {
+        console.error('Error loading countries:', error);
+      }
+      return;
+    }
+
+    try {
+      const countries = await locationService.getAllCountries();
+      const filteredCountries = countries.filter(country => 
+        country.name.toLowerCase().includes(query.toLowerCase())
+      );
+      const formattedOptions = filteredCountries.map(country => ({
+        value: country.code,
+        label: `${country.flag} ${country.name}`,
+        type: 'country',
+        country: country
+      }));
+      setCountryOptions(formattedOptions);
+    } catch (error) {
+      console.error('Error searching countries:', error);
+    }
+  }, []);
+
+  // Handle state search
+  const handleStateSearch = useCallback(async (query) => {
+    if (!query || query.length < 2) {
+      // Reset to all states from selected countries
+      try {
+        const allStates = [];
+        for (const countryCode of formData.selectedCountries) {
+          const states = await locationService.getCountryStates(countryCode);
+          const countryData = countryOptions.find(opt => opt.value === countryCode);
+          const countryFlag = countryData?.country?.flag || '🌍';
+          const countryName = countryData?.country?.name || countryCode;
+          
+          const formattedStates = states.map(state => ({
+            value: `${state.countryCode}:${state.code}`,
+            label: `${countryFlag} ${state.name}, ${countryName}`,
+            type: 'state',
+            countryCode: state.countryCode,
+            countryName: countryName,
+            state: state
+          }));
+          
+          allStates.push(...formattedStates);
+        }
+        setStateOptions(allStates);
+      } catch (error) {
+        console.error('Error loading states:', error);
+      }
+      return;
+    }
+
+    try {
+      const allStates = [];
+      for (const countryCode of formData.selectedCountries) {
+        const states = await locationService.getCountryStates(countryCode);
+        const filteredStates = states.filter(state => 
+          state.name.toLowerCase().includes(query.toLowerCase())
+        );
+        const countryData = countryOptions.find(opt => opt.value === countryCode);
+        const countryFlag = countryData?.country?.flag || '🌍';
+        const countryName = countryData?.country?.name || countryCode;
+        
+        const formattedStates = filteredStates.map(state => ({
+          value: `${state.countryCode}:${state.code}`,
+          label: `${countryFlag} ${state.name}, ${countryName}`,
+          type: 'state',
+          countryCode: state.countryCode,
+          countryName: countryName,
+          state: state
+        }));
+        
+        allStates.push(...formattedStates);
+      }
+      setStateOptions(allStates);
+    } catch (error) {
+      console.error('Error searching states:', error);
+    }
+  }, [formData.selectedCountries, countryOptions]);
+
+  // Handle country selection
+  const handleCountryChange = (selectedCountries) => {
+    setFormData(prev => ({
+      ...prev,
+      selectedCountries: selectedCountries
+    }));
+  };
+
+  // Handle state selection
+  const handleStateChange = (selectedStates) => {
+    setFormData(prev => ({
+      ...prev,
+      selectedStates: selectedStates
+    }));
+  };
+
+  // Helper function to get full country names from codes
+  const getCountryNames = useCallback(() => {
+    return formData.selectedCountries.map(code => {
+      const country = countryOptions.find(opt => opt.value === code);
+      return {
+        code: code,
+        name: country?.country?.name || code,
+        flag: country?.country?.flag || ''
+      };
+    });
+  }, [formData.selectedCountries, countryOptions]);
+
+  // Helper function to get full state names from codes
+  const getStateNames = useCallback(() => {
+    return formData.selectedStates.map(stateValue => {
+      const state = stateOptions.find(opt => opt.value === stateValue);
+      const [countryCode, stateCode] = stateValue.split(':');
+      return {
+        code: stateCode,
+        name: state?.state?.name || stateCode,
+        countryCode: countryCode,
+        countryName: countryOptions.find(opt => opt.value === countryCode)?.country?.name || countryCode
+      };
+    });
+  }, [formData.selectedStates, stateOptions, countryOptions]);
+
+  // Combine countries and states into targetRegions
+  useEffect(() => {
+    const combinedRegions = [
+      ...formData.selectedCountries.map(code => `country:${code}`),
+      ...formData.selectedStates.map(state => `state:${state}`)
+    ];
+    
+    setFormData(prev => ({
+      ...prev,
+      targetRegions: combinedRegions
+    }));
+  }, [formData.selectedCountries, formData.selectedStates]);
 
   // Handle email account selection
   const handleEmailAccountChange = (selectedAccount) => {
@@ -249,10 +383,26 @@ export default function CreateSDRModal({ isOpen, onClose }) {
         }
       }
       try {
+        const countryNames = getCountryNames();
+        const stateNames = getStateNames();
+        
         const clientData = {
           domain: formData.domain,
           name: `Client for ${formData.domain}`,
-          target_regions: formData.targetRegions,
+          meeting_link: formData.meetingLink || "",
+          email_account: {
+            email: selectedEmailAccount.email_address,
+            id: selectedEmailAccount.id,
+            provider: selectedEmailAccount.provider
+          },
+          csv_file: csvFile ? {
+            file_name: csvFile.name,
+            file_size: csvFile.size,
+            uploaded_at: new Date().toISOString()
+          } : null,
+          selected_countries: countryNames,
+          selected_states: stateNames,
+          target_regions: formData.targetRegions || [],
           created_at: new Date().toISOString(),
           status: 'active'
         };
@@ -262,7 +412,13 @@ export default function CreateSDRModal({ isOpen, onClose }) {
         console.error("Client creation failed, continuing with campaign creation:", clientError);
       }
 
-      const campaignData = campaignService.buildCampaignData(formData, selectedEmailAccount);
+      const campaignData = campaignService.buildCampaignData(
+        formData, 
+        selectedEmailAccount, 
+        csvFile,
+        getCountryNames(),
+        getStateNames()
+      );
       const campaignResult = await campaignService.createCampaignTemplate(campaignData);
 
       const { parallelResults } = campaignResult;
@@ -281,7 +437,14 @@ export default function CreateSDRModal({ isOpen, onClose }) {
         failedOperations.push('Email attachment');
       }
 
-      setFormData({ domain: "", emailAccount: "" });
+      setFormData({ 
+        domain: "", 
+        emailAccount: { id: "", email_address: "" },
+        selectedCountries: [],
+        selectedStates: [],
+        targetRegions: [],
+        meetingLink: ""
+      });
       setCsvFile(null);
       setFileUploadStatus('idle');
       onClose();
@@ -487,44 +650,79 @@ export default function CreateSDRModal({ isOpen, onClose }) {
             </p>
           </div>
 
-          {/* Target Regions Selection
+          {/* Target Countries Selection */}
           <div className="space-y-2">
             <Label className="text-white font-medium flex items-center gap-2">
               <MapPin className="w-4 h-4" />
-              Target Regions
+              Target Countries
             </Label>
             <Combobox
-              options={locationOptions}
-              value={formData.targetRegions}
-              onValueChange={handleRegionChange}
-              onSearch={handleLocationSearch}
-              placeholder="Select countries or states..."
-              searchPlaceholder="Search countries and states..."
-              emptyText={isLoadingLocations ? "Loading locations..." : "No locations found."}
-              loading={isLoadingLocations}
+              options={countryOptions}
+              value={formData.selectedCountries}
+              onValueChange={handleCountryChange}
+              onSearch={handleCountrySearch}
+              placeholder="Select countries..."
+              searchPlaceholder="Search countries..."
+              emptyText={isLoadingCountries ? "Loading countries..." : "No countries found."}
+              loading={isLoadingCountries}
               multiple={true}
               className="w-full [&>button]:bg-white/10 [&>button]:border-white/30 [&>button]:text-white [&>button:hover]:bg-white/20 [&>button]:focus:border-white/50"
               renderOption={(option) => (
                 <div className="flex items-center gap-2">
                   <span>{option.label}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {option.type === 'country' ? 'Country' : 'State/Province'}
-                  </span>
                 </div>
               )}
               renderValue={(values, options) => {
-                if (values.length === 0) return "Select regions to target...";
+                if (values.length === 0) return "Select countries to target...";
                 if (values.length === 1) {
                   const option = options.find(opt => opt.value === values[0]);
                   return option?.label || values[0];
                 }
-                return `${values.length} regions selected`;
+                return `${values.length} countries selected`;
               }}
             />
             <p className="text-xs text-white/60">
-              Select the countries and states you want to target for lead generation. You can search and select multiple regions.
+              Select the countries you want to target for lead generation.
             </p>
-          </div> */}
+          </div>
+
+          {/* Target States Selection - Only shown when countries are selected */}
+          {formData.selectedCountries.length > 0 && (
+            <div className="space-y-2">
+              <Label className="text-white font-medium flex items-center gap-2">
+                <MapPin className="w-4 h-4" />
+                Target States (Optional)
+              </Label>
+              <Combobox
+                options={stateOptions}
+                value={formData.selectedStates}
+                onValueChange={handleStateChange}
+                onSearch={handleStateSearch}
+                placeholder="Select states..."
+                searchPlaceholder="Search states..."
+                emptyText={isLoadingStates ? "Loading states..." : "No states found for selected countries."}
+                loading={isLoadingStates}
+                multiple={true}
+                className="w-full [&>button]:bg-white/10 [&>button]:border-white/30 [&>button]:text-white [&>button:hover]:bg-white/20 [&>button]:focus:border-white/50"
+                renderOption={(option) => (
+                  <div className="flex items-center gap-2">
+                    <span>{option.label}</span>
+                  </div>
+                )}
+                renderValue={(values, options) => {
+                  if (values.length === 0) return "Select states to target...";
+                  if (values.length === 1) {
+                    const option = options.find(opt => opt.value === values[0]);
+                    return option?.label || values[0];
+                  }
+                  return `${values.length} states selected`;
+                }}
+              />
+              <p className="text-xs text-white/60">
+                Optionally, narrow down your targeting by selecting specific states within the selected countries.
+              </p>
+            </div>
+          )} 
 
           {/* Action Buttons */}
           <div className="flex gap-3 pt-4">
