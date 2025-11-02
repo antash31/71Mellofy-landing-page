@@ -169,13 +169,13 @@ const AccountPage = () => {
                 <Edit3 className="w-4 h-4" />
                 Edit Profile
               </Button>
-              {<Button
+              {/* {<Button
                 onClick={handleIntegrateCRM}
                 className="flex items-center gap-2"
               >
                 Integrate CRM
                 <ArrowRight className="w-4 h-4" />
-              </Button>}
+              </Button>} */}
             </>
           )}
         </div>
@@ -355,7 +355,7 @@ const AccountPage = () => {
       </div>
 
       {/* Account Security Card */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="w-5 h-5" />
@@ -409,7 +409,7 @@ const AccountPage = () => {
             </div>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 };

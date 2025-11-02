@@ -21,19 +21,18 @@ export function AppSidebar({
 }) {
   const hasEmailAccounts = useSelector((state) => state.auth.hasEmailAccounts);
   const doesCampaignExist = useSelector((state) => state.auth.doesCampaignExist);
+  const [mounted, setMounted] = React.useState(false);
 
-  const filteredProjects = data.projects.filter((project) => {
-    if (project.name === "Dashboard") {
-      return true;
-    }
-    if (project.name === "Leads") {
-      return doesCampaignExist;
-    }
-    if (project.name === "Email Accounts") {
-      return hasEmailAccounts;
-    }
+ React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+   const filteredProjects = mounted ? data.projects.filter((project) => {
+    if (project.name === "Dashboard") return true;
+    if (project.name === "Leads") return doesCampaignExist;
+    if (project.name === "Email Accounts") return hasEmailAccounts;
     return true;
-  });
+  }) : data.projects;
 
   const userDetails = useSelector(state => state.auth.userDetails);
   return (

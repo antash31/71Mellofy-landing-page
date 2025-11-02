@@ -143,10 +143,5 @@ import {
         url: "/dashboard/email-accounts",
         icon: Mail,
       },
-      {
-        name: "ICP",
-        url: "/dashboard/icp",
-        icon: Map,
-      },
     ],
   }
