@@ -44,7 +44,7 @@ const Pagination = ({ currentPage, totalPages, hasMore, onPageChange, isLoading,
           variant="outline"
           size="sm"
           onClick={() => onPageChange(currentPage + 1)}
-          disabled={!hasMore || isLoading}
+          disabled={currentPage >= totalPages || isLoading}
           className="flex items-center gap-2"
         >
           Next

@@ -4,7 +4,7 @@ export const WEBSITE_CONFIG = {
         heading_1:"Scale Like 7",
         heading_2:"Spend Like 1",
         description:"71Mellofy is an AI-first Sales Development Representative (SDR) platform designed to streamline your outbound sales efforts. It consolidates the power of seven SDRs into one comprehensive solution, transforming outbound chaos into predictable revenue.",
-        cta_button:"Find out how AI SDR works"
+        cta_button:"Book a demo"
     },
     SECTION_2:{
         heading_1:"Why Choose AI SDRs for Sales Development?",

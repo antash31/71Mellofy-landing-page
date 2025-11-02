@@ -115,7 +115,6 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
-          <DashboardHeader />
           <ErrorState error={error} onRefresh={handleRefreshAccounts} isRefreshing={isRefreshing} />
           <CreateSDRModal isOpen={isModalOpen} onClose={handleCloseModal} />
         </div>
@@ -148,7 +147,6 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <DashboardHeader />
         {mainContent}
         {!error && !isLoading && campaignError && (
           <CampaignError

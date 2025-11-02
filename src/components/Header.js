@@ -10,7 +10,7 @@ const SHOW_LOGIN = true;
 
 export default function Header() {
   return (
-    <header className="fixed inset-x-0 top-2 z-300 flex justify-center pointer-events-none">
+    <header className="fixed inset-x-0 top-2 z-300 flex justify-center pointer-events-none h-16">
       <div className="pointer-events-auto mx-4 flex w-full max-w-7xl items-center justify-between rounded-2xl bg-black/90 px-6 py-3 shadow-xl ring-1 ring-white/10 backdrop-blur">
         {/* Left section with fixed width */}
         <div className="w-[140px]">

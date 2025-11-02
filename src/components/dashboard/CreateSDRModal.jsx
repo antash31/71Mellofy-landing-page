@@ -258,9 +258,6 @@ export default function CreateSDRModal({ isOpen, onClose }) {
         };
 
         const clientResult = await clientService.createClient(clientData);
-
-        console.log({clientResult})
-
       } catch (clientError) {
         console.error("Client creation failed, continuing with campaign creation:", clientError);
       }
