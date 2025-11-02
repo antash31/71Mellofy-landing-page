@@ -73,7 +73,6 @@ const LeadsPage = () => {
 
   return (
     <div className="space-y-8">
-      <LeadsHeader onRefresh={handleRefresh} isLoading={isLoading} totalLeads={totalLeads} />
       <Card className="border-border/50">
         <CardContent className="p-0">
           <LeadsTable leads={leads} />
