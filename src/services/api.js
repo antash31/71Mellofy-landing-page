@@ -228,6 +228,11 @@ export const campaignService = {
   takeActionOnCampaign: async (action) => {
     const response = await api.post(supabaseUrl + '/functions/v1/POST-CAMPAIGN-STATUS-UPDATE', { action });
     return response.data;
+  },
+
+  getCampaignSettings: async () => {
+    const response = await api.post(supabaseUrl + '/functions/v1/fetch-campaign-settings',{});
+    return response.data;
   }
 };
 

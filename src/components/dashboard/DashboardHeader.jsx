@@ -1,8 +1,16 @@
 import React from 'react';
-import { Bot } from "lucide-react";
+import Link from 'next/link';
+import { Bot, Settings } from "lucide-react";
 
 const DashboardHeader = () => (
-  <div className="text-center mb-16">
+  <div className="text-center mb-16 relative">
+    <Link 
+      href="/dashboard/compaign-setting"
+      className="absolute top-0 right-0 flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-primary/5"
+    >
+      <Settings className="w-4 h-4" />
+      Settings
+    </Link>
     <div className="mx-auto w-24 h-24 bg-gradient-to-br from-primary/15 to-primary/5 rounded-3xl flex items-center justify-center mb-8 shadow-2xl border border-primary/10 backdrop-blur-sm">
       <Bot className="w-12 h-12 text-primary drop-shadow-sm" />
     </div>
